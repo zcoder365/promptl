@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div align="center" style="margin:0px; padding:0px">
+		
+	<div align="center" style="width:100%">
+		<div align='center'>
+			<span style="font-size:28px; color:#FF5349"><b style="font-size:28px">Welcome to Promptl!</span><br>
+			<span style="font-size:20px">Use the words below in your story!</b></span><br><br>
+	</div>
+		
+	<div align='center'>
+		✏️ <span style="color:#00008B">Each Promptl word is worth 10 points. The bonus word is worth 20 points.</span><br>
+		✏️ <span style="color:#00008B">You need to write more than 70 words to be awarded any points for your story.</span><br>
+		✏️ <span style="color:#00008B">If your story is greater than 100 words, you will get an extra 25 points!</span></b><br><br>
+		<span style='font-size:16px; color:#FF5349'><i>Please don't reload this page while you are writing (the prompts will change).</i></span>
+	</div>
+	
+	<br>
+	
+	<div align='center'>
+		<a href='/new-prompt'><button style="border-width:0px; border-radius:100%; padding:0px; margin:0px"><img src='/static/generate.png' style="border-width:2px; border-radius:10px; width:4cm"></button></a>
+	
+	<br><br>
+		
+		<table align='center' style='width:200px'>
+	 		<tr align='center' style='width:40px'>
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<img src='static/name.png' style="width:3cm">
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<img src='static/job.png' style="width:3cm">
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<img src='static/thing.png' style="width:3cm">
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<img src='static/place.png' style="width:3cm">
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<img src='static/bonus.png' style="width:3cm">
+				</td>
+			</tr>
+			
+			<tr align='center' style='width:40px'>
+				<td align='center' id='name'  style='padding-left:20px; padding-right:20px'>
+					<b>{{ prompts['name'] }}</b>
+				</td>
+				
+				<td align='center' id='job' onclick='showRandomFrom("jobs.txt")' style='padding-left:20px; padding-right:20px'>
+					<b>{{ prompts['job'] }}</b>
+				</td>
+				
+				<td align='center' id='object' onclick='showRandomFrom("objects.txt")' style='padding-left:20px; padding-right:20px'>
+					<b>{{ prompts['object'] }}</b>
+				</td>
+				
+				<td align='center' id='place' onclick='showRandomFrom("places.txt")' style='padding-left:20px; padding-right:20px'>
+					<b>{{ prompts['place'] }}</b>
+				</td>
+				
+				<td align='center' id='bonus' onclick='showRandomFrom("bonus.txt")' style='padding-left:20px; padding-right:20px'>
+					<b>{{ prompts['bonus'] }}</b>
+				</td>
+			</tr>
+	
+	<!-- 		<tr align='center' style='width:40px'>
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<a href="/home/gen-name"><button style="border-width:0px; border-radius:100%; margin:0px; padding:0px"><img src="/static/person.jpg" style="width:2cm; margin:0px; padding:0px; border-radius:100%"></button></a>
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<button onclick='gen_name' onclick='showRandomFrom("jobs.txt")' style="border-width:0px; border-radius:100%; margin:0px; padding:0px"><img src="/static/briefcase.png" style="width:2cm; margin:0px; padding:0px; border-radius:100%"></button>
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<button onclick='gen_name' onclick='showRandomFrom("objects.txt")' style="border-width:0px; border-radius:100%; margin:0px; padding:0px"><img src="/static/briefcase.png" style="width:2cm; margin:0px; padding:0px; border-radius:100%"></button>
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<form action='/home/gen-place'>
+						<input type='button' value='Generate Place!'>
+					</form>
+				</td>
+	
+				<td align='center' style='padding-left:20px; padding-right:20px'>
+					<form action='/home/gen-bonus'>
+						<input type='button' value='Generate Bonus!'>
+					</form>
+				</td>
+			</tr> -->
+		</table>
+	
+	<!-- 	<a href='/new-prompt'><button style="border-width:0px; border-radius:10px; background-color:lightblue">Generate!</button></a> -->
+	
+	<!-- 	<h3 style="padding-top:20px">Your Story:</h3> -->
+	<div>
+		<br>
+		
+		<a href="https://www.thesaurus.com" target="_blank">
+			<button style="border-width:0px; border-radius:100%; padding:0px; margin-right:10px"><img src="/static/help.png" style="border-radius:10px; width:2cm"></button>
+		</a>
+
+	</div>
+		
+	<br>
+		
+		<form action='/save-writing' method='post'>
+			<label for='title' style='padding-right:10px'>Title:</label>
+			<input type="text" name='title' placeholder='Your Title Here...' value=''>
+	
+			<br><br>
+	
+	<!-- 		<label for='story'>Your Piece:</label><br> -->
+			<textarea name="story" rows="10" cols="90" placeholder='Start Typing Here...'></textarea>
+	
+			<br>
+
+<!-- 			<p align='left' style='padding-left:290px' action='/word-count'>{{words}} words written</p>
+
+			<br> -->
+	
+			<a href="/save-writing"><button style="border-width:0px; border-radius:100%; padding:0px; margin:0px"><img src="/static/library.png" style="border-width:2px; border-color:black; border-radius:10px; width:4cm"></button></a>
+		</form>
+	</div>
+</div>
+{% endblock %}

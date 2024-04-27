@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div align='center'>
+	<h2>{{ story.title }}</h2>
+	<p style="font-size:18px"><b>Word Count:</b> {{ story.word_count }}</p>
+	<p style="font-sixe:18px"><b>Prompt:</b> {{ story.prompts.name }}, {{ story.prompts.job }}, {{ story.prompts.place }}, {{ story.prompts.object }}, {{ story.prompts.bonus }}</p>
+	<div style="width:80%">
+		<textarea name="updated_story" rows="10" cols="90">{{ story.story }}</textarea>
+		<br>
+
+		<a href="/update-story/<storyID>" method="post"><button style="border-width:0px; border-radius:100%; padding:0px; margin:0px"><img src="/static/library.png" style="border-width:2px; border-color:black; border-radius:10px; width:4cm"></button></a>
+	</div>
+
+	<a href="{{url_for('prior_pieces')}}">Back</a>
+	<br><br><br>
+</div>
+	
+{% endblock %}

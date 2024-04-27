@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div align='center' style='margin-left:50px; margin-right:50px'>
+	<h2 align="center">Prior Pieces</h2>
+
+	<table class="table table-hover" style="width:80%">
+			<tr>
+				<th scope="col">Story Name</th>
+				<th scope="col">Word Count</th>
+				<th scope="col">Points Earned</th>
+				<th scope="col">Actions</th>
+			</tr>
+	{% for story in writing %}
+			<tr>
+				<td style="padding-left:50px">
+					{{ story.title }}
+				</td>
+				<td style="padding-left:50px">
+					{{ story.word_count }}
+				</td>
+				<td style="padding-left:50px">
+					{{ story.points }}
+				</td>
+				<td>
+					<a href="/read-story/{{story._id}}" style="text-decoration:none; color:blue">Read</a> | <a href="/edit-story/{{story._id}}" style="text-decoration:none; color:forestgreen">Edit</a>
+				</td>
+			</tr>
+	{% endfor %}		
+	</table>
+</div>
+
+{% endblock %}

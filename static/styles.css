@@ -1,0 +1,4 @@
+input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
+ color:gray;
+ font-style:italic;
+}

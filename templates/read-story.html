@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div align='center'>
+	<h2>{{ story.title }}</h2>
+	<p style="font-size:18px"><b>Word Count:</b> {{ story.word_count }}</p>
+	<div style="width:80%">
+		<p style="font-size:16px">{{ story.story }}</p>
+	</div>
+
+	<a href="{{url_for('prior_pieces')}}">Back</a>
+	<br><br><br>
+</div>
+	
+{% endblock %}

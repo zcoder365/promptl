@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- {{user._id}} -->
+
+<div align='center'>
+	<h2 style="padding-top:10px">My Account</h2>
+
+	<form action="/change-email/{{user._id}}" method='post'>
+		<label for="changed">Parent Email:</label>
+		<input type='email' name='changed' value="">
+
+		<br><br>
+
+		<input type='submit' value="Save Parent Email">
+	</form>
+	
+{% endblock %}

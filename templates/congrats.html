@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<br><br><br><br>
+<div align="center">
+	<span style="color:#FF5349"><b style='font-size:28px'>{{ compliment }}</b></span>
+	<br><br>
+	<div style="outline:2px solid navy; width:200px">
+		Title: {{ title }}
+	</div>
+
+	<br>
+	
+	<div style="outline:2px solid navy; width:200px">
+		<span style="color:#FF5349"><b>{{ words }}</b></span> out of <span style="color:#FF5349"><b>5</b></span> words used
+		<br>
+		
+		<span style="color:#FF5349"><b>{{ written }}</b></span> words written
+
+		<br>
+		
+		<span style="color:#FF5349"><b>{{ points }}</b></span> points earned
+		<br>
+	</div>
+
+	<br>
+
+<!-- 	<span>Click <a href='/send-stats/{{story._id}}'>here</a> to send stats to your parent!</span> -->
+</div>
+<br><br><br><br><br><br><br><br>
+{% endblock %}

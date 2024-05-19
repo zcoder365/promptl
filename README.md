@@ -1,4 +1,4 @@
-# pr💡mptl
+# pr💡mptl (promptl.com)
 
 a web app designed to motivate kids with learning differences write.
 

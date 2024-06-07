@@ -1,6 +1,6 @@
 # pr💡mptl (promptl.com)
 
-a web app designed to motivate kids with learning differences write.
+a web app to make writing fun and rewarding for kids with learning differences.
 
 ## earn points!
 by writing a certain number of words in your stories, you can earn points! write over 70 words and use all 5 words in the prompt to earn points, and write over 100 words to get bonus points! (your words are tracked underneath the textbox where you write your story.)

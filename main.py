@@ -106,8 +106,13 @@ def signup_check():
     return redirect(url_for("home"))
 
 # LOGIN ROUTE
-@app.route('/login/check', methods=['POST'])
+@app.route("/login")
 def login():
+    return render_template("login.html")
+
+# LOGIN CHECK ROUTE
+@app.route('/login/check', methods=['POST'])
+def login_check():
     # get user from form and determine if they exist
     username = request.form.get("username")
     password = request.form.get("password")

@@ -1,10 +1,10 @@
-from flask import *
 import pymongo
+from flask import *
 from flask_pymongo import PyMongo
-import model
 from dotenv import load_dotenv
 import os
 import bcrypt
+import model
 
 app = Flask(__name__)
 

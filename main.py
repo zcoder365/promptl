@@ -69,9 +69,6 @@ def about_page():
 # check signup for the user
 @app.route('/signup/check', methods=['POST'])
 def signup_check():
-    # users = mongo.db.users
-    # users = data['users']
-    
     # get username, password, and parent email from form
     username = request.form.get("username")
     password = request.form.get("password")

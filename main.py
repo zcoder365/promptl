@@ -39,7 +39,7 @@ writing = data['writing']
 # login signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')
 def index():
-    return render_template('login-signup.html')
+    return render_template('create_account.html')
 
 # home page route
 @app.route('/home')
@@ -76,8 +76,8 @@ def about_page():
     return render_template('about.html')
 
 # check signup for the user
-@app.route('/signup-check', methods=['GET', 'POST'])
-def signup():
+@app.route('/signup/check', methods=['GET', 'POST'])
+def signup_check():
     if request.method == 'POST':
         # users = mongo.db.users
         # users = data['users']
@@ -92,7 +92,7 @@ def signup():
         
         if not existing_user:
             # Create a hash of the user's password
-            hashpass = bcrypt.hashpw(request.form['password'].encode('utf–8'), bcrypt.gensalt())
+            hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
             
             users.insert_one({ 'username': un, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
             
@@ -106,7 +106,7 @@ def signup():
     return redirect(url_for("home"))
 
 # LOGIN ROUTE
-@app.route('/login-check', methods=['POST'])
+@app.route('/login/check', methods=['POST'])
 def login():
     # get user from form and determine if they exist
     username = request.form.get("username")

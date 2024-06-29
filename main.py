@@ -24,12 +24,6 @@ client = pymongo.MongoClient(URI)
 # get the general data
 data = client['promptl_data']
 
-# set some global variables
-global users
-global writing
-global title
-global prompts
-
 # get the users specifically
 users = data['users']
 

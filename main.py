@@ -80,14 +80,17 @@ def signup_check():
     # determine if the user exists
     existing_user = users.find_one({'username': username})
     
-    if not existing_user:
+    if existing_user == False: # if user doesn't exist...
         # Create a hash of the user's password
         hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
         
-        users.insert_one({ 'username': un, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
+        # add the user with generic info
+        users.insert_one({ 'username': username, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
         
+        # create a session
         session['username'] = request.form['username']
         
+        # return the user to the home/writing page
         return redirect(url_for('home'))
     
     elif existing_user:

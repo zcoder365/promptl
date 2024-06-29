@@ -72,13 +72,13 @@ def signup_check():
     # users = mongo.db.users
     # users = data['users']
     
-    # determine if the user exists
-    existing_user = users.find_one({'username': request.form['username']})
+    # get username, password, and parent email from form
+    username = request.form.get("username")
+    password = request.form.get("password")
+    parent_email = request.form.get("parent-email")
     
-    # get the username, password, and parent email from the form
-    un = request.form['username']
-    pw = request.form['password']
-    parent_email = request.form['parent_email']
+    # determine if the user exists
+    existing_user = users.find_one({'username': username})
     
     if not existing_user:
         # Create a hash of the user's password

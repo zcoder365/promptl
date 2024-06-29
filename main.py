@@ -109,7 +109,7 @@ def login_check():
     username = request.form.get("username")
     password = request.form.get("password")
     
-    if not username or not password:
+    if username == "" or password == "":
         return 'Please provide both username and password.'
     
     # determine if the user exists

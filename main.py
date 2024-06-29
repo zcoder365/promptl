@@ -112,15 +112,17 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
     
+    if not username or not password:
+        return 'Please provide both username and password.'
+    
     # determine if the user exists
     login_user = users.find_one({"username": username})
     
     if login_user:
-        if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')) == True:
+        if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')):
             session['username'] = username
-            
             return redirect(url_for("home"))
-        
+    
     return 'Invalid username-password combination. Please try again.'
 
 # logout route

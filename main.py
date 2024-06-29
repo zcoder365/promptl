@@ -93,7 +93,8 @@ def signup_check():
         # return the user to the home/writing page
         return redirect(url_for('home'))
     
-    elif existing_user:
+    elif existing_user == True: # if the user exists...
+        # return the error message
         return 'That username already exists! Try logging in.'
         
     return redirect(url_for("home"))

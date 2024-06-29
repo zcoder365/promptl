@@ -216,10 +216,6 @@ def save_writing():
                 points += 10
                 words_used += 1
                 
-                # myquery = {"_id":ObjectId(userID)}
-                # new_points = {"$set":{'points':points}}
-                # users.update_one(myquery, new_points)
-                
             elif prompts['name'] not in written.upper():
                 pass
             
@@ -227,10 +223,6 @@ def save_writing():
                 points += 10
                 
                 words_used += 1
-                
-                # myquery = {"_id":ObjectId(userID)}
-                # new_points = {"$set":{'points':points}}
-                # users.update_one(myquery, new_points)
 
             elif prompts['job'] not in written.upper():
                 pass

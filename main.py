@@ -77,7 +77,7 @@ def signup_check():
     # determine if the user exists
     existing_user = users.find_one({'username': username})
     
-    if existing_user == False: # if user doesn't exist...
+    if existing_user == None: # if user doesn't exist...
         # Create a hash of the user's password
         hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
         

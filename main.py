@@ -106,19 +106,22 @@ def signup():
     return redirect(url_for("home"))
 
 # LOGIN ROUTE
-@app.route('/login-check', methods=['GET', 'POST'])
+@app.route('/login-check', methods=['POST'])
 def login():
-    if request.method == "POST":
-        # determine if the user exists
-        login_user = users.find_one({'username': request.form['username']})
-        
-        if login_user:
-            if bcrypt.checkpw(request.form['password'].encode('utf-8'), login_user['password'].encode('utf-8')) == True:
-                session['username'] = request.form['username']
-                
-                return redirect(url_for("home"))
+    # get user from form and determine if they exist
+    username = request.form.get("username")
+    password = request.form.get("password")
+    
+    # determine if the user exists
+    login_user = users.find_one({"username": username})
+    
+    if login_user:
+        if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')) == True:
+            session['username'] = username
             
-        return 'Invalid username-password combination. Please try again.'
+            return redirect(url_for("home"))
+        
+    return 'Invalid username-password combination. Please try again.'
 
 # logout route
 @app.route('/logout')

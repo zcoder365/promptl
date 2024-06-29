@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div align='center'>
+
+	<img src="/static/logo.png" align='center' style='width:10cm'>
+	
+	<br>
+	
+	<h3>Create an Account:</h3>
+	
+		<form method="post" action="/signup-check">
+			<label for="username">Username:</label>
+			<input type="text" name="username" value="">
+
+			<br><br>
+			
+			<label for="password">Password:</label>
+			<input type="password" name="password" value="">
+
+			<br><br>
+
+			<label for="parent_email">Parent Email:</label>
+			<input type="input" name="parent_email" value="">
+
+			<br><br>
+			
+			<input type="submit" value="Submit">
+		</form>
+
+		<br>
+
+		<h3>Login:</h3>
+
+		<form method="post" action="/login-check">
+			<label for="username">Username:</label>
+			<input type="text" name="username" value="">
+
+			<br><br>
+			
+			<label for="password">Password:</label>
+			<input type="password" name="password" value="">
+
+			<br><br>
+			
+			<input type="submit" value="Submit">
+		</form>
+
+</div>
+	
+{% endblock %}

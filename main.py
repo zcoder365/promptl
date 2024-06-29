@@ -36,12 +36,6 @@ users = data['users']
 # get the writing specifically
 writing = data['writing']
 
-# name = model.gen_name()
-# job = model.gen_job()
-# place = model.gen_place()
-# object = model.gen_object()
-# bonus = model.gen_bonus()
-
 # login signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')
 def index():
@@ -369,56 +363,5 @@ def update_story(storyID):
         
     # go back to the prior pieces page
     return redirect(url_for('prior_pieces'))
-
-# @app.route('/send-stats/<storyID>')
-# def send_stats(storyID):
-#     users = mongo.db.users
-#     writing = mongo.db.writing
-
-#     username = session['username']
-
-#     users = users.find_one({"username": username})
-#     story = writing.find_one({"_id": ObjectId(storyID)})
-
-#     title = story['title']
-#     points = story['points']
-#     words = story['word_count']
-
-#     parent = users['parent_email']
-
-#     message = "Hello Parent!\n" + username + " wrote a story titled " + title + ' that was ' + str(
-#         words) + 'long! They earned ' + str(points) + " points for this story!"
-
-#     context = ssl.create_default_context()
-
-#     try:
-#     server = smtplib.SMTP(smtp_server, port)
-#     server.ehlo()  # Can be omitted
-#     server.starttls(context=context)  # Secure the connection
-#     server.ehlo()  # Can be omitted
-#     server.login(sender_email, password)
-#     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-#     # server.ehlo()
-#     server.starttls(context=context)
-#     # server.ehlo()
-#     server.login(sender_email, password)
-#     server.sendmail(sender_email, parent, message)
-
-#     server.quit()
-
-#     except Exception as e:
-#     # Print any error messages to stdout
-#     print(e)
-
-#     return redirect(url_for('prior_pieces'))
-
-# # Words Written in the Story
-# @app.route("/word-count")
-# def words_written():
-#     get_words = request.form['story']
-#     story_lenth = list(words)
-#     words = story_length.split(" ")
-#     words = len(words)
-#     return words
 
 app.run(host="0.0.0.0", port=8080)

@@ -110,7 +110,7 @@ def login_check():
     password = request.form.get("password")
     
     if username == "" or password == "":
-        return 'Please provide both username and password.'
+        flash('Please provide both username and password.')
     
     # determine if the user exists
     login_user = users.find_one({"username": username})
@@ -120,7 +120,7 @@ def login_check():
             session['username'] = username
             return redirect(url_for("home"))
     
-    return 'Invalid username-password combination. Please try again.'
+    flash('Invalid username-password combination. Please try again.')
 
 # logout route
 @app.route('/logout')

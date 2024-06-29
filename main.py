@@ -43,13 +43,7 @@ def home():
     bonus = model.gen_bonus()
 
 	# update the prompts
-    prompts = {
-        'name': name,
-        'job': job,
-        'place': place,
-        'object': object,
-        'bonus': bonus
-    }
+    prompts = {'name': name, 'job': job, 'place': place, 'object': object, 'bonus': bonus}
 
 	# return the main page for writing with the prompts
     return render_template('index.html', prompts=prompts)

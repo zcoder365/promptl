@@ -123,7 +123,7 @@ def login_check():
     # determine if the user exists
     login_user = users.find_one({"username": username})
     
-    if login_user:
+    if login_user == True:
         if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')):
             session['username'] = username
             return redirect(url_for("home"))

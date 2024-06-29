@@ -76,7 +76,7 @@ def about_page():
     return render_template('about.html')
 
 # check signup for the user
-@app.route('/signup/check', methods=['GET', 'POST'])
+@app.route('/signup/check', methods=['POST'])
 def signup_check():
     if request.method == 'POST':
         # users = mongo.db.users

@@ -69,30 +69,29 @@ def about_page():
 # check signup for the user
 @app.route('/signup/check', methods=['POST'])
 def signup_check():
-    if request.method == 'POST':
-        # users = mongo.db.users
-        # users = data['users']
+    # users = mongo.db.users
+    # users = data['users']
+    
+    # determine if the user exists
+    existing_user = users.find_one({'username': request.form['username']})
+    
+    # get the username, password, and parent email from the form
+    un = request.form['username']
+    pw = request.form['password']
+    parent_email = request.form['parent_email']
+    
+    if not existing_user:
+        # Create a hash of the user's password
+        hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
         
-        # determine if the user exists
-        existing_user = users.find_one({'username': request.form['username']})
+        users.insert_one({ 'username': un, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
         
-		# get the username, password, and parent email from the form
-        un = request.form['username']
-        pw = request.form['password']
-        parent_email = request.form['parent_email']
+        session['username'] = request.form['username']
         
-        if not existing_user:
-            # Create a hash of the user's password
-            hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-            
-            users.insert_one({ 'username': un, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
-            
-            session['username'] = request.form['username']
-            
-            return redirect(url_for('home'))
-        
-        elif existing_user:
-            return 'That username already exists! Try logging in.'
+        return redirect(url_for('home'))
+    
+    elif existing_user:
+        return 'That username already exists! Try logging in.'
         
     return redirect(url_for("home"))
 

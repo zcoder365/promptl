@@ -22,13 +22,13 @@ app.config['MONGO_DBNAME'] = 'promptl_data'
 client = pymongo.MongoClient(URI)
 
 # get the general data
-data = client['promptl_data']
+db = client['promptl_data']
 
 # get the users specifically
-users = data['users']
+users = db['users']
 
 # get the writing specifically
-writing = data['writing']
+writing = db['writing']
 
 # login signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')

@@ -116,11 +116,11 @@ def login_check():
     login_user = users.find_one({"username": username})
     
     # if the user exists...
-    if login_user  != None:
+    if login_user != None:
         # if the encrypted messages match...
         if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')):
             # create the session and return the user to the main/writing page
-            session['user'] = username
+            session['username'] = username
             return redirect(url_for("home"))
     
     flash('Invalid username-password combination. Please try again.')

@@ -104,11 +104,11 @@ def login_check():
     if username == "" or username == None or password == "" or password == None:
         flash('Please provide both username and password.')
     
-    # determine if the user exists
-    login_user = users.find_one({"username": username})
+    # determine if the user exists (call login_user)
+    print(users.find_one({"username": username}))
     
     # if the user exists...
-    if login_user:
+    if login_user  != None:
         # if the encrypted messages match...
         if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')):
             # create the session and return the user to the main/writing page

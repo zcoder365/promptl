@@ -108,7 +108,7 @@ def login_check():
     login_user = users.find_one({"username": username})
     
     # if the user exists...
-    if login_user == True:
+    if login_user:
         # if the encrypted messages match...
         if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')):
             # create the session and return the user to the main/writing page

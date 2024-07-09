@@ -64,6 +64,11 @@ def about_page():
     # return the page about the game
     return render_template('about.html')
 
+# let the user signup
+@app.route("/signup")
+def signup():
+    return render_template("signup.html")
+
 # check signup for the user
 @app.route('/signup/check', methods=['POST'])
 def signup_check():

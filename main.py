@@ -1,4 +1,5 @@
-import pymongo
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 from flask import *
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
@@ -18,7 +19,7 @@ app.config['MONGO_URI'] = URI
 app.config['MONGO_DBNAME'] = 'promptl_data'
 
 # Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
+client = MongoClient(URI, server_api=ServerApi('1'))
 
 # setup global vars
 global users, writing

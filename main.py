@@ -8,12 +8,8 @@ import model
 
 app = Flask(__name__)
 
-# load dotenv file and get URI
-load_dotenv()
-URI = os.getenv("URI")
-
 # set the uri for MongoDB to URI
-app.config['MONGO_URI'] = URI
+app.config['MONGO_URI'] = "mongodb+srv://zdroulias:FrozenAnna0306$@cluster0.usy3a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # get the database from mongodb
 app.config['MONGO_DBNAME'] = 'promptl_data'

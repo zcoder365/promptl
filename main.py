@@ -8,6 +8,9 @@ import model
 
 app = Flask(__name__)
 
+# create a secret key
+secret_key = os.urandom(32).hex()
+
 # SET URI TO FINAL
 URI = "mongodb+srv://zdroulias:FrozenAnna0306@cluster0.usy3a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 

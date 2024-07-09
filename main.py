@@ -1,5 +1,4 @@
 from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
 from flask import *
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv

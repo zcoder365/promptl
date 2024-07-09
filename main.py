@@ -100,7 +100,8 @@ def login_check():
     username = request.form.get("username")
     password = request.form.get("password")
     
-    if username == "" or password == "":
+    # if the username or password doesn't exist
+    if username == "" or username == None or password == "" or password == None:
         flash('Please provide both username and password.')
     
     # determine if the user exists

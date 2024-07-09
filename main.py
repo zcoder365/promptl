@@ -120,7 +120,7 @@ def login_check():
         # if the encrypted messages match...
         if bcrypt.checkpw(password.encode('utf-8'), login_user['password'].encode('utf-8')):
             # create the session and return the user to the main/writing page
-            session['username'] = username
+            session['user'] = username
             return redirect(url_for("home"))
     
     flash('Invalid username-password combination. Please try again.')

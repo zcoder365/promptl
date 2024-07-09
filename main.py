@@ -19,7 +19,7 @@ app.config['MONGO_URI'] = URI
 app.config['MONGO_DBNAME'] = 'promptl_data'
 
 # Create a new client and connect to the server
-client = MongoClient(URI, server_api=ServerApi('1'))
+client = MongoClient(URI)
 
 # setup global vars
 global users, writing

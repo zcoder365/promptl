@@ -10,7 +10,7 @@ import model
 app = Flask(__name__)
 
 # SET URI TO FINAL
-URI = "mongodb+srv://zdroulias:FrozenAnna0306$@cluster0.usy3a.mongodb.net/promptl?retryWrites=true&w=majority&appName=Cluster0"
+URI = "mongodb+srv://zdroulias:FrozenAnna0306$@cluster0.usy3a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # set the uri for MongoDB to URI
 app.config['MONGO_URI'] = URI

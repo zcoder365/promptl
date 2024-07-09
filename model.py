@@ -3,7 +3,7 @@ import random
 def gen_name():
 	names = []
 
-	name_file = open('/static/text/names.txt', 'r')
+	name_file = open('text/names.txt', 'r')
 	name_data = name_file.read()
 	names = name_data.replace('\n', ',').split(',')
 	
@@ -15,7 +15,7 @@ def gen_name():
 def gen_job():
 	jobs = []
 
-	job_file = open('/static/text/jobs.txt', 'r')
+	job_file = open('text/jobs.txt', 'r')
 	job_data = job_file.read()
 	jobs = job_data.replace('\n', ',').split(',')
 
@@ -27,7 +27,7 @@ def gen_job():
 def gen_object():
 	objects = []
 
-	object_file = open('/static/text/objects.txt', 'r')
+	object_file = open('text/objects.txt', 'r')
 	object_data = object_file.read()
 	objects = object_data.replace('\n', ',').split(",")
 
@@ -39,7 +39,7 @@ def gen_object():
 def gen_place():
 	places = []
 
-	place_file = open('/static/text/places.txt', 'r')
+	place_file = open('text/places.txt', 'r')
 	place_data = place_file.read()
 	places = place_data.replace('\n', ",").split(",")
 	
@@ -51,7 +51,7 @@ def gen_place():
 def gen_bonus():
 	bonus = []
 	
-	bonus_file = open('/static/text/bonus.txt', 'r')
+	bonus_file = open('text/bonus.txt', 'r')
 	bonus_data = bonus_file.read()
 	bonus = bonus_data.replace('\n', ',').split(",")
 	

@@ -17,8 +17,8 @@ app.config['MONGO_URI'] = URI
 # get the database from mongodb
 app.config['MONGO_DBNAME'] = 'promptl_data'
 
-# set up the client and get specific data
-client = pymongo.MongoClient(URI)
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
 
 # setup global vars
 global users, writing

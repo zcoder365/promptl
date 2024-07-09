@@ -20,6 +20,10 @@ app.config['MONGO_DBNAME'] = 'promptl_data'
 
 # set up the client and get specific data
 client = pymongo.MongoClient(URI)
+
+# setup global vars
+global users, writing
+
 db = client['promptl_data']
 users = db['users']
 writing = db['writing']
@@ -105,7 +109,7 @@ def login_check():
         flash('Please provide both username and password.')
     
     # determine if the user exists (call login_user)
-    print(users.find_one({"username": username}))
+    login_user = users.find_one({"username": username})
     
     # if the user exists...
     if login_user  != None:

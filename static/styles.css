@@ -6,3 +6,7 @@ input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
+
+nav {
+    display: inline-flex;
+}

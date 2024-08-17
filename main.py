@@ -364,4 +364,4 @@ def update_story(storyID):
     # go back to the prior pieces page
     return redirect(url_for('prior_pieces'))
 
-app.run(port="8080", debug=True)
+app.run(port="5000", debug=True)

@@ -10,3 +10,12 @@ body {
 nav {
     display: inline-flex;
 }
+
+.logo-btn-nav {
+    height: 50px;
+}
+
+nav button {
+    height: 50px;
+    width: 150px;
+}

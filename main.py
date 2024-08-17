@@ -1,6 +1,6 @@
 from pymongo.mongo_client import MongoClient
 from flask import *
-from flask_pymongo import PyMongo
+from flask_pymongo import PyMongo, ObjectId
 from dotenv import load_dotenv
 import os
 import bcrypt
@@ -196,7 +196,7 @@ def save_writing():
         new_streak = streak + 1
         
         # Find the user to edit using userID
-        myquery = {"_id": PyMongo.ObjectId(userID)} 
+        myquery = {"_id": ObjectId(userID)} 
         
         # Create new values to update the user
         new_streak = {"$set": {'streak': new_streak}}
@@ -271,14 +271,14 @@ def save_writing():
         compliment = model.gen_compliment()
         
         # find the user and get their points
-        user = users.find_one({"_id": PyMongo.ObjectId(userID)})
+        user = users.find_one({"_id": ObjectId(userID)})
         user_points = int(user['points'])
         
         # update the user's points
         add_points = points + user_points
         
 		# update the user's info in the database
-        myquery = {"_id": PyMongo.ObjectId(userID)}
+        myquery = {"_id": ObjectId(userID)}
         new_points = {"$set": {'points': add_points}}
         users.update_one(myquery, new_points)
         
@@ -304,7 +304,7 @@ def save_info(userID):
     parent_email = request.form['changed']
     
     # Find the user to edit using userID
-    myquery = {"_id": PyMongo.ObjectId(userID)}
+    myquery = {"_id": ObjectId(userID)}
     
     # Create new values to update the user
     newvalues = {"$set": {'parent_email': parent_email}}
@@ -313,7 +313,7 @@ def save_info(userID):
     users.update_one(myquery, newvalues)
     
     # Find the newly edited user
-    users = users.find_one({'_id': PyMongo.ObjectId(userID)})
+    users = users.find_one({'_id': ObjectId(userID)})
 
 	# return to the user's account page
     return redirect(url_for('my_account'))
@@ -325,7 +325,7 @@ def read_story(storyID):
     writing = client['promptl_data']['writing']
     
     # get the story's ID
-    story = writing.find_one({"_id": PyMongo.ObjectId(storyID)})
+    story = writing.find_one({"_id": ObjectId(storyID)})
     
 	# return the page for reading the story
     return render_template("read-story.html", story=story)
@@ -337,7 +337,7 @@ def edit_story(storyID):
     writing = client['promptl_data']['writing']
     
     # find the story and get it's ID
-    story = writing.find_one({"_id": PyMongo.ObjectId(storyID)})
+    story = writing.find_one({"_id": ObjectId(storyID)})
     
     # return the page for editing a story
     return render_template("edit-story.html", story=story)
@@ -353,7 +353,7 @@ def update_story(storyID):
         story = request.form['updated_story']
         
         # get the id of the story using ObjectID from PyMongo
-        myquery = {"_id": PyMongo.ObjectId(storyID)}
+        myquery = {"_id": ObjectId(storyID)}
         
         # get the new values from the form
         newvalues = {"$set": {'story': story}}

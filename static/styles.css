@@ -19,4 +19,10 @@ nav button {
     height: 50px;
     width: 150px;
     border: none;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.navigation {
+    display: inline-flex;
 }

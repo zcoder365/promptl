@@ -12,22 +12,13 @@
 	</head>
 	
 	<body align='center'>
-		<header>
-			<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			  <div class="container-fluid">
-			    <a class="navbar-brand" href="/home"><img src="{{url_for('static', filename='logo.png')}}" alt="logo" style='height:40px'></a>
-			    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-			      <div class="navbar-nav">
-			        <a class="nav-link active" aria-current="page" href="/home">Home</a>
-					<a class="nav-link active" aria-current="page" href="/about">About</a>
-<!-- 			        <a class="nav-link active" href="/prizes">Prizes</a> -->
-			        <a class="nav-link active" href="/prior-pieces">Prior Pieces</a>
-			        <a class="nav-link active" href="/my-account">My Account</a>		  
-			      </div>
-			    </div>
-			  </div>
-			</nav>	
-		</header>
+		<nav>
+			<a href="/home"><img src="static/logo.png" alt="prompt-l written with a lightbulb replacing the O"></a>
+			<a href="/home"><button>Home</button></a>
+			<a href="/about"><button>About</button></a>
+			<a href="/prior-pieces"><button>Prior Pieces</button></a>
+			<a href="/my-account"><button>My Account</button></a>
+		</nav>
 
 		<br>
 

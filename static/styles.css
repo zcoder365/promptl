@@ -28,5 +28,5 @@ nav button {
 }
 
 .navigation {
-    display: inline-flex;
+    display: inline-block;
 }

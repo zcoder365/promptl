@@ -1,7 +1,7 @@
 import sqlite3
 
-USER_DATA = "../data/users.db"
-WRITING_DATA = "../data/stories.db"
+USER_DATA = "data/users.db"
+WRITING_DATA = "data/stories.db"
 
 def get_user_data():
     # connect to the database
@@ -18,3 +18,5 @@ def get_user_data():
     # close the database objects
     cur.close()
     conn.close()
+    
+get_user_data()

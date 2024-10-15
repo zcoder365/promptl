@@ -6,6 +6,8 @@ import bcrypt
 # import other files
 import model, data.data as data
 
+
+# create an instance of a flask app
 app = Flask(__name__)
 
 # create variable for prompts

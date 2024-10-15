@@ -1,4 +1,3 @@
-import os
 import data.data
 
 def user_exists(username: str, password: str, parent_email: str):

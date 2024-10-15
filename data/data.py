@@ -6,7 +6,7 @@ USER_DATA_TABLE = "users"
 STORY_DATA_FILE = "data/stories.db"
 STORY_DATA_TABLE = "stories"
 
-def add_data(data_path: str, data: list):
+def add_user_data(data_path: str, data: list):
     # connect to the database
     conn = sqlite3.connect(data_path)
     

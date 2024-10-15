@@ -27,7 +27,7 @@ def add_story_data(story_data: list):
     cur.close()
     story_conn.close()
 
-def view_user_data():
+def view_all_user_data():
     # create a cursor
     cur = user_conn.cursor()
 

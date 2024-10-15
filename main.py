@@ -8,21 +8,6 @@ import model, data
 
 app = Flask(__name__)
 
-# create a secret key
-app.secret_key = "zoe"
-
-# SET URI TO FINAL
-URI = "mongodb+srv://zdroulias:FrozenAnna0306@cluster0.usy3a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-# set the uri for MongoDB to URI
-app.config['MONGO_URI'] = URI
-
-# get the database from mongodb
-app.config['MONGO_DBNAME'] = 'promptl_data'
-
-# Create a new client and connect to the server
-client = MongoClient(URI)
-
 # setup global vars
 global users, writing
 

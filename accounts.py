@@ -19,4 +19,6 @@ def user_exists(username: str, password: str, parent_email: str):
         return 'That username already exists! Try logging in.'
     
 def login_check(username: str, password: str):
-    pass
+    logged_in = data.data.login_user(username, password)
+    
+    return logged_in

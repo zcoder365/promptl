@@ -47,8 +47,7 @@ def find_user(user_name: str):
     return result is not None
 
 def login_user(username: str, password: str):
-    conn = sqlite3.connect(USER_DATA_FILE)
-    cur = conn.cursor()
+    cur = user_conn.cursor()
     
     try:
         cur.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
@@ -70,4 +69,6 @@ def login_user(username: str, password: str):
         conn.close()
         
 def get_user_stories(user_name: str):
-    pass
+    try:
+        cur.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+        result = cur.fetchone()

@@ -70,3 +70,10 @@ def login_user(username: str, password: str):
         
 def get_user_stories(user_name: str):
     cur = story_conn.cursor()
+    
+    cur.execute("SELECT * FROM users WHERE author = ?", (user_name))
+    user_data = cur.fetchall()
+    
+    story_conn.close()
+    
+    return user_data

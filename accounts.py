@@ -1,7 +1,7 @@
 import session, request
 import data.data
 
-def user_exists(username, password, parent_email):
+def user_exists(username: str, password: str, parent_email: str):
     # determine if the user exists
     existing_user = data.data.find_user(username)
     

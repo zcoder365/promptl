@@ -159,12 +159,6 @@ def save_writing():
         streak = int(data.data.get_user_streak(session['username']))
         new_streak = streak + 1
         
-        # # Find the user to edit using userID
-        # myquery = {"_id": ObjectId(userID)} 
-        
-        # Create new values to update the user
-        # new_streak = {"$set": {'streak': new_streak}}
-        
         # Update the selected user and assign new values
         data.data.update_user_streak(session['username'], new_streak)
         

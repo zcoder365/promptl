@@ -4,7 +4,7 @@ import os
 import bcrypt
 
 # import other files
-import prompts, data.data, accounts
+import prompts, data.data, accounts, model
 
 # create an instance of a flask app
 app = Flask(__name__)
@@ -170,51 +170,13 @@ def save_writing():
         data.data.update_user_streak(session['username'], new_streak)
         
         # insert the prompts to the user's story
-        writing.insert_one({"prompts": prompts})
-        prompt_id = writing['_id']
+        # writing.insert_one({"prompts": prompts})
+        # prompt_id = writing['_id']
         
         # create a list for the story
         story = written.split(' ')
-        
-        # get it's length/number of words
-        words_written = len(story)
-        
-        if words_written >= 70:
-            if prompts['name'] in written.upper():
-                points += 10
-                words_used += 1
-                
-            elif prompts['name'] not in written.upper():
-                pass
-            
-            if prompts['job'] in written.upper():
-                points += 10
-                
-                words_used += 1
 
-            elif prompts['job'] not in written.upper():
-                pass
-            
-            if prompts['object'] in written.upper():
-                points += 10
-                words_used += 1
-                
-            elif prompts['object'] not in written.upper():
-                pass
-            
-            if prompts['place'] in written.upper():
-                points += 10
-                words_used += 1
-                
-            elif prompts['place'] not in written.upper():
-                pass
-            
-            if prompts['bonus'] in written.upper():
-                points += 20
-                words_used += 1
-                
-            elif prompts['bonus'] not in written.upper():
-                pass
+        model.get_story_length_and_points(story)
             
         story = written.upper()
         story = story.split()

@@ -6,9 +6,9 @@ USER_DATA_TABLE = "users"
 STORY_DATA_FILE = "data/stories.db"
 STORY_DATA_TABLE = "stories"
 
-def add_user_data(data_path: str, data: list):
+def add_user_data(user_data: list):
     # connect to the database
-    conn = sqlite3.connect(data_path)
+    conn = sqlite3.connect(USER_DATA_FILE)
     
     # create a cursor
     cur = conn.cursor()
@@ -18,7 +18,7 @@ def add_user_data(data_path: str, data: list):
                 (username TEXT, password TEXT)''')
     conn.commit()
     
-    cur.executemany("""INSERT INTO users (username, password) VALUES (?, ?)""", data)
+    cur.executemany("""INSERT INTO users (username, password) VALUES (?, ?)""", user_data)
     
     # close the database objects
     cur.close()

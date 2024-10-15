@@ -42,6 +42,6 @@ test_data = [
     ("sushi", "test")
 ]
 
-add_data(test_data)
+# add_data(test_data)
 
 view_data(USER_DATA_FILE, USER_DATA_TABLE)

@@ -7,5 +7,14 @@ def get_user_data():
     # connect to the database
     conn = sqlite3.connect(USER_DATA)
     
-    # close the connection
+    # create a cursor
+    cur = conn.cursor()
+    
+    # create a "users" table
+    curr.execute("""CREATE TABLE IF NOT EXISTS users
+                (username TEXT, password TEXT)""")
+    conn.commit()
+    
+    # close the database objects
+    cur.close()
     conn.close()

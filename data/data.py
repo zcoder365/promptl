@@ -1,11 +1,11 @@
 import sqlite3
 
 USER_DATA = "data/users.db"
-WRITING_DATA = "data/stories.db"
+STORY_DATA = "data/stories.db"
 
-def get_user_data():
+def get_data(file_path: str):
     # connect to the database
-    conn = sqlite3.connect(USER_DATA)
+    conn = sqlite3.connect(file_path)
     
     # create a cursor
     cur = conn.cursor()
@@ -19,4 +19,4 @@ def get_user_data():
     cur.close()
     conn.close()
     
-get_user_data()
+get_data(WRITING_DATA)

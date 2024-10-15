@@ -184,8 +184,7 @@ def save_writing():
             
             # story = writing.find_one({'title': title})
             
-        # get the number of words the user used
-        words = words_used
+        # FIX THE REST OF THE FUNCTION
         
         # generate a random compliment for the user since they completed their story
         compliment = prompts.gen_compliment()
@@ -201,6 +200,8 @@ def save_writing():
         myquery = {"_id": ObjectId(userID)}
         new_points = {"$set": {'points': add_points}}
         users.update_one(myquery, new_points)
+        
+        # STOP FIXING HERE
         
     # return the congrats page
     return render_template("congrats.html", title=title, story=story, words=words, written=word_count, compliment=compliment, points=points)

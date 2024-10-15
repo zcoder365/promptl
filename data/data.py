@@ -70,7 +70,3 @@ def login_user(username: str, password: str):
         
 def get_user_stories(user_name: str):
     cur = story_conn.cursor()
-    
-    try:
-        cur.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-        result = cur.fetchone()

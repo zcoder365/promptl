@@ -96,3 +96,30 @@ def get_total_word_count(user_name):
 
     # Handle the case where the user has no posts
     return total_word_count if total_word_count is not None else 0
+
+def get_user_streak(database_path, user_identifier):
+    # Connect to the SQLite database
+    connection = sqlite3.connect(database_path)
+    cursor = connection.cursor()
+
+    # SQL query to find the current streak
+    query = """
+    SELECT COUNT(*) AS streak_length
+    FROM (
+        SELECT activity_date,
+                ROW_NUMBER() OVER (ORDER BY activity_date) - 
+                JULIANDAY(activity_date) AS date_gap
+        FROM user_activity
+        WHERE user_id = ?
+    ) AS streaks
+    WHERE JULIANDAY('now') - JULIANDAY(activity_date) < COUNT(*);
+    """
+    
+    cursor.execute(query, (user_identifier,))
+    streak_length = cursor.fetchone()[0]
+
+    # Close the connection
+    connection.close()
+
+    # Handle the case where the user has no activity
+    return streak_length if streak_length is not None else 0

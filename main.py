@@ -4,9 +4,7 @@ import os
 import bcrypt
 
 # import other files
-import model, data.data as data
-
-data.view_user_data()
+import model, data.data
 
 # create an instance of a flask app
 app = Flask(__name__)
@@ -345,4 +343,4 @@ def update_story(storyID):
     # go back to the prior pieces page
     return redirect(url_for('prior_pieces'))
 
-# app.run(debug=True)
+app.run(debug=True)

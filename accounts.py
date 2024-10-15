@@ -17,3 +17,6 @@ def user_exists(username: str, password: str, parent_email: str):
     elif existing_user: # if the user exists...
         # return the error message
         return 'That username already exists! Try logging in.'
+    
+def login_check(username: str, password: str):
+    pass

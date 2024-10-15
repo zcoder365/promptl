@@ -62,11 +62,10 @@ def signup_check():
     existing_user = data.data.find_user(username)
     
     if not existing_user: # if user doesn't exist...
-        # Create a hash of the user's password
-        hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-        
         # add the user with generic info
-        user_data = [(username, password, parent_email, 0, 0, 0, 0)]
+        # users.insert_one({ 'username': username, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
+        
+        user_data = [(username, password, parent_email, 0, 0)]
         
         data.data.add_user_data(user_data)
         

@@ -59,19 +59,21 @@ def signup_check():
     parent_email = request.form.get("parent-email")
     
     # determine if the user exists
-    existing_user = users.find_one({'username': username})
+    existing_user = data.data.find_user(username)
     
-    if existing_user == None: # if user doesn't exist...
+    if not existing_user: # if user doesn't exist...
         # Create a hash of the user's password
         hashpass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
         
         # add the user with generic info
-        users.insert_one({ 'username': username, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
+        user_data = [(username, password, parent_email, 0, 0, 0, 0)]
+        
+        data.data.add_user_data(user_data)
         
         # create a session
         session['username'] = request.form['username']
     
-    elif existing_user == True: # if the user exists...
+    elif existing_user: # if the user exists...
         # return the error message
         return 'That username already exists! Try logging in.'
         

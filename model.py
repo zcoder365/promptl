@@ -1,4 +1,4 @@
-def get_story_length(story, prompts):
+def get_story_length_and_points(story, prompts):
     points = 0
     
     # create a list for the story
@@ -6,7 +6,7 @@ def get_story_length(story, prompts):
     
     # get it's length/number of words
     words_written = len(story)
-    
+
     if words_written >= 70:
         if prompts['name'] in story.upper():
             points += 10

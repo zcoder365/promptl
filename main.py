@@ -95,7 +95,7 @@ def logout():
     # return the user to the login/signup page
     return redirect(url_for('index'))
 
-# prior pieces route
+# prior pieces route - UPDATE
 @app.route('/prior-pieces')
 def prior_pieces():
     # find the user's stories
@@ -104,7 +104,7 @@ def prior_pieces():
     # return a page with the user's prior stories
     return render_template('prior-pieces.html', writing=stories)
 
-# user's accoutn page
+# user's account page - UPDATE
 @app.route('/my-account')
 def my_account():
     # get the user's username from the session
@@ -130,7 +130,7 @@ def my_account():
     # return a page that shows the user's information
     return render_template('my-account.html', users=user, total_words=total_words)
 
-# save writing route
+# save writing route - UPDATE
 @app.route('/save-writing', methods=['GET', 'POST'])
 def save_writing():
     if request.method == "POST":
@@ -243,19 +243,19 @@ def save_writing():
     # return the congrats page
     return render_template("congrats.html", title=title, story=story, words=words, written=story_word_count, compliment=compliment, points=points)
 
-# edit user's account page
+# edit user's account page - UPDATE
 @app.route("/my-account/edit")
 def edit_info():
     # get the username of the current user
     username = session['username']
     
-    # find the user in the databse
+    # find the user in the database
     user = users.find_one({'username': username})
     
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)
 
-# change parent email page
+# change parent email page - UPDATE
 @app.route('/change-email/<userID>', methods=['POST', 'GET'])
 def save_info(userID):
     # get the user's parent's email 
@@ -276,7 +276,7 @@ def save_info(userID):
 	# return to the user's account page
     return redirect(url_for('my_account'))
 
-# read a story page
+# read a story page - UPDATE
 @app.route("/read-story/<storyID>")
 def read_story(storyID):
     # get the database for the stories the user wrote
@@ -288,7 +288,7 @@ def read_story(storyID):
 	# return the page for reading the story
     return render_template("read-story.html", story=story)
 
-# edit a story, based on the story's ID
+# edit a story, based on the story's ID - UPDATE
 @app.route("/edit-story/<storyID>")
 def edit_story(storyID):
     # get the writing databsae
@@ -300,7 +300,7 @@ def edit_story(storyID):
     # return the page for editing a story
     return render_template("edit-story.html", story=story)
 
-# update story route
+# update story route - UPDATE
 @app.route('/update-story/<storyID>')
 def update_story(storyID):
     if request.method == "POST":

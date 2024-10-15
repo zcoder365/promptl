@@ -61,3 +61,6 @@ def find_user(user_name: str):
     conn.close()
     
     return result is not None
+
+def login_user(username: str, password: str):
+    pass

@@ -11,8 +11,8 @@ def get_user_data():
     cur = conn.cursor()
     
     # create a "users" table
-    curr.execute("""CREATE TABLE IF NOT EXISTS users
-                (username TEXT, password TEXT)""")
+    cur.execute('''CREATE TABLE IF NOT EXISTS users
+                (username TEXT, password TEXT)''')
     conn.commit()
     
     # close the database objects

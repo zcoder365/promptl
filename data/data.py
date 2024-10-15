@@ -117,7 +117,7 @@ def get_user_streak(user_identifier):
     streak_length = cursor.fetchone()[0]
 
     # Close the connection
-    connection.close()
+    story_conn.close()
 
     # Handle the case where the user has no activity
     return streak_length if streak_length is not None else 0

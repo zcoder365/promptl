@@ -1,11 +1,5 @@
-# main imports
-import pymongo
-from pymongo.mongo_client import MongoClient
-from flask_pymongo import PyMongo, ObjectId
-
-# good imports
+# general imports
 from flask import *
-from dotenv import load_dotenv
 import os
 import bcrypt
 

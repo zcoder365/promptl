@@ -4,7 +4,7 @@ import os
 import bcrypt
 
 # import other files
-import model, data.data
+import prompts, data.data, accounts
 
 # create an instance of a flask app
 app = Flask(__name__)
@@ -21,11 +21,11 @@ def index():
 @app.route('/home')
 def home():
     # generate the prompts
-    name = model.gen_name()
-    job = model.gen_job()
-    place = model.gen_place()
-    object = model.gen_object()
-    bonus = model.gen_bonus()
+    name = prompts.gen_name()
+    job = prompts.gen_job()
+    place = prompts.gen_place()
+    object = prompts.gen_object()
+    bonus = prompts.gen_bonus()
 
 	# update the prompts
     prompts = {'name': name, 'job': job, 'place': place, 'object': object, 'bonus': bonus}
@@ -250,7 +250,7 @@ def save_writing():
         words = words_used
         
         # generate a random compliment for the user since they completed their story
-        compliment = model.gen_compliment()
+        compliment = prompts.gen_compliment()
         
         # find the user and get their points
         user = users.find_one({"_id": ObjectId(userID)})

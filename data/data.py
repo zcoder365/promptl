@@ -15,7 +15,7 @@ def add_user_data(user_data: list):
     
     # create a "users" table
     cur.execute('''CREATE TABLE IF NOT EXISTS users
-                (username TEXT, password TEXT)''')
+                (username TEXT, password TEXT, parent_email TEXT, points INTEGER, streak INTEGER)''')
     conn.commit()
     
     cur.executemany("""INSERT INTO users (username, password) VALUES (?, ?)""", user_data)

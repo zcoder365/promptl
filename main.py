@@ -158,8 +158,8 @@ def save_writing():
         streak = int(user['streak'])
         new_streak = streak + 1
         
-        # Find the user to edit using userID
-        myquery = {"_id": ObjectId(userID)} 
+        # # Find the user to edit using userID
+        # myquery = {"_id": ObjectId(userID)} 
         
         # Create new values to update the user
         new_streak = {"$set": {'streak': new_streak}}

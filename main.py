@@ -222,7 +222,7 @@ def save_writing():
             
             story = writing.find_one({'title': title})
             
-    	# get the number of words the user used
+        # get the number of words the user used
         words = words_used
         
         # generate a random compliment for the user since they completed their story

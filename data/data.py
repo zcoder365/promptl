@@ -122,10 +122,8 @@ def get_user_streak(user_identifier):
     # Handle the case where the user has no activity
     return streak_length if streak_length is not None else 0
 
-def update_user_streak(database_path, user_identifier, new_streak):
-    # Connect to the SQLite database
-    connection = sqlite3.connect(database_path)
-    cursor = connection.cursor()
+def update_user_streak(new_streak):
+    cursor = story_conn.cursor()
 
     # SQL query to update the streak for a specific user
     query = """

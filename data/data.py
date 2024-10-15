@@ -13,7 +13,7 @@ def add_user_data(user_data: list):
     # create a cursor
     cur = user_conn.cursor()
     
-    cur.executemany("INSERT INTO" + USER_DATA_TABLE + "(username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
+    cur.execute("INSERT INTO" + USER_DATA_TABLE + "(username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
     
     # close the database objects
     cur.close()

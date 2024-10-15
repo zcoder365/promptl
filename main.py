@@ -160,10 +160,6 @@ def save_writing():
         # Update the selected user and assign new values
         data.data.update_user_streak(session['username'], new_streak)
         
-        # insert the prompts to the user's story
-        # writing.insert_one({"prompts": prompts})
-        # prompt_id = writing['_id']
-        
         # create a list for the story
         story = written.split(' ')
 
@@ -171,16 +167,16 @@ def save_writing():
         word_count = story_info['story_length']
         points_earned = story_info['points']
             
-        story = written.upper()
-        story = story.split()
-        story_word_count = int(len(story))
+        # story = written.upper()
+        # story = story.split()
+        # story_word_count = int(len(story))
         
         title = request.form['title'] # referenced before assignment; but this is the assignment...
         
-        if story_word_count >= 100:
+        if word_count >= 100:
             points += 25
             
-            writing.insert_one({'title': title, 'story': written, 'username': session['username'], 'word_count': story_word_count, "prompts": prompts, "points": points})
+            writing.insert_one({'title': title, 'story': written, 'username': session['username'], 'word_count': word_count, "prompts": prompts, "points": points})
             
             story = writing.find_one({'title': title})
             
@@ -203,7 +199,7 @@ def save_writing():
         users.update_one(myquery, new_points)
         
     # return the congrats page
-    return render_template("congrats.html", title=title, story=story, words=words, written=story_word_count, compliment=compliment, points=points)
+    return render_template("congrats.html", title=title, story=story, words=words, written=word_count, compliment=compliment, points=points)
 
 # edit user's account page - UPDATE
 @app.route("/my-account/edit")

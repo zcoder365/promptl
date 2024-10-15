@@ -77,3 +77,22 @@ def get_user_stories(user_name: str):
     story_conn.close()
     
     return user_data
+
+def get_total_word_count(user_name):
+    cursor = story_conn.cursor()
+
+    # Query to get the total word count for the specified user
+    query = """
+    SELECT SUM(LENGTH(content) - LENGTH(REPLACE(content, ' ', '')) + 1) AS total_words
+    FROM stories
+    WHERE user_id = ?
+    """
+    
+    cursor.execute(query, (user_name,))
+    total_word_count = cursor.fetchone()[0]
+
+    # Close the connection
+    story_conn.close()
+
+    # Handle the case where the user has no posts
+    return total_word_count if total_word_count is not None else 0

@@ -125,7 +125,8 @@ def my_account():
 	# for each story in the database...
     for story in stories:
         # get the user's total number of words they wrote
-        word_count = story['word_count']
+        # word_count = story['word_count']
+        word_count = data.data.get_total_word_count(username)
         
         # increase the total_words variable by the word count of each story
         total_words += word_count

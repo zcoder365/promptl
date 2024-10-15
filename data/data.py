@@ -24,19 +24,6 @@ def add_data(data: list):
     cur.close()
     conn.close()
 
-def view_data(database_directory: str, table_name: str):
-    # connect to the database
-    conn = sqlite3.connect(database_directory)
-    
-    # create a cursor
-    cur = conn.cursor()
-    
-    for row in cur.execute("SELECT * FROM " + table_name+ ";"):
-        print(row)
-        
-    cur.close()
-    conn.close()
-
 test_data = [
     ("zkd365", "test"),
     ("sushi", "test")
@@ -44,4 +31,14 @@ test_data = [
 
 # add_data(test_data)
 
-view_data(USER_DATA_FILE, USER_DATA_TABLE)
+# connect to the database
+conn = sqlite3.connect(database_directory)
+
+# create a cursor
+cur = conn.cursor()
+
+for row in cur.execute("SELECT * FROM users;"):
+    print(row)
+    
+cur.close()
+conn.close()

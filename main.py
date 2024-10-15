@@ -1,3 +1,4 @@
+# main imports
 import pymongo
 from pymongo.mongo_client import MongoClient
 from flask import *
@@ -5,7 +6,9 @@ from flask_pymongo import PyMongo, ObjectId
 from dotenv import load_dotenv
 import os
 import bcrypt
-import model
+
+# import other files
+import model, data
 
 app = Flask(__name__)
 

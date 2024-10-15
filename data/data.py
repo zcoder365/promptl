@@ -28,17 +28,14 @@ def add_story_data(story_data: list):
     story_conn.close()
 
 def view_user_data():
-    # connect to the database
-    conn = sqlite3.connect(USER_DATA_FILE)
-
     # create a cursor
-    cur = conn.cursor()
+    cur = user_conn.cursor()
 
     for row in cur.execute("SELECT * FROM users;"):
         print(row)
         
     cur.close()
-    conn.close()
+    user_conn.close()
     
 def find_user(user_name: str):
     conn = sqlite3.connect(USER_DATA_FILE)

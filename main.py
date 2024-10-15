@@ -115,10 +115,12 @@ def my_account():
     total_words = 0
     
     # find the user in the database
-    user = users.find_one({'username': username})
+    # user = users.find_one({'username': username})
+    user = data.data.find_user(username)
     
     # find the stories they wrote
-    stories = writing.find({'username': username})
+    # stories = writing.find({'username': username})
+    stories = data.data.get_user_stories(username)
 
 	# for each story in the database...
     for story in stories:

@@ -19,4 +19,4 @@ def get_data(file_path: str):
     cur.close()
     conn.close()
     
-get_data(WRITING_DATA)
+get_data(STORY_DATA)

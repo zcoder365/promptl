@@ -121,3 +121,26 @@ def get_user_streak(user_identifier):
 
     # Handle the case where the user has no activity
     return streak_length if streak_length is not None else 0
+
+def update_user_streak(database_path, user_identifier, new_streak):
+    # Connect to the SQLite database
+    connection = sqlite3.connect(database_path)
+    cursor = connection.cursor()
+
+    # SQL query to update the streak for a specific user
+    query = """
+    UPDATE users
+    SET streak = ?
+    WHERE user_id = ?
+    """
+    
+    # Execute the query with the new streak value and user_id as parameters
+    cursor.execute(query, (new_streak, user_identifier))
+    
+    # Commit the changes to the database
+    connection.commit()
+
+    # Close the connection
+    connection.close()
+
+    print(f"User {user_identifier}'s streak has been updated to {new_streak}.")

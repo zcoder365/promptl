@@ -122,23 +122,22 @@ def get_user_streak(user_identifier):
     # Handle the case where the user has no activity
     return streak_length if streak_length is not None else 0
 
-def update_user_streak(new_streak):
+def update_user_streak(username, new_streak):
     cursor = story_conn.cursor()
 
     # SQL query to update the streak for a specific user
     query = """
     UPDATE users
     SET streak = ?
-    WHERE user_id = ?
+    WHERE username = ?
     """
-    
-    # Execute the query with the new streak value and user_id as parameters
-    cursor.execute(query, (new_streak, user_identifier))
+
+    cursor.execute(query, (new_streak, username))
     
     # Commit the changes to the database
-    connection.commit()
+    story_conn.commit()
 
     # Close the connection
-    connection.close()
+    story_conn.close()
 
-    print(f"User {user_identifier}'s streak has been updated to {new_streak}.")
+    print(f"User {username}'s streak has been updated to {new_streak}.")

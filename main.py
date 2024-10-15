@@ -163,10 +163,11 @@ def save_writing():
         # myquery = {"_id": ObjectId(userID)} 
         
         # Create new values to update the user
-        new_streak = {"$set": {'streak': new_streak}}
+        # new_streak = {"$set": {'streak': new_streak}}
         
         # Update the selected user and assign new values
-        users.update_one(myquery, new_streak)
+        # users.update_one(myquery, new_streak)
+        data.data.update_user_streak(session['username'], new_streak)
         
         # insert the prompts to the user's story
         writing.insert_one({"prompts": prompts})

@@ -155,7 +155,8 @@ def save_writing():
         userID = user['_id']
         
         # get the user's streak and increase it by one
-        streak = int(user['streak'])
+        # streak = int(user['streak'])
+        streak = int(data.data.get_user_streak(session['username']))
         new_streak = streak + 1
         
         # # Find the user to edit using userID

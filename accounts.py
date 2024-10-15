@@ -14,9 +14,6 @@ def user_exists(username: str, password: str, parent_email: str):
         
         # add the data using the function in the data.py file in the data folder
         data.data.add_user_data(user_data)
-        
-        # create a session
-        session['username'] = username
     
     elif existing_user: # if the user exists...
         # return the error message

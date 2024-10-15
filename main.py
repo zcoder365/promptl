@@ -213,7 +213,7 @@ def edit_info():
     username = session['username']
     
     # find the user in the database
-    user = users.find_one({'username': username})
+    user = data.data.find_user(username)
     
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)

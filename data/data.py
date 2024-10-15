@@ -66,7 +66,7 @@ def login_user(username: str, password: str):
         return False
     
     finally:
-        conn.close()
+        user_conn.close()
         
 def get_user_stories(user_name: str):
     cur = story_conn.cursor()

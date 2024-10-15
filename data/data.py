@@ -17,7 +17,7 @@ def add_user_data(user_data: list):
     
     # close the database objects
     cur.close()
-    conn.close()
+    user_conn.close()
 
 def add_story_data(story_data: list):
     conn = sqlite3.connect(STORY_DATA_FILE)

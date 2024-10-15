@@ -1,11 +1,14 @@
 import sqlite3
 
-USER_DATA = "data/users.db"
-STORY_DATA = "data/stories.db"
+USER_DATA_FILE = "data/users.db"
+USER_DATA_TABLE = "users"
+
+STORY_DATA_FILE = "data/stories.db"
+STORY_DATA_TABLE = "stories"
 
 def add_data(data: list):
     # connect to the database
-    conn = sqlite3.connect(USER_DATA)
+    conn = sqlite3.connect(USER_DATA_FILE)
     
     # create a cursor
     cur = conn.cursor()
@@ -40,3 +43,5 @@ test_data = [
 ]
 
 add_data(test_data)
+
+view_data(USER_DATA_FILE, USER_DATA_TABLE)

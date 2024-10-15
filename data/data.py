@@ -15,6 +15,13 @@ def get_data(file_path: str):
                 (username TEXT, password TEXT)''')
     conn.commit()
     
+    test_data = [
+        ("zkd365", "test"),
+        ("sushi", "test")
+    ]
+    
+    cur.executemany("""INSERT INTO users (username, password) VALUES (?, ?)""", test_data)
+    
     # close the database objects
     cur.close()
     conn.close()

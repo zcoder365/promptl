@@ -166,7 +166,6 @@ def save_writing():
         # new_streak = {"$set": {'streak': new_streak}}
         
         # Update the selected user and assign new values
-        # users.update_one(myquery, new_streak)
         data.data.update_user_streak(session['username'], new_streak)
         
         # insert the prompts to the user's story
@@ -176,7 +175,9 @@ def save_writing():
         # create a list for the story
         story = written.split(' ')
 
-        model.get_story_length_and_points(story)
+        story_info = model.get_story_length_and_points(story)
+        word_count = story_info['story_length']
+        points_earned = story_info['points']
             
         story = written.upper()
         story = story.split()

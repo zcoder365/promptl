@@ -70,3 +70,6 @@ def login_user(username: str, password: str):
     
     finally:
         conn.close()
+        
+def get_user_stories(user_name: str):
+    pass

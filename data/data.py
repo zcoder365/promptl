@@ -6,19 +6,14 @@ USER_DATA_TABLE = "users"
 STORY_DATA_FILE = "data/stories.db"
 STORY_DATA_TABLE = "stories"
 
+user_conn = sqlite3.connect(USER_DATA_FILE)
+story_conn = sqlite3.connect(STORY_DATA_FILE)
+
 def add_user_data(user_data: list):
-    # connect to the database
-    conn = sqlite3.connect(USER_DATA_FILE)
-    
     # create a cursor
-    cur = conn.cursor()
+    cur = user_conn.cursor()
     
-    # create a "users" table
-    cur.execute('''CREATE TABLE IF NOT EXISTS users
-                (username TEXT, password TEXT, parent_email TEXT, points INTEGER, streak INTEGER)''')
-    conn.commit()
-    
-    cur.executemany("""INSERT INTO users (username, password) VALUES (?, ?)""", user_data)
+    cur.executemany("INSERT INTO" + USER_DATA_TABLE + "(username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
     
     # close the database objects
     cur.close()

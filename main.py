@@ -6,6 +6,7 @@ import bcrypt
 # import other files
 import model, data.data as data
 
+data.view_user_data()
 
 # create an instance of a flask app
 app = Flask(__name__)

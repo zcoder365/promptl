@@ -1,4 +1,4 @@
-import session, request
+import os
 import data.data
 
 def user_exists(username: str, password: str, parent_email: str):
@@ -16,7 +16,7 @@ def user_exists(username: str, password: str, parent_email: str):
         data.data.add_user_data(user_data)
         
         # create a session
-        session['username'] = request.form['username']
+        session['username'] = username
     
     elif existing_user: # if the user exists...
         # return the error message

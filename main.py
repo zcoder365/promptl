@@ -58,7 +58,7 @@ def signup_check():
     password = request.form.get("password")
     parent_email = request.form.get("parent-email")
     
-    
+    accounts.user_exists(username, password, parent_email)
         
     # redirect the user to the home/writing page
     return redirect(url_for("home"))

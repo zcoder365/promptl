@@ -22,7 +22,7 @@ def add_user_data(user_data: list):
 def add_story_data(story_data: list):
     cur = story_conn.cursor()
     
-    cur.execute("""INSERT INTO""" + STORY_DATA_TABLE + """(story_author, story_title, story_contents, story_word_count) VALUES (?, ?, ?, ?)""", story_data)
+    cur.execute("""INSERT INTO""" + STORY_DATA_TABLE + """(story_author, story_title, story_contents, story_word_count, prompts) VALUES (?, ?, ?, ?)""", story_data)
     
     story_conn.close()
 
@@ -141,25 +141,3 @@ def update_user_streak(username, new_streak):
     story_conn.close()
 
     print(f"User {username}'s streak has been updated to {new_streak}.")
-    
-def add_story(database_path, author, title, contents, word_count):
-    # Connect to the SQLite database
-    connection = sqlite3.connect(database_path)
-    cursor = connection.cursor()
-
-    # SQL query to insert a new story into the story table
-    query = """
-    INSERT INTO story (story_author, story_title, story_contents, story_word_count)
-    VALUES (?, ?, ?, ?)
-    """
-    
-    # Execute the query with the provided story details
-    cursor.execute(query, (author, title, contents, word_count))
-    
-    # Commit the changes to the database
-    connection.commit()
-
-    # Close the connection
-    connection.close()
-
-    print(f"Story '{title}' by {author} has been added to the database.")

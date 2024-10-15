@@ -171,14 +171,18 @@ def save_writing():
         # story = story.split()
         # story_word_count = int(len(story))
         
-        title = request.form['title'] # referenced before assignment; but this is the assignment...
+        title = request.form['title']
         
         if word_count >= 100:
-            points += 25
+            points_earned += 25
             
-            writing.insert_one({'title': title, 'story': written, 'username': session['username'], 'word_count': word_count, "prompts": prompts, "points": points})
+            # writing.insert_one({'title': title, 'story': written, 'username': session['username'], 'word_count': word_count, "prompts": prompts, "points": points})
             
-            story = writing.find_one({'title': title})
+            story_data = [(session['username'], title, story, word_count, prompts)]
+            
+            data.data.add_story_data(story_data)
+            
+            # story = writing.find_one({'title': title})
             
         # get the number of words the user used
         words = words_used

@@ -31,14 +31,15 @@ test_data = [
 
 # add_data(test_data)
 
-# connect to the database
-conn = sqlite3.connect(USER_DATA_FILE)
+def view_user_data():
+    # connect to the database
+    conn = sqlite3.connect(USER_DATA_FILE)
 
-# create a cursor
-cur = conn.cursor()
+    # create a cursor
+    cur = conn.cursor()
 
-for row in cur.execute("SELECT * FROM users;"):
-    print(row)
-    
-cur.close()
-conn.close()
+    for row in cur.execute("SELECT * FROM users;"):
+        print(row)
+        
+    cur.close()
+    conn.close()

@@ -24,6 +24,19 @@ def add_user_data(user_data: list):
     cur.close()
     conn.close()
 
+def add_story_data(story_data: list):
+    conn = sqlite3.connect(STORY_DATA_FILE)
+    cur = conn.cursor()
+    
+    cur.execute('''CREATE TABLE IF NOT EXISTS users
+                (story_title TEXT, story_contents TEXT, story_word_count INTEGER)''')
+    conn.commit()
+    
+    cur.executemany("""INSERT INTO""" + STORY_DATA_TABLE + """(story_title, story_contents, story_word_count) VALUES (?, ?)""", story_data)
+    
+    cur.close()
+    conn.close()
+
 def view_user_data():
     # connect to the database
     conn = sqlite3.connect(USER_DATA_FILE)

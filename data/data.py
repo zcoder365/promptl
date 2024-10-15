@@ -32,7 +32,7 @@ test_data = [
 # add_data(test_data)
 
 # connect to the database
-conn = sqlite3.connect(database_directory)
+conn = sqlite3.connect(USER_DATA_FILE)
 
 # create a cursor
 cur = conn.cursor()

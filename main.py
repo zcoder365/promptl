@@ -4,16 +4,9 @@ import os
 import bcrypt
 
 # import other files
-import model, data
+import model, data.data as data
 
 app = Flask(__name__)
-
-# setup global vars
-global users, writing
-
-db = client['promptl_data']
-users = db['users']
-writing = db['writing']
 
 # create variable for prompts
 prompts = {}

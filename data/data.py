@@ -24,7 +24,6 @@ def add_story_data(story_data: list):
     
     cur.execute("""INSERT INTO""" + STORY_DATA_TABLE + """(story_author, story_title, story_contents, story_word_count) VALUES (?, ?, ?, ?)""", story_data)
     
-    cur.close()
     story_conn.close()
 
 def view_all_user_data():
@@ -33,8 +32,7 @@ def view_all_user_data():
 
     for row in cur.execute("SELECT * FROM users;"):
         print(row)
-        
-    cur.close()
+
     user_conn.close()
     
 def find_user(user_name: str):

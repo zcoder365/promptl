@@ -148,14 +148,12 @@ def save_writing():
         title = request.form['title']
         
         # find the user in the database
-        # user = users.find_one({'username': session['username']})
         user = data.data.find_user(session['username'])
         
         # get the user's ID
         userID = user['_id']
         
         # get the user's streak and increase it by one
-        # streak = int(user['streak'])
         streak = int(data.data.get_user_streak(session['username']))
         new_streak = streak + 1
         

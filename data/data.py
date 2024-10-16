@@ -167,4 +167,21 @@ def get_user_points(username: str):
     return points
 
 def update_user_points(username: str, new_points: int):
-    pass
+    cursor = user_conn.cursor()
+
+    # SQL query to update the streak for a specific user
+    query = """
+    UPDATE users
+    SET streak = ?
+    WHERE username = ?
+    """
+
+    cursor.execute(query, (new_streak, username))
+    
+    # Commit the changes to the database
+    story_conn.commit()
+
+    # Close the connection
+    story_conn.close()
+
+    print(f"User {username}'s streak has been updated to {new_streak}.")

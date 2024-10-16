@@ -225,18 +225,6 @@ def save_info(userID):
     parent_email = request.form['changed']
     
     data.data.change_parent_email(parent_email, session['username'])
-    
-    # # Find the user to edit using userID
-    # myquery = {"_id": ObjectId(userID)}
-    
-    # # Create new values to update the user
-    # newvalues = {"$set": {'parent_email': parent_email}}
-    
-    # # Update the selected user and assign new values
-    # users.update_one(myquery, newvalues)
-    
-    # # Find the newly edited user
-    # users = users.find_one({'_id': ObjectId(userID)})
 
 	# return to the user's account page
     return redirect(url_for('my_account'))

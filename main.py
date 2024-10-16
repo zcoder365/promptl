@@ -1,5 +1,6 @@
 # general imports
 from flask import *
+import os
 
 # import other files
 import prompts, accounts, model

@@ -13,9 +13,6 @@ d.create_databases()
 app = Flask(__name__)
 app.secret_key = 'key'
 
-# # create variable for prompts
-# prompts = {}
-
 # login signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')
 def index():

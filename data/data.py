@@ -143,22 +143,23 @@ def update_user_streak(username, new_streak):
     print(f"User {username}'s streak has been updated to {new_streak}.")
     
 def change_parent_email(parent_email, username):
-    # connect to the SQLite database
-    connection = sqlite3.connect('your_database.db')
-    cursor = connection.cursor()
+    cursor = user_conn.cursor()
     
     # Create new values to update the user
     cursor.execute("UPDATE users SET parent_email = ? WHERE username = ?", (parent_email, username))
     
     # Commit the changes to the database
-    connection.commit()
+    user_conn.commit()
     
     # Optionally fetch the newly edited user (not necessary if you're just redirecting)
     cursor.execute("SELECT * FROM users WHERE id = ?", (username))
     edited_user = cursor.fetchone()  # You can process this if needed
 
     # close the connection
-    connection.close()
+    user_conn.close()
     
 def get_user_points(username: str):
-    pass
+    cursor = user_conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username))
+    user = cursor.fetchone()
+    

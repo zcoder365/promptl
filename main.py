@@ -32,7 +32,7 @@ def home():
     # prompts = {'name': name, 'job': job, 'place': place, 'object': object, 'bonus': bonus}
 
 	# return the main page for writing with the prompts
-    return render_template('index.html', prompts=prompts)
+    return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)
 
 # generate a new prompt
 @app.route('/new-prompt')

@@ -8,7 +8,7 @@ def add_user(username: str, password: str, email: str):
     
     elif not is_user:
         # generate the user data
-        user_data = [(username, password, email, 0, 0)]
+        user_data = (username, password, email, 0, 0)
         
         # add the data using the function in the data.py file in the data folder
         d.add_user_data(user_data)

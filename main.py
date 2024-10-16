@@ -15,7 +15,7 @@ prompts = {}
 # login signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')
 def index():
-    return render_template('create_account.html')
+    return render_template('signup.html')
 
 # home page route
 @app.route('/home')

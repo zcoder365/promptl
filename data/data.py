@@ -176,7 +176,7 @@ def update_user_points(username: str, new_points: int):
     WHERE username = ?
     """
 
-    cursor.execute(query, (new_streak, username))
+    cursor.execute(query, (new_points, username))
     
     # Commit the changes to the database
     story_conn.commit()
@@ -184,4 +184,4 @@ def update_user_points(username: str, new_points: int):
     # Close the connection
     story_conn.close()
 
-    print(f"User {username}'s streak has been updated to {new_streak}.")
+    print(f"User {username}'s points have been updated to {new_points}.")

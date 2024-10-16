@@ -239,13 +239,13 @@ def read_story(story_title):
     return render_template("read-story.html", story=story)
 
 # edit a story, based on the story's ID - UPDATE
-@app.route("/edit-story/<storyID>")
-def edit_story(storyID):
-    # get the writing databsae
-    writing = client['promptl_data']['writing']
+@app.route("/edit-story/<story_title>")
+def edit_story(story_title):
+    # # get the writing databsae
+    # writing = client['promptl_data']['writing']
     
-    # find the story and get it's ID
-    story = writing.find_one({"_id": ObjectId(storyID)})
+    # # find the story and get it's ID
+    # story = writing.find_one({"_id": ObjectId(storyID)})
     
     # return the page for editing a story
     return render_template("edit-story.html", story=story)

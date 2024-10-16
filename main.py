@@ -256,7 +256,7 @@ def update_story(story_title):
         story = data.data.find_story(story_title)
         
         # get the updated story from the web page
-        story = request.form['updated_story']
+        updated_story = request.form['updated_story']
         
         # get the id of the story using ObjectID from PyMongo
         myquery = {"_id": ObjectId(storyID)}

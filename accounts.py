@@ -15,7 +15,7 @@ def add_user(username: str, password: str, email: str):
         # users.insert_one({ 'username': username, 'password': str(hashpass, 'utf-8'), 'parent_email': parent_email, 'points': 0, 'streak': 0, "prizes": 0, "average_words": 0})
         
         # generate the user data
-        user_data = [(username, password, parent_email, 0, 0)]
+        user_data = [(username, password, email, 0, 0)]
         
         # add the data using the function in the data.py file in the data folder
         data.data.add_user_data(user_data)

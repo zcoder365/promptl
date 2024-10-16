@@ -127,7 +127,7 @@ def get_total_word_count(user_name):
     # Handle the case where the user has no posts
     return total_word_count if total_word_count is not None else 0
 
-def get_user_streak(user_identifier):
+def get_user_streak(username: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)
     cursor = story_conn.cursor()
 
@@ -144,7 +144,7 @@ def get_user_streak(user_identifier):
     WHERE JULIANDAY('now') - JULIANDAY(activity_date) < COUNT(*);
     """
     
-    cursor.execute(query, (user_identifier,))
+    cursor.execute(query, (username,))
     streak_length = cursor.fetchone()[0]
 
     # Close the connection

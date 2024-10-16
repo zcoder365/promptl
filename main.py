@@ -204,7 +204,7 @@ def save_writing():
         # STOP FIXING HERE
         
     # return the congrats page
-    return render_template("congrats.html", title=title, story=story, words=words, written=word_count, compliment=compliment, points=points)
+    return render_template("congrats.html", title=title, story=story, words=word_count, written=word_count, compliment=compliment, points=points)
 
 # edit user's account page - UPDATE
 @app.route("/my-account/edit")

@@ -100,7 +100,7 @@ def get_user_stories(user_name: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)
     cur = story_conn.cursor()
     
-    cur.execute("SELECT * FROM users WHERE author = ?", (user_name))
+    cur.execute("SELECT * FROM stories WHERE author = ?", (user_name))
     user_data = cur.fetchall()
     
     story_conn.close()

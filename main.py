@@ -140,7 +140,6 @@ def my_account():
 @app.route('/save-writing', methods=['GET', 'POST'])
 def save_writing():
     if request.method == "POST":
-        words_used = 0
         points = 0
         
         # get the story content, title

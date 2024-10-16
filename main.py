@@ -8,11 +8,11 @@ import data.data as d
 # create databases
 d.create_databases()
 
-# create an instance of a flask app
+# create the flask app
 app = Flask(__name__)
 
-# create variable for prompts
-prompts = {}
+# # create variable for prompts
+# prompts = {}
 
 # login signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')

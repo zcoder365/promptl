@@ -187,4 +187,10 @@ def update_user_points(username: str, new_points: int):
     print(f"User {username}'s points have been updated to {new_points}.")
     
 def find_story(story_title: str):
-    pass
+    cursor = story_conn.cursor()
+    
+    cursor.execute("SELECT * FROM stories WHERE title = ?", (story_title))
+    
+    story = cursor.fetchone()
+    
+    return story

@@ -167,10 +167,10 @@ def update_user_streak(username, new_streak):
     cursor.execute(query, (new_streak, username))
     
     # Commit the changes to the database
-    story_conn.commit()
+    user_conn.commit()
 
     # Close the connection
-    story_conn.close()
+    user_conn.close()
 
     print(f"User {username}'s streak has been updated to {new_streak}.")
     

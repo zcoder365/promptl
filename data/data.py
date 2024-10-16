@@ -159,3 +159,6 @@ def change_parent_email(parent_email, username):
 
     # close the connection
     connection.close()
+    
+def get_user_points(username: str):
+    pass

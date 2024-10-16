@@ -117,17 +117,14 @@ def my_account():
     total_words = 0
     
     # find the user in the database
-    # user = users.find_one({'username': username})
     user = d.find_user(username)
     
     # find the stories they wrote
-    # stories = writing.find({'username': username})
     stories = d.get_user_stories(username)
 
 	# for each story in the database...
     for story in stories:
         # get the user's total number of words they wrote
-        # word_count = story['word_count']
         word_count = d.get_total_word_count(username)
         
         # increase the total_words variable by the word count of each story

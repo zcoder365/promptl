@@ -147,9 +147,6 @@ def save_writing():
         written = request.form['story']
         title = request.form['title']
         
-        # find the user in the database
-        user = d.find_user(session['username'])
-        
         # get the user's streak, increase it by one, and update it
         streak = int(d.get_user_streak(session['username']))
         new_streak = streak + 1

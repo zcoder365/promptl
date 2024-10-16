@@ -161,10 +161,6 @@ def save_writing():
         story_info = model.get_story_length_and_points(story)
         word_count = story_info['story_length']
         points_earned = story_info['points']
-            
-        # story = written.upper()
-        # story = story.split()
-        # story_word_count = int(len(story))
         
         title = request.form['title']
         

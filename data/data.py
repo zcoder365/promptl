@@ -43,7 +43,7 @@ def find_user(user_name: str):
     cur = user_conn.cursor()
     
     # query to check if the user exists
-    cur.execute("SELECT 1 FROM " + USER_DATA_TABLE + " WHERE user_name = ?", (user_name))
+    cur.execute("SELECT 1 FROM users WHERE user_name = ?", (user_name))
     result = cur.fetchone()
     
     user_conn.close()

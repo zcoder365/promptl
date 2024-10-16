@@ -143,17 +143,12 @@ def save_writing():
         words_used = 0
         points = 0
         
-        # get the story content
+        # get the story content, title
         written = request.form['story']
-        
-        # get the story title
         title = request.form['title']
         
         # find the user in the database
         user = d.find_user(session['username'])
-        
-        # get the user's ID
-        userID = user['_id']
         
         # get the user's streak and increase it by one
         streak = int(d.get_user_streak(session['username']))

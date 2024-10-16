@@ -27,7 +27,7 @@ def create_databases():
     create_stories_db()
 
 # FUNCTIONS FOR ACCESSING DATABASES
-def add_user_data(user_data: list):
+def add_user_data(user_data: tuple):
     # connect to the user database
     user_conn = sqlite3.connect(USER_DATA_FILE)
     cur = user_conn.cursor()

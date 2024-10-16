@@ -11,6 +11,7 @@ d.create_databases()
 
 # create the flask app
 app = Flask(__name__)
+app.secret_key = 'key'
 
 # # create variable for prompts
 # prompts = {}

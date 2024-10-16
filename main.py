@@ -6,6 +6,9 @@ import bcrypt # do i need?
 # import other files
 import prompts, data.data, accounts, model
 
+# create databases
+data.data.create_databases()
+
 # create an instance of a flask app
 app = Flask(__name__)
 

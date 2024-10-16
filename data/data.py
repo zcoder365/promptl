@@ -44,10 +44,12 @@ def find_user(user_name: str):
     
     user_conn.close()
     
-    if result == None:
-        return False
-    elif result != None:
-        return True
+    user_exists = False
+    
+    if result != None:
+        user_exists = True
+        
+    return user_exists
 
 def login_user(username: str, password: str):
     cur = user_conn.cursor()

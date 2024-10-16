@@ -247,6 +247,7 @@ def edit_story(story_title):
     # # find the story and get it's ID
     # story = writing.find_one({"_id": ObjectId(storyID)})
     
+    # get the story from the db
     story = data.data.find_story(story_title)
     
     # return the page for editing a story

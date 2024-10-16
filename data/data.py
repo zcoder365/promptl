@@ -172,7 +172,7 @@ def update_user_points(username: str, new_points: int):
     # SQL query to update the streak for a specific user
     query = """
     UPDATE users
-    SET streak = ?
+    SET points = ?
     WHERE username = ?
     """
 

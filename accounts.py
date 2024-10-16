@@ -1,11 +1,11 @@
-import data.data
+import data.data as d
 
 # def user_exists(username: str):
 #     # determine if the user exists
 #     return data.data.find_user(username)
 
 def add_user(username: str, password: str, email: str):
-    is_user = data.find_user(username)
+    is_user = d.find_user(username)
     
     if is_user:
         return "User already exists. Can't create a new account with this username."

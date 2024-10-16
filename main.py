@@ -230,14 +230,10 @@ def save_info(userID):
     return redirect(url_for('my_account'))
 
 # read a story page - UPDATE
-@app.route("/read-story/<storyID>")
-def read_story(storyID):
-    # # get the database for the stories the user wrote
-    # writing = client['promptl_data']['writing']
-    
-    # # get the story's ID
-    # story = writing.find_one({"_id": ObjectId(storyID)})
-    story = data.data.find_story()
+@app.route("/read-story/<story_title>")
+def read_story(story_title):
+    # get the story from the story database
+    story = data.data.find_story(story_title)
     
 	# return the page for reading the story
     return render_template("read-story.html", story=story)

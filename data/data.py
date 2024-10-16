@@ -21,6 +21,7 @@ def add_user_data(user_data: list):
     user_conn.close()
 
 def add_story_data(story_data: list):
+    story_conn = sqlite3.connect(STORY_DATA_FILE)
     cur = story_conn.cursor()
     
     cur.execute("""INSERT INTO""" + STORY_DATA_TABLE + """(story_author, story_title, story_contents, story_word_count, prompts) VALUES (?, ?, ?, ?)""", story_data)
@@ -78,6 +79,7 @@ def login_user(username: str, password: str):
         user_conn.close()
         
 def get_user_stories(user_name: str):
+    story_conn = sqlite3.connect(STORY_DATA_FILE)
     cur = story_conn.cursor()
     
     cur.execute("SELECT * FROM users WHERE author = ?", (user_name))
@@ -88,6 +90,7 @@ def get_user_stories(user_name: str):
     return user_data
 
 def get_total_word_count(user_name):
+    story_conn = sqlite3.connect(STORY_DATA_FILE)
     cursor = story_conn.cursor()
 
     # Query to get the total word count for the specified user
@@ -107,6 +110,7 @@ def get_total_word_count(user_name):
     return total_word_count if total_word_count is not None else 0
 
 def get_user_streak(user_identifier):
+    story_conn = sqlite3.connect(STORY_DATA_FILE)
     cursor = story_conn.cursor()
 
     # SQL query to find the current streak
@@ -201,6 +205,7 @@ def update_user_points(username: str, new_points: int):
     print(f"User {username}'s points have been updated to {new_points}.")
     
 def find_story(story_title: str):
+    story_conn = sqlite3.connect(STORY_DATA_FILE)
     cursor = story_conn.cursor()
     
     cursor.execute("SELECT * FROM stories WHERE title = ?", (story_title))

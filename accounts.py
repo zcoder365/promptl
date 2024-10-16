@@ -20,10 +20,6 @@ def add_user(username: str, password: str, email: str):
         # add the data using the function in the data.py file in the data folder
         data.data.add_user_data(user_data)
     
-    elif existing_user: # if the user exists...
-        # return the error message
-        return 'That username already exists! Try logging in.'
-    
 def login_check(username: str, password: str):
     logged_in = data.data.login_user(username, password)
     

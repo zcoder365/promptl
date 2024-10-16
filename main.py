@@ -1,7 +1,7 @@
 # general imports
 from flask import *
-import os
-import bcrypt
+import os # do i need?
+import bcrypt # do i need?
 
 # import other files
 import prompts, data.data, accounts, model

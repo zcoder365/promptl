@@ -248,11 +248,12 @@ def edit_story(story_title):
     return render_template("edit-story.html", story=story)
 
 # update story route - UPDATE
-@app.route('/update-story/<storyID>')
-def update_story(storyID):
+@app.route('/update-story/<story_title>')
+def update_story(story_title):
     if request.method == "POST":
         # get the story from the database
-        writing = client["promptl_data"]['writing']
+        # writing = client["promptl_data"]['writing']
+        story = data.data.find_story(story_title)
         
         # get the updated story from the web page
         story = request.form['updated_story']

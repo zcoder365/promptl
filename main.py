@@ -232,11 +232,11 @@ def save_info(userID):
 # read a story page - UPDATE
 @app.route("/read-story/<storyID>")
 def read_story(storyID):
-    # get the database for the stories the user wrote
-    writing = client['promptl_data']['writing']
+    # # get the database for the stories the user wrote
+    # writing = client['promptl_data']['writing']
     
-    # get the story's ID
-    story = writing.find_one({"_id": ObjectId(storyID)})
+    # # get the story's ID
+    # story = writing.find_one({"_id": ObjectId(storyID)})
     story = data.data.find_story()
     
 	# return the page for reading the story

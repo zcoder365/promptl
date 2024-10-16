@@ -168,8 +168,6 @@ def save_writing():
             story_data = [(session['username'], title, story, word_count, prompts)]
             
             d.add_story_data(story_data)
-            
-            # story = writing.find_one({'title': title})
         
         # generate a random compliment for the user since they completed their story
         compliment = prompts.gen_compliment()
@@ -182,8 +180,6 @@ def save_writing():
         new_points = points + user_points
         
         d.update_user_points(session['username'], new_points)
-        
-        # STOP FIXING HERE
         
     # return the congrats page
     return render_template("congrats.html", title=title, story=story, words=word_count, written=word_count, compliment=compliment, points=points)

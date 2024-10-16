@@ -165,8 +165,6 @@ def save_writing():
         if word_count >= 100:
             points_earned += 25
             
-            # writing.insert_one({'title': title, 'story': written, 'username': session['username'], 'word_count': word_count, "prompts": prompts, "points": points})
-            
             story_data = [(session['username'], title, story, word_count, prompts)]
             
             d.add_story_data(story_data)

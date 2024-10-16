@@ -5,7 +5,7 @@ import data.data
 #     return data.data.find_user(username)
 
 def add_user(username: str, password: str, email: str):
-    is_user = data.data.find_user(username)
+    is_user = data.find_user(username)
     
     if is_user:
         return "User already exists. Can't create a new account with this username."

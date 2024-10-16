@@ -185,3 +185,6 @@ def update_user_points(username: str, new_points: int):
     story_conn.close()
 
     print(f"User {username}'s points have been updated to {new_points}.")
+    
+def find_story(story_title: str):
+    pass

@@ -237,6 +237,7 @@ def read_story(storyID):
     
     # get the story's ID
     story = writing.find_one({"_id": ObjectId(storyID)})
+    story = data.data.find_story()
     
 	# return the page for reading the story
     return render_template("read-story.html", story=story)

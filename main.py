@@ -183,8 +183,6 @@ def save_writing():
             data.data.add_story_data(story_data)
             
             # story = writing.find_one({'title': title})
-            
-        # FIX THE REST OF THE FUNCTION
         
         # generate a random compliment for the user since they completed their story
         compliment = prompts.gen_compliment()

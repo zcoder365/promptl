@@ -162,8 +162,6 @@ def save_writing():
         word_count = story_info['story_length']
         points_earned = story_info['points']
         
-        title = request.form['title']
-        
         if word_count >= 100:
             points_earned += 25
             

@@ -190,8 +190,6 @@ def save_writing():
         compliment = prompts.gen_compliment()
         
         # find the user and get their points
-        # user = users.find_one({"_id": ObjectId(userID)})
-        # user_points = int(user['points'])
         user = data.data.find_user(session['username'])
         user_points = data.data.get_user_points(session['username'])
         

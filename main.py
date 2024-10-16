@@ -194,12 +194,14 @@ def save_writing():
         user_points = data.data.get_user_points(session['username'])
         
         # update the user's points
-        add_points = points + user_points
+        new_points = points + user_points
         
 		# update the user's info in the database
         myquery = {"_id": ObjectId(userID)}
         new_points = {"$set": {'points': add_points}}
         users.update_one(myquery, new_points)
+        
+        data.data.update_user_points(session['username'], new_points)
         
         # STOP FIXING HERE
         

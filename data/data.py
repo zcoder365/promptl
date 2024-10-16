@@ -165,3 +165,6 @@ def get_user_points(username: str):
     points = user[4]
     
     return points
+
+def update_user_points(username: str, new_points: int):
+    pass

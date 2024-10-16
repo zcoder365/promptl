@@ -96,11 +96,11 @@ def login_user(username: str, password: str):
     finally:
         user_conn.close()
         
-def get_user_stories(user_name: str):
+def get_user_stories(username: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)
     cur = story_conn.cursor()
     
-    cur.execute("SELECT * FROM stories WHERE author = ?", (user_name))
+    cur.execute("SELECT * FROM stories WHERE author = ?", (username,))
     user_data = cur.fetchall()
     
     story_conn.close()

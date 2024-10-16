@@ -2,10 +2,11 @@
 from flask import *
 
 # import other files
-import prompts, data.data, accounts, model
+import prompts, accounts, model
+import data.data as d
 
 # create databases
-data.data.create_databases()
+d.create_databases()
 
 # create an instance of a flask app
 app = Flask(__name__)
@@ -101,7 +102,7 @@ def logout():
 def prior_pieces():
     # find the user's stories
     # stories = writing.find({'username': session['username']})
-    stories = data.data.get_user_stories(session['username'])
+    stories = d.get_user_stories(session['username'])
     
     # return a page with the user's prior stories
     return render_template('prior-pieces.html', writing=stories)
@@ -117,17 +118,17 @@ def my_account():
     
     # find the user in the database
     # user = users.find_one({'username': username})
-    user = data.data.find_user(username)
+    user = d.find_user(username)
     
     # find the stories they wrote
     # stories = writing.find({'username': username})
-    stories = data.data.get_user_stories(username)
+    stories = d.get_user_stories(username)
 
 	# for each story in the database...
     for story in stories:
         # get the user's total number of words they wrote
         # word_count = story['word_count']
-        word_count = data.data.get_total_word_count(username)
+        word_count = d.get_total_word_count(username)
         
         # increase the total_words variable by the word count of each story
         total_words += word_count
@@ -149,17 +150,17 @@ def save_writing():
         title = request.form['title']
         
         # find the user in the database
-        user = data.data.find_user(session['username'])
+        user = d.find_user(session['username'])
         
         # get the user's ID
         userID = user['_id']
         
         # get the user's streak and increase it by one
-        streak = int(data.data.get_user_streak(session['username']))
+        streak = int(d.get_user_streak(session['username']))
         new_streak = streak + 1
         
         # Update the selected user and assign new values
-        data.data.update_user_streak(session['username'], new_streak)
+        d.update_user_streak(session['username'], new_streak)
         
         # create a list for the story
         story = written.split(' ')
@@ -181,7 +182,7 @@ def save_writing():
             
             story_data = [(session['username'], title, story, word_count, prompts)]
             
-            data.data.add_story_data(story_data)
+            d.add_story_data(story_data)
             
             # story = writing.find_one({'title': title})
         
@@ -189,13 +190,13 @@ def save_writing():
         compliment = prompts.gen_compliment()
         
         # find the user and get their points
-        user = data.data.find_user(session['username'])
-        user_points = data.data.get_user_points(session['username'])
+        user = d.find_user(session['username'])
+        user_points = d.get_user_points(session['username'])
         
         # update the user's points
         new_points = points + user_points
         
-        data.data.update_user_points(session['username'], new_points)
+        d.update_user_points(session['username'], new_points)
         
         # STOP FIXING HERE
         
@@ -209,7 +210,7 @@ def edit_info():
     username = session['username']
     
     # find the user in the database
-    user = data.data.find_user(username)
+    user = d.find_user(username)
     
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)
@@ -220,7 +221,7 @@ def save_info(userID):
     # get the user's parent's email 
     parent_email = request.form['changed']
     
-    data.data.change_parent_email(parent_email, session['username'])
+    d.change_parent_email(parent_email, session['username'])
 
 	# return to the user's account page
     return redirect(url_for('my_account'))
@@ -229,7 +230,7 @@ def save_info(userID):
 @app.route("/read-story/<story_title>")
 def read_story(story_title):
     # get the story from the story database
-    story = data.data.find_story(story_title)
+    story = d.find_story(story_title)
     
 	# return the page for reading the story
     return render_template("read-story.html", story=story)
@@ -238,7 +239,7 @@ def read_story(story_title):
 @app.route("/edit-story/<story_title>")
 def edit_story(story_title):
     # get the story from the db
-    story = data.data.find_story(story_title)
+    story = d.find_story(story_title)
     
     # return the page for editing a story
     return render_template("edit-story.html", story=story)
@@ -250,7 +251,7 @@ def edit_story(story_title):
 #     if request.method == "POST":
 #         # get the story from the database
 #         # writing = client["promptl_data"]['writing']
-#         story = data.data.find_story(story_title)
+#         story = d.find_story(story_title)
         
 #         # get the updated story from the web page
 #         updated_story = request.form['updated_story']

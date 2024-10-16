@@ -162,4 +162,6 @@ def get_user_points(username: str):
     cursor = user_conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (username))
     user = cursor.fetchone()
+    points = user[4]
     
+    return points

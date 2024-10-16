@@ -247,6 +247,7 @@ def edit_story(story_title):
     # return the page for editing a story
     return render_template("edit-story.html", story=story)
 
+# REVIEW - DO I NEED IN THE FUTURE?
 # # update story route - UPDATE
 # @app.route('/update-story/<story_title>')
 # def update_story(story_title):

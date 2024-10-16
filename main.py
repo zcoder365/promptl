@@ -206,7 +206,7 @@ def save_writing():
     # return the congrats page
     return render_template("congrats.html", title=title, story=story, words=word_count, written=word_count, compliment=compliment, points=points)
 
-# edit user's account page - UPDATE
+# edit user's account page
 @app.route("/my-account/edit")
 def edit_info():
     # get the username of the current user

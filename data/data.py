@@ -10,7 +10,8 @@ user_conn = sqlite3.connect(USER_DATA_FILE)
 story_conn = sqlite3.connect(STORY_DATA_FILE)
 
 def add_user_data(user_data: list):
-    # create a cursor
+    # connect to the user database
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cur = user_conn.cursor()
     
     cur.execute("INSERT INTO" + USER_DATA_TABLE + "(username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
@@ -27,7 +28,8 @@ def add_story_data(story_data: list):
     story_conn.close()
 
 def view_all_user_data():
-    # create a cursor
+    # connect to the user database
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cur = user_conn.cursor()
 
     for row in cur.execute("SELECT * FROM users;"):
@@ -36,6 +38,7 @@ def view_all_user_data():
     user_conn.close()
     
 def find_user(user_name: str):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cur = user_conn.cursor()
     
     # query to check if the user exists
@@ -52,6 +55,7 @@ def find_user(user_name: str):
     return user_exists
 
 def login_user(username: str, password: str):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cur = user_conn.cursor()
     
     try:
@@ -128,6 +132,7 @@ def get_user_streak(user_identifier):
     return streak_length if streak_length is not None else 0
 
 def update_user_streak(username, new_streak):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cursor = user_conn.cursor()
 
     # SQL query to update the streak for a specific user
@@ -148,6 +153,7 @@ def update_user_streak(username, new_streak):
     print(f"User {username}'s streak has been updated to {new_streak}.")
     
 def change_parent_email(parent_email, username):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cursor = user_conn.cursor()
     
     # Create new values to update the user
@@ -164,6 +170,8 @@ def change_parent_email(parent_email, username):
     user_conn.close()
     
 def get_user_points(username: str):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
+    
     cursor = user_conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (username))
     user = cursor.fetchone()
@@ -172,6 +180,7 @@ def get_user_points(username: str):
     return points
 
 def update_user_points(username: str, new_points: int):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
     cursor = user_conn.cursor()
 
     # SQL query to update the streak for a specific user

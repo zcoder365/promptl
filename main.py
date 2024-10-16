@@ -241,12 +241,6 @@ def read_story(story_title):
 # edit a story, based on the story's ID - UPDATE
 @app.route("/edit-story/<story_title>")
 def edit_story(story_title):
-    # # get the writing databsae
-    # writing = client['promptl_data']['writing']
-    
-    # # find the story and get it's ID
-    # story = writing.find_one({"_id": ObjectId(storyID)})
-    
     # get the story from the db
     story = data.data.find_story(story_title)
     

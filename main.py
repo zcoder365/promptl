@@ -58,7 +58,7 @@ def signup_check():
     password = request.form.get("password")
     parent_email = request.form.get("parent-email")
     
-    accounts.user_exists(username, password, parent_email)
+    accounts.user_exists(username)
     
     session['username'] = username
         

@@ -21,6 +21,12 @@ def create_stories_db():
     story_conn.commit()
     story_conn.close()
 
+def create_databases():
+    # create databases
+    create_user_db()
+    create_stories_db()
+
+# FUNCTIONS FOR ACCESSING DATABASES
 def add_user_data(user_data: list):
     # connect to the user database
     user_conn = sqlite3.connect(USER_DATA_FILE)

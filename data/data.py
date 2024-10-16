@@ -3,8 +3,23 @@ import sqlite3
 USER_DATA_FILE = "data/users.db"
 STORY_DATA_FILE = "data/stories.db"
 
-user_conn = sqlite3.connect(USER_DATA_FILE)
-story_conn = sqlite3.connect(STORY_DATA_FILE)
+def create_user_db():
+    user_conn = sqlite3.connect(USER_DATA_FILE)
+    
+    cur = user_conn.cursor()
+    cur.execute("CREATE TABLE users (username, password, parent_email, streak, points)")
+    user_conn.commit()
+    
+    user_conn.close()
+
+def create_stories_db():
+    story_conn = sqlite3.connect(STORY_DATA_FILE)
+    cur = story_conn.cursor()
+    
+    cur.execute("CREATE TABLE stories (story_author, story_title, story_contents, story_word_count, prompts)")
+    
+    story_conn.commit()
+    story_conn.close()
 
 def add_user_data(user_data: list):
     # connect to the user database

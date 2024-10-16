@@ -101,7 +101,6 @@ def logout():
 @app.route('/prior-pieces')
 def prior_pieces():
     # find the user's stories
-    # stories = writing.find({'username': session['username']})
     stories = d.get_user_stories(session['username'])
     
     # return a page with the user's prior stories

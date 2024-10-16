@@ -21,7 +21,7 @@ def add_story_data(story_data: list):
     story_conn = sqlite3.connect(STORY_DATA_FILE)
     cur = story_conn.cursor()
     
-    cur.execute("""INSERT INTO""" + STORY_DATA_TABLE + """(story_author, story_title, story_contents, story_word_count, prompts) VALUES (?, ?, ?, ?)""", story_data)
+    cur.execute("""INSERT INTO stories (story_author, story_title, story_contents, story_word_count, prompts) VALUES (?, ?, ?, ?)""", story_data)
     
     story_conn.close()
 

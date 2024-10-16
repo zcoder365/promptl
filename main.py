@@ -157,6 +157,7 @@ def save_writing():
         # create a list for the story
         story = written.split(' ')
 
+        # get story info, word count, and points earned
         story_info = model.get_story_length_and_points(story)
         word_count = story_info['story_length']
         points_earned = story_info['points']

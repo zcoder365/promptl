@@ -1,10 +1,7 @@
 import sqlite3
 
 USER_DATA_FILE = "data/users.db"
-USER_DATA_TABLE = "users"
-
 STORY_DATA_FILE = "data/stories.db"
-STORY_DATA_TABLE = "stories"
 
 user_conn = sqlite3.connect(USER_DATA_FILE)
 story_conn = sqlite3.connect(STORY_DATA_FILE)
@@ -14,7 +11,7 @@ def add_user_data(user_data: list):
     user_conn = sqlite3.connect(USER_DATA_FILE)
     cur = user_conn.cursor()
     
-    cur.execute("INSERT INTO" + USER_DATA_TABLE + "(username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
+    cur.execute("INSERT INTO users (username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
     
     # close the database objects
     cur.close()
@@ -43,7 +40,7 @@ def find_user(user_name: str):
     cur = user_conn.cursor()
     
     # query to check if the user exists
-    cur.execute("SELECT 1 FROM users WHERE user_name = ?", (user_name))
+    cur.execute("SELECT 1 FROM users WHERE user_name = ?", user_name)
     result = cur.fetchone()
     
     user_conn.close()

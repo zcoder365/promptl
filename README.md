@@ -4,7 +4,7 @@ A web app to make writing fun and rewarding for kids with learning differences.
 ## User Interface
 To view the user interface, go to the [UserInterface](https://github.com/zcoder365/promptl/tree/main/UserInterface) directory.
 
-## Sarn points!
+## Earn points!
 By writing a certain number of words in your stories, you can earn points! Write over 70 words and use all 5 words in the prompt to earn points, and write over 100 words to get bonus points! (Your words are tracked underneath the textbox where you write your story.)
 
 ## Save your work!

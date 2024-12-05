@@ -11,4 +11,4 @@ Click the "publish" button at the bottom of the page to save your work (don't wo
 You can view your prior stories and make changes to them by clicking "prior changes" in the navigation bar. This doesn't change the number of points you earn for the story though.
 
 ## User Interface
-Go [here](https://github.com/zcoder365/promptl/blob/main/UserInterface/Screenshot%202024-12-05%20at%204.17.10%E2%80%AFPM.png) (or UserInterface/HomeScreen in this repo) to view the homescreen of the website.
+To view the user interface, go to the UserInterface directory [here](https://github.com/zcoder365/promptl/tree/main/UserInterface).

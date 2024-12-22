@@ -1,16 +1,13 @@
 import random
 
 def gen_name():
-	names = []
-
-	name_file = open('text/names.txt', 'r')
-	name_data = name_file.read()
-	names = name_data.replace('\n', ',').split(',')
-	
+	with open("text/names.txt", "r") as name_file:
+		name_data = name_file.read()
+		names = name_data.replace("\n", ",").split(',')
+        
 	name = random.choice(names)
-	name = name.upper()
-
-	return name
+	return name.upper()
+        
 
 def gen_job():
 	jobs = []

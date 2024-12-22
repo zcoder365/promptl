@@ -200,12 +200,11 @@ def get_user_points(username: str):
     user_conn = sqlite3.connect(USER_DATA_FILE)
     
     cursor = user_conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-    user = cursor.fetchone()
-    points = user[4]
+    cursor.execute("SELECT points FROM users WHERE username = ?", (username,))
+    points = cursor.fetchone()
     
     user_conn.close() # close connection
-    return points
+    return points # return points
 
 def update_user_points(username: str, new_points: int):
     user_conn = sqlite3.connect(USER_DATA_FILE)

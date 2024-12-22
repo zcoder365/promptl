@@ -240,18 +240,27 @@ def read_story(story_title):
         return redirect(url_for("prior_pieces"))
     
     # check if the logged-in user is the author
-    if story[0] != session["username"]:
+    if story[0] != session["username"]: # assuming story[0] contains author username
         flash("You don't have permission to view the story.")
         return redirect(url_for('prior_pieces'))
     
 	# return the page for reading the story
     return render_template("read-story.html", story=story)
 
-# edit a story, based on the story's ID - UPDATE
+# edit a story, based on the story's ID
 @app.route("/edit-story/<story_title>")
 def edit_story(story_title):
     # get the story from the db
     story = d.find_story(story_title)
+    
+    if not story:
+        flash("Story not found.")
+        return redirect(url_for("prior_pieces"))
+    
+    # check if the logged-in user is the author
+    if story[0] != session['username']:  # assuming story[0] contains author username
+        flash('You do not have permission to edit this story.')
+        return redirect(url_for('prior_pieces'))
     
     # return the page for editing a story
     return render_template("edit-story.html", story=story)

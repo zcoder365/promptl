@@ -16,6 +16,25 @@ def gen_prompt(file_name):
     prompt = random.choice(data2)
     return prompt.upper()
 
+def gen_all_prompts():
+    prompts = {}
+    
+    for file in prompt_file_names:
+        if "bonus" in file:
+            key = "bonus"
+        elif "jobs" in file:
+            key = "jobs"
+        elif "names" in file:
+            key = "names"
+        elif "objects" in file:
+            key = "objects"
+        elif "places" in file:
+            key = "places"
+        
+        prompts[key] = gen_prompt(file)
+        
+    return prompts
+
 def gen_name():
 	with open("text/names.txt", "r") as f:
 		data = f.read()

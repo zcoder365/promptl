@@ -250,8 +250,10 @@ def get_parent_email(username: str):
         
         # return the parent email if found (None if not found)
         return result[0] if result else None
+    
     except sqlite3.Error as e:
         print(f"Database error: {e}")
         return None
+    
     finally:
         user_conn.close() # close the connection

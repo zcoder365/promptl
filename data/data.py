@@ -44,7 +44,7 @@ def add_story_data(story_data: list):
     
     cur.execute("""INSERT INTO stories (story_author, story_title, story_contents, story_word_count, prompts) VALUES (?, ?, ?, ?, ?)""", story_data)
     
-    story_conn.commit()
+    story_conn.commit() # add commit before closing connection
     story_conn.close()
 
 def view_all_user_data():

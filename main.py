@@ -14,7 +14,7 @@ d.create_databases()
 app = Flask(__name__)
 app.secret_key = 'key'
 
-# signup page when the user comes to promptl (change this so there's a landing page?)
+# page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')
 def index():
     return render_template('signup.html')
@@ -64,26 +64,35 @@ def about_page():
     return render_template('about.html')
 
 # let the user signup
-@app.route("/signup")
+@app.route("/signup", methods=['GET', 'POST'])
 def signup():
+    if request.method == "POST":
+        # get username, password, and parent email
+        username = request.form.get("username")
+        password = request.form.get("password")
+        parent_email = request.form.get("parent-email")
+        
+        # check if all required fields are filled
+        if not username or not password or not parent_email:
+            flash("Please fill in all fields.")
+            return render_template("signup.html")
+        
+        # check if the user already exists
+        if d.find_user(username):
+            flash("Username already exists.")
+            return render_template("signup.html")
+        
+        # add user and create session
+        accounts.add_user(username, password, parent_email)
+        session['username'] = username
+        
+        # redirect the user to the home/writing page
+        return redirect(url_for("home"))
+    
+    # if GET request, just show signup page
     return render_template("signup.html")
 
-# check signup for the user
-@app.route('/signup/check', methods=['POST'])
-def signup_check():
-    # get username, password, and parent email from form
-    username = request.form.get("username")
-    password = request.form.get("password")
-    parent_email = request.form.get("parent-email")
-    
-    accounts.add_user(username, password, parent_email)
-    
-    session['username'] = username
-        
-    # redirect the user to the home/writing page
-    return redirect(url_for("home"))
-
-# login route - UPDATE
+# login route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == "POST":

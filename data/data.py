@@ -238,3 +238,20 @@ def find_story(story_title: str):
     
     story_conn.close() # close database connection
     return story
+
+def get_parent_email(username: str):
+    user_conn = sqlite3.connect(USER_DATA_FILE)
+    cursor = user_conn.cursor()
+    
+    try:
+        # query to get the parent email for the specific user
+        cursor.execute("SELECT parent_email FROM users WHERE username = ?", (username,))
+        result = cursor.fetchone()
+        
+        # return the parent email if found (None if not found)
+        return result[0] if result else None
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return None
+    finally:
+        user_conn.close() # close the connection

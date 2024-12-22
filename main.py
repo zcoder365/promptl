@@ -83,7 +83,7 @@ def signup_check():
     # redirect the user to the home/writing page
     return redirect(url_for("home"))
 
-# login route - update
+# login route - UPDATE
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     return render_template("login.html")

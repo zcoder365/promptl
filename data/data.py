@@ -200,6 +200,7 @@ def get_user_points(username: str):
     user = cursor.fetchone()
     points = user[4]
     
+    user_conn.close() # close connection
     return points
 
 def update_user_points(username: str, new_points: int):

@@ -228,8 +228,9 @@ def find_story(story_title: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)
     cursor = story_conn.cursor()
     
-    cursor.execute("SELECT * FROM stories WHERE title = ?", (story_title))
+    cursor.execute("SELECT * FROM stories WHERE title = ?", (story_title,))
     
     story = cursor.fetchone()
     
+    story_conn.close() # close database connection
     return story

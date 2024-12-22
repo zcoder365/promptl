@@ -154,6 +154,7 @@ def my_account():
     num_stories = len(d.get_user_stories(username)) # get user's streak/stories written
     total_words = d.get_total_word_count(username) # get user's total word count
     points = d.get_user_points(username) # get user's points
+    parent_email = d.get_parent_email(username) # get parent email
     
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)

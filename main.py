@@ -164,11 +164,7 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@# The `login` function in the provided code is responsible for rendering the login.html template when
-# a user accesses the "/login" route. This route serves as the login page where users can input their
-# username and password to log into the application. The function itself returns the rendered
-# template for the login page.
-login_required
+@login_required
 def save_writing():
     if request.method == "POST":
         # Initialize points

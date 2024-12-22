@@ -151,7 +151,7 @@ def my_account():
     user = d.find_user(username)
     
     # find the stories they wrote
-    stories = d.get_user_stories(username)
+    num_stories = len(d.get_user_stories(username))
     
     total_words = d.get_total_word_count(username)
     

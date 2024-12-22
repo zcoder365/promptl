@@ -23,13 +23,13 @@ def gen_all_prompts():
         if "bonus" in file:
             key = "bonus"
         elif "jobs" in file:
-            key = "jobs"
+            key = "job"
         elif "names" in file:
-            key = "names"
+            key = "name"
         elif "objects" in file:
-            key = "objects"
+            key = "object"
         elif "places" in file:
-            key = "places"
+            key = "place"
         
         prompts[key] = gen_prompt(file)
         

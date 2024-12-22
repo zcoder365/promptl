@@ -129,10 +129,8 @@ def my_account():
     # get the user's username from the session
     username = session['username']
     
-    # # find the user in the database
-    # user = d.find_user(username)
-    # if not user:
-    #     return redirect(url_for("login"))
+    # find the user in the database
+    user = d.find_user(username)
     
     # find the stories they wrote
     stories = d.get_user_stories(username)
@@ -140,7 +138,7 @@ def my_account():
     total_words = d.get_total_word_count(username)
     
     # return a page that shows the user's information
-    return render_template('my-account.html', users=users, total_words=total_words)
+    return render_template('my-account.html', users=user, total_words=total_words)
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])

@@ -212,13 +212,19 @@ def edit_info():
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)
 
-# change parent email page - UPDATE
+# change parent email page
 @app.route('/change-email/<userID>', methods=['POST', 'GET'])
+@login_required # add login check
 def save_info(userID):
     # get the user's parent's email 
     parent_email = request.form['changed']
     
-    d.change_parent_email(parent_email, session['username'])
+    # only update if a parent email is provided
+    if parent_email:
+        d.change_parent_email(parent_email, session['username'])
+        flash("Email updated successfully!")
+    else:
+        flash("Please provide an email address.")
 
 	# return to the user's account page
     return redirect(url_for('my_account'))

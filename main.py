@@ -110,19 +110,6 @@ def login():
     # if GET request, just show the login page
     return render_template("login.html")
 
-# # LOGIN CHECK ROUTE
-# @app.route('/login/check', methods=['POST'])
-# def login_check():
-#     # get user from form and determine if they exist
-#     username = request.form.get("username")
-#     password = request.form.get("password")
-    
-#     # if the username or password doesn't exist
-#     if username == "" or username == None or password == "" or password == None:
-#         flash('Please provide both username and password.')
-    
-#     return redirect(url_for("home"))
-
 # logout route
 @app.route('/logout')
 def logout():

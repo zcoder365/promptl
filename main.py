@@ -126,29 +126,22 @@ def prior_pieces():
     # return a page with the user's prior stories
     return render_template('prior-pieces.html', writing=stories)
 
-# user's account page - UPDATE
+# user's account page
 @app.route('/my-account')
 def my_account():
     # get the user's username from the session
     username = session['username']
-
-	# set a variable to keep track of the number of words the user wrote
-    total_words = 0
     
     # find the user in the database
     user = d.find_user(username)
+    if not user:
+        return redirect(url_for("login"))
     
     # find the stories they wrote
     stories = d.get_user_stories(username)
-
-	# for each story in the database...
-    for story in stories:
-        # get the user's total number of words they wrote
-        word_count = d.get_total_word_count(username)
-        
-        # increase the total_words variable by the word count of each story
-        total_words += word_count
-        
+    
+    total_words = d.get_total_word_count(username)
+    
     # return a page that shows the user's information
     return render_template('my-account.html', users=user, total_words=total_words)
 

@@ -265,28 +265,4 @@ def edit_story(story_title):
     # return the page for editing a story
     return render_template("edit-story.html", story=story)
 
-# REVIEW - DO I NEED IN THE FUTURE?
-# # update story route - UPDATE
-# @app.route('/update-story/<story_title>')
-# def update_story(story_title):
-#     if request.method == "POST":
-#         # get the story from the database
-#         # writing = client["promptl_data"]['writing']
-#         story = d.find_story(story_title)
-        
-#         # get the updated story from the web page
-#         updated_story = request.form['updated_story']
-        
-#         # get the id of the story using ObjectID from PyMongo
-#         myquery = {"_id": ObjectId(storyID)}
-        
-#         # get the new values from the form
-#         newvalues = {"$set": {'story': story}}
-        
-#         # update the story with the story (gotten by ID) with the new values
-#         writing.update_one(myquery, newvalues)
-        
-#     # go back to the prior pieces page
-#     return redirect(url_for('prior_pieces'))
-
 app.run(port="8080", debug=True)

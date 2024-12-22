@@ -147,6 +147,8 @@ def my_account():
     # get the user's username from the session
     username = session['username']
     
+    print(f"\n{d.view_all_user_data()}\n")
+    
     # find the user in the database
     user = d.find_user(username)
     

@@ -156,7 +156,7 @@ def my_account():
     total_words = d.get_total_word_count(username)
     
     # return a page that shows the user's information
-    return render_template('my-account.html', users=user, total_words=total_words)
+    return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=streak)
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])

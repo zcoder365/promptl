@@ -33,6 +33,7 @@ def login_required(f):
 
 # home page route
 @app.route('/home')
+@login_required # call the function decorator
 def home():
     # generate the prompts
     name = prompts.gen_name()
@@ -146,11 +147,12 @@ def my_account():
 
 # save writing route - UPDATE
 @app.route('/save-writing', methods=['GET', 'POST'])
+@login_required # call function decorator for login check
 def save_writing():
     if request.method == "POST":
         points = 0
         
-        # get the story content, title
+        # get the story content and title
         written = request.form['story']
         title = request.form['title']
         

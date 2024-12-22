@@ -14,7 +14,7 @@ d.create_databases()
 app = Flask(__name__)
 app.secret_key = 'key'
 
-# login signup page when the user comes to promptl (change this so there's a landing page?)
+# signup page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')
 def index():
     return render_template('signup.html')
@@ -86,6 +86,28 @@ def signup_check():
 # login route - UPDATE
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if request.method == "POST":
+        # get username and password from the form
+        username = request.form.get("username")
+        password = request.form.get("password")
+        
+        # check if username or password is empty
+        if not username or not password:
+            flash("Please provide boht username and password.")
+            return render_template("login.html")
+        
+        # use the accounts module to check login
+        logged_in = accounts.login_check(username, password)
+        
+        if logged_in:
+            # set the session
+            session['username'] = username
+            return redirect(url_for("home"))
+        else:
+            flash("Invalid username or password.")
+            return render_template("login.html")
+    
+    # if GET request, just show the login page
     return render_template("login.html")
 
 # # LOGIN CHECK ROUTE
@@ -142,7 +164,11 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required
+@# The `login` function in the provided code is responsible for rendering the login.html template when
+# a user accesses the "/login" route. This route serves as the login page where users can input their
+# username and password to log into the application. The function itself returns the rendered
+# template for the login page.
+login_required
 def save_writing():
     if request.method == "POST":
         # Initialize points

@@ -113,11 +113,15 @@ def logout():
     # return the user to the login/signup page
     return redirect(url_for('index'))
 
-# prior pieces route - UPDATE
+# prior pieces route
 @app.route('/prior-pieces')
 def prior_pieces():
     # find the user's stories
     stories = d.get_user_stories(session['username'])
+    
+    # handle the case where users have no stories
+    if not stories:
+        stories = []
     
     # return a page with the user's prior stories
     return render_template('prior-pieces.html', writing=stories)

@@ -1,6 +1,12 @@
 import random
 
-prompt_file_names = ["bonus.txt", "jobs.txt", "names.txt", "objects.txt", "places.txt"]
+BONUS_FILE = "bonus.txt"
+JOBS_FILE = "jobs.txt"
+NAMES_FILE = "names.txt"
+OBJECTS_FILE = "objects.txt"
+PLACES_FILE = "places.txt"
+
+prompt_file_names = [BONUS_FILE, JOBS_FILE, NAMES_FILE, OBJECTS_FILE, PLACES_FILE]
 
 def gen_prompt(file_name):
     with open("text/" + file_name, "r") as f:

@@ -1,25 +1,21 @@
 import random
 
 def gen_name():
-	with open("text/names.txt", "r") as name_file:
-		name_data = name_file.read()
-		names = name_data.replace("\n", ",").split(',')
+	with open("text/names.txt", "r") as f:
+		data = f.read()
+		names = data.replace("\n", ",").split(',')
         
 	name = random.choice(names)
 	return name.upper()
         
 
 def gen_job():
-	jobs = []
-
-	job_file = open('text/jobs.txt', 'r')
-	job_data = job_file.read()
-	jobs = job_data.replace('\n', ',').split(',')
-
-	job = random.choice(jobs)
-	job = job.upper()
-
-	return job
+	with open("text/jobs.txt", "r") as f:
+		data = f.read()
+		jobs = data.replace("\n", ",").split(',')
+        
+	name = random.choice(jobs)
+	return name.upper()
 
 def gen_object():
 	objects = []

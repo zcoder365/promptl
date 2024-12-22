@@ -101,8 +101,7 @@ def login_check():
         
     logged_in = accounts.login_check(username, password)
     
-    if logged_in:
-        return redirect(url_for("home"))
+    return redirect(url_for("home"))
 
 # logout route
 @app.route('/logout')

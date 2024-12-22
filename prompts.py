@@ -1,5 +1,13 @@
 import random
 
+def gen_prompt(file_name):
+    with open("text/" + file_name, "r") as f:
+        data = f.read()
+        data2 = data.replace("\n", ",").split(',')
+        
+    prompt = random.choice(data2)
+    return prompt.upper()
+
 def gen_name():
 	with open("text/names.txt", "r") as f:
 		data = f.read()

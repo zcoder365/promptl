@@ -132,10 +132,10 @@ def my_account():
     # get the user's username from the session
     username = session['username']
     
-    # find the user in the database
-    user = d.find_user(username)
-    if not user:
-        return redirect(url_for("login"))
+    # # find the user in the database
+    # user = d.find_user(username)
+    # if not user:
+    #     return redirect(url_for("login"))
     
     # find the stories they wrote
     stories = d.get_user_stories(username)

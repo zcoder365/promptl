@@ -198,13 +198,21 @@ def change_parent_email(parent_email, username):
     
 def get_user_points(username: str):
     user_conn = sqlite3.connect(USER_DATA_FILE)
-    
     cursor = user_conn.cursor()
-    cursor.execute("SELECT points FROM users WHERE username = ?", (username,))
-    points = cursor.fetchone()
     
-    user_conn.close() # close connection
-    return points # return points
+    try:
+        cursor.execute("SELECT points FROM users WHERE username = ?", (username,))
+        result = cursor.fetchone()
+        
+        # If result exists, return the points (which is the first column), otherwise return 0
+        return result[0] if result else 0
+        
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return 0
+        
+    finally:
+        user_conn.close()
 
 def update_user_points(username: str, new_points: int):
     user_conn = sqlite3.connect(USER_DATA_FILE)

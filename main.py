@@ -98,8 +98,6 @@ def login_check():
     # if the username or password doesn't exist
     if username == "" or username == None or password == "" or password == None:
         flash('Please provide both username and password.')
-        
-    logged_in = accounts.login_check(username, password)
     
     return redirect(url_for("home"))
 

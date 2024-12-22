@@ -150,13 +150,13 @@ def my_account():
     # find the user in the database
     user = d.find_user(username)
     
-    # find the stories they wrote
-    num_stories = len(d.get_user_stories(username))
-    
-    total_words = d.get_total_word_count(username)
+    # get user's info
+    num_stories = len(d.get_user_stories(username)) # get user's streak/stories written
+    total_words = d.get_total_word_count(username) # get user's total word count
+    points = d.get_user_points(username) # get user's points
     
     # return a page that shows the user's information
-    return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=streak)
+    return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])

@@ -4,8 +4,8 @@
 <div align='center'>
 	<h2 style="padding-top:10px">My Account</h2>
 	
-	<p><b>Username:</b> {{ users.username }}</p>
-	<p><b>Parent Email:</b> {{ users.parent_email }}</p>
+	<p><b>Username:</b> {{ username }}</p>
+	<p><b>Parent Email:</b> {{ parent_email }}</p>
 
 	<form action='/my-account/edit'>
 		<input type="submit" value="Edit Parent Email">
@@ -16,12 +16,12 @@
 	<table align='center'>
 		<tr>
 			<td style="padding:10px">My Streak:</td>
-			<td style="padding:10px">{{ users.streak }} stories</td>
+			<td style="padding:10px">{{ streak }} stories</td>
 		</tr>
 		
 		<tr>
 			<td style="padding:10px">Total Points:</td>
-			<td style="padding:10px">{{ users.points }} points</td>
+			<td style="padding:10px">{{ points }} points</td>
 		</tr>
 
 		<tr>

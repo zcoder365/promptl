@@ -148,53 +148,65 @@ def my_account():
     # return a page that shows the user's information
     return render_template('my-account.html', users=user, total_words=total_words)
 
-# save writing route - UPDATE
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required # call function decorator for login check
+@login_required
 def save_writing():
     if request.method == "POST":
+        # Initialize points
         points = 0
         
-        # get the story content and title
+        # Get the story content and title
         written = request.form['story']
         title = request.form['title']
         
-        # get the user's streak, increase it by one, and update it
+        # Get the prompts from the form
+        prompts = {
+            'name': request.form.get('name'),
+            'job': request.form.get('job'),
+            'object': request.form.get('object'),
+            'place': request.form.get('place'),
+            'bonus': request.form.get('bonus')
+        }
+        
+        # Get the user's streak, increase it by one, and update it
         streak = int(d.get_user_streak(session['username']))
         new_streak = streak + 1
-        
-        # Update the selected user and assign new values
         d.update_user_streak(session['username'], new_streak)
         
-        # create a list for the story
+        # Create a list for the story
         story = written.split(' ')
-
-        # get story info, word count, and points earned
-        story_info = model.get_story_length_and_points(story)
+        
+        # Get story info, word count, and points earned
+        story_info = model.get_story_length_and_points(story, prompts)  # Added prompts parameter
         word_count = story_info['story_length']
         points_earned = story_info['points']
         
         if word_count >= 100:
             points_earned += 25
             
-            story_data = [(session['username'], title, story, word_count, prompts)]
-            
+            # Create story data tuple with correct format
+            story_data = (session['username'], title, written, word_count, str(prompts))  # Changed to tuple, converted prompts to string
             d.add_story_data(story_data)
         
-        # generate a random compliment for the user since they completed their story
+        # Generate a random compliment
         compliment = prompts.gen_compliment()
         
-        # find the user and get their points
-        user = d.find_user(session['username'])
+        # Get user points and update them
         user_points = d.get_user_points(session['username'])
-        
-        # update the user's points
-        new_points = points + user_points
-        
+        new_points = points_earned + user_points  # Changed to points_earned instead of points
         d.update_user_points(session['username'], new_points)
         
-    # return the congrats page
-    return render_template("congrats.html", title=title, story=story, words=word_count, written=word_count, compliment=compliment, points=points)
+        # Return the congrats page with updated values
+        return render_template("congrats.html", 
+                            title=title, 
+                            story=written,  # Changed from story list to original text
+                            words=word_count, 
+                            written=word_count, 
+                            compliment=compliment, 
+                            points=points_earned)  # Changed to points_earned
+    
+    # If not POST method, redirect to home
+    return redirect(url_for('home'))
 
 # edit user's account page
 @app.route("/my-account/edit")

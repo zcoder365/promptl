@@ -1,5 +1,7 @@
 import random
 
+prompt_file_names = ["bonus.txt", "jobs.txt", "names.txt", "objects.txt", "places.txt"]
+
 def gen_prompt(file_name):
     with open("text/" + file_name, "r") as f:
         data = f.read()

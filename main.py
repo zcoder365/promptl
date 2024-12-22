@@ -197,13 +197,7 @@ def save_writing():
         d.update_user_points(session['username'], new_points)
         
         # Return the congrats page with updated values
-        return render_template("congrats.html", 
-                            title=title, 
-                            story=written,  # Changed from story list to original text
-                            words=word_count, 
-                            written=word_count, 
-                            compliment=compliment, 
-                            points=points_earned)  # Changed to points_earned
+        return render_template("congrats.html", title=title, story=written, words=word_count, written=word_count, compliment=compliment, points=points_earned)  # Changed to points_earned
     
     # If not POST method, redirect to home
     return redirect(url_for('home'))

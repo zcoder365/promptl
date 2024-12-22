@@ -1,6 +1,7 @@
 # general imports
 from flask import *
 import os
+from functools import wraps # preserves function metadata
 
 # import other files
 import prompts, accounts, model
@@ -17,6 +18,18 @@ app.secret_key = 'key'
 @app.route('/')
 def index():
     return render_template('signup.html')
+
+# added to check if the user is logged in
+def login_required(f):
+    @wraps(f)
+    
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return redirect(url_for('login'))
+    
+        return f(*args, **kwargs)
+    
+    return decorated_function
 
 # home page route
 @app.route('/home')

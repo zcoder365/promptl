@@ -1,5 +1,6 @@
 def get_story_length_and_points(story, prompts):
     points = 0
+    words_used = 0 # was referenced, but never created
     
     # get it's length/number of words
     words_written = len(story)

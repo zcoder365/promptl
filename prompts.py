@@ -35,58 +35,58 @@ def gen_all_prompts():
         
     return prompts
 
-def gen_name():
-	with open("text/names.txt", "r") as f:
-		data = f.read()
-		names = data.replace("\n", ",").split(',')
+# def gen_name():
+# 	with open("text/names.txt", "r") as f:
+# 		data = f.read()
+# 		names = data.replace("\n", ",").split(',')
         
-	name = random.choice(names)
-	return name.upper()
+# 	name = random.choice(names)
+# 	return name.upper()
         
 
-def gen_job():
-	with open("text/jobs.txt", "r") as f:
-		data = f.read()
-		jobs = data.replace("\n", ",").split(',')
+# def gen_job():
+# 	with open("text/jobs.txt", "r") as f:
+# 		data = f.read()
+# 		jobs = data.replace("\n", ",").split(',')
         
-	name = random.choice(jobs)
-	return name.upper()
+# 	name = random.choice(jobs)
+# 	return name.upper()
 
-def gen_object():
-	objects = []
+# def gen_object():
+# 	objects = []
 
-	object_file = open('text/objects.txt', 'r')
-	object_data = object_file.read()
-	objects = object_data.replace('\n', ',').split(",")
+# 	object_file = open('text/objects.txt', 'r')
+# 	object_data = object_file.read()
+# 	objects = object_data.replace('\n', ',').split(",")
 
-	object = random.choice(objects)
-	object = object.upper()
+# 	object = random.choice(objects)
+# 	object = object.upper()
 
-	return object
+# 	return object
 
-def gen_place():
-	places = []
+# def gen_place():
+# 	places = []
 
-	place_file = open('text/places.txt', 'r')
-	place_data = place_file.read()
-	places = place_data.replace('\n', ",").split(",")
+# 	place_file = open('text/places.txt', 'r')
+# 	place_data = place_file.read()
+# 	places = place_data.replace('\n', ",").split(",")
 	
-	place = random.choice(places)
-	place = place.upper()
+# 	place = random.choice(places)
+# 	place = place.upper()
 
-	return place
+# 	return place
 
-def gen_bonus():
-	bonus = []
+# def gen_bonus():
+# 	bonus = []
 	
-	bonus_file = open('text/bonus.txt', 'r')
-	bonus_data = bonus_file.read()
-	bonus = bonus_data.replace('\n', ',').split(",")
+# 	bonus_file = open('text/bonus.txt', 'r')
+# 	bonus_data = bonus_file.read()
+# 	bonus = bonus_data.replace('\n', ',').split(",")
 	
-	bonus = random.choice(bonus)
-	bonus = bonus.upper()
+# 	bonus = random.choice(bonus)
+# 	bonus = bonus.upper()
 
-	return bonus
+# 	return bonus
 
 def gen_compliment():
 	compliments = ['Great Job!', 'Excellent Work!', 'Super Job!', 'Way to Go!']

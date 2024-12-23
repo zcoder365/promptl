@@ -4,7 +4,9 @@ import os
 from functools import wraps # preserves function metadata
 
 # import other files
-import prompts, accounts, model
+import prompts
+import accounts
+import model
 import data.data as d
 
 # create databases
@@ -179,37 +181,36 @@ def save_writing():
         
         # validate input
         is_valid, error = model.validate_story_input(written, title, prompts)
+        if not is_valid:
+            flash(error)
+            return redirect(url_for("home"))
         
-        # Get the user's streak, increase it by one, and update it
-        streak = int(d.get_user_streak(session['username']))
-        new_streak = streak + 1
-        d.update_user_streak(session['username'], new_streak)
-        
-        # Create a list for the story
-        story = written.split(' ')
-        
-        # Get story info, word count, and points earned
-        story_info = model.get_story_length_and_points(story, prompts)  # Added prompts parameter
-        word_count = story_info['story_length']
-        points_earned = story_info['points']
-        
-        if word_count >= 100:
-            points_earned += 25
+        try:
+            # process the story
+            story = written.split() # split the story into a list
+            word_count = len(story) # get the story length
+            points_earned = model.process_story_points(story, prompts, word_count) # get points earned
             
-            # Create story data tuple with correct format
-            story_data = (session['username'], title, written, word_count, str(prompts))  # Changed to tuple, converted prompts to string
-            d.add_story_data(story_data)
+            # if word count is >= 70, save the story
+            if word_count >= 70:
+                model.save_story_to_db(session['username'], title, written, word_count, prompts)
+                
+                # update user stats
+                streak = int(d.get_user_streak(session['username'])) # CREATE GET_USER_STREAK
+                d.update_user_streak(session['username'], streak+1)
+                
+                current_points = d.get_user_points()
+                d.update_user_points(session['username'], current_points + points_earned)
+                
+            # generate compliment message - FIX
+            compliment = prompts.gen_compliment()
+            
+            return render_template("congrats.html", title=title, story=written, words=word_count, compliment=compliment, points=points_earned)
         
-        # Generate a random compliment
-        compliment = prompts.gen_compliment()
-        
-        # Get user points and update them
-        user_points = d.get_user_points(session['username'])
-        new_points = points_earned + user_points  # Changed to points_earned instead of points
-        d.update_user_points(session['username'], new_points)
-        
-        # Return the congrats page with updated values
-        return render_template("congrats.html", title=title, story=written, words=word_count, written=word_count, compliment=compliment, points=points_earned)  # Changed to points_earned
+        except Exception as e:
+            logging.error(f"Error saving story: {str(e)}")
+            flash("An error occurred while saving your story. Please try again.")
+            return redirect(url_for("home"))
     
     # If not POST method, redirect to home
     return redirect(url_for('home'))

@@ -164,11 +164,11 @@ def my_account():
 @login_required
 def save_writing():
     if request.method == "POST":
-        # Get the story content and title
-        written = request.form['story']
-        title = request.form['title']
+        # get the story content and title
+        written = request.form.get('story')
+        title = request.form.get('title')
         
-        # Get the prompts from the form
+        # get the prompts from the form
         prompts = {
             'name': request.form.get('name'),
             'job': request.form.get('job'),
@@ -176,6 +176,9 @@ def save_writing():
             'place': request.form.get('place'),
             'bonus': request.form.get('bonus')
         }
+        
+        # validate input
+        is_valid, error = model.validate_story_input(written, title, prompts)
         
         # Get the user's streak, increase it by one, and update it
         streak = int(d.get_user_streak(session['username']))

@@ -195,7 +195,7 @@ def save_writing():
             return redirect(url_for("login"))
         
         # Save story and update user stats
-        save_story_to_db(username, title, written, word_count, prompts)
+        save_story_to_db(username, title, written_raw, word_count, prompts)
         
         # Update user streak
         streak = int(d.get_user_streak(username))
@@ -209,7 +209,7 @@ def save_writing():
         compliment = gen_compliment() 
         
         # Render success page
-        return render_template("congrats.html", title=title, story=written, words=word_count, compliment=compliment, points=points_earned)
+        return render_template("congrats.html", title=title, story=written_raw, words=word_count, compliment=compliment, points=points_earned)
     
     # handle GET request
     return redirect(url_for('home'))

@@ -261,3 +261,28 @@ def get_total_word_count(username: str) -> int:
         return 0
     finally:
         conn.close()
+
+def get_user_streak(username: str) -> int:
+    """
+    Get a user's current streak count.
+    
+    Args:
+        username: Username to get streak for
+        
+    Returns:
+        Current streak count, or 0 if user not found or error occurs
+    """
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT streak FROM users WHERE username = ?",
+            (username,)
+        )
+        result = cur.fetchone()
+        return result[0] if result else 0
+    except sqlite3.Error as e:
+        logging.error(f"Error getting user streak: {e}")
+        return 0
+    finally:
+        conn.close()

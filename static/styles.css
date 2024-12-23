@@ -37,6 +37,9 @@ nav button {
     background-size: cover;
     background-repeat: no-repeat;
 
+    /* update border */
+    border: 0px solid transparent;
+
     /* optional: remove default button text */
     color: transparent;
 }

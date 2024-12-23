@@ -26,3 +26,17 @@ nav button {
     margin-left: 5px;
     margin-right: 5px;
 }
+
+.image-submit {
+    /* set dimensions */
+    width: 4cm;
+    height: 4cm;
+    
+    /* add the background image */
+    background-image: url("/static/library.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    /* optional: remove default button text */
+    color: transparent;
+}

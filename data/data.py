@@ -205,21 +205,19 @@ def update_user_streak(username, new_streak):
         conn.close()
     
 def change_parent_email(parent_email, username):
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    cursor = user_conn.cursor()
-    
-    # Create new values to update the user
-    cursor.execute("UPDATE users SET parent_email = ? WHERE username = ?", (parent_email, username))
-    
-    # Commit the changes to the database
-    user_conn.commit()
-    
-    # Optionally fetch the newly edited user (not necessary if you're just redirecting)
-    cursor.execute("SELECT * FROM users WHERE id = ?", (username))
-    edited_user = cursor.fetchone()  # You can process this if needed
-
-    # close the connection
-    user_conn.close()
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE users SET parent_email = ? WHERE username = ?",
+            (parent_email, username)
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Error changing parent email: {e}")
+        raise
+    finally:
+        conn.close()
     
 def get_user_points(username: str):
     user_conn = sqlite3.connect(USER_DATA_FILE)

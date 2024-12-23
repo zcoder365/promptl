@@ -164,9 +164,6 @@ def my_account():
 @login_required
 def save_writing():
     if request.method == "POST":
-        # Initialize points
-        points = 0
-        
         # Get the story content and title
         written = request.form['story']
         title = request.form['title']

@@ -116,27 +116,20 @@ def find_user(user_name: str) -> bool:
         conn.close()
 
 def login_user(username: str, password: str):
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    cur = user_conn.cursor()
-    
     try:
-        cur.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT 1 FROM users WHERE username = ? AND password = ?", 
+            (username, password)
+        )
         result = cur.fetchone()
-        
-        if result:
-            print("Login successful!")
-            return True
-    
-        else:
-            print("Login failed. Invalid username or password.")
-            return False
-        
+        return result is not None
     except sqlite3.Error as e:
-        print(f"An error occurred: {e}")
+        logging.error(f"Error during login: {e}")
         return False
-    
     finally:
-        user_conn.close()
+        conn.close()
         
 def get_user_stories(username: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)

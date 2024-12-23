@@ -6,7 +6,7 @@ import logging
 
 # import other files
 from prompts import *
-from accounts import *
+from helpers.accounts import *
 from model import *
 import data.data as d
 

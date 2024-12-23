@@ -195,7 +195,7 @@ def update_user_streak(username: str, new_streak: int):
     finally:
         conn.close()
 
-# Story functions
+# STORY FUNCTIONS
 def add_story_data(story_data: tuple):
     """Add a new story to the database."""
     try:

@@ -12,13 +12,24 @@ def get_db_connection(db_file: str) -> sqlite3.Connection:
         raise
 
 def create_user_db():
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    
-    cur = user_conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS users (username, password, parent_email, streak, points)")
-    user_conn.commit()
-    
-    user_conn.close()
+    try:
+        conn = get_db_connection(USER_DATA_FILE) # connect to the database
+        cur = conn.cursor() # create a cursor
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                username TEXT PRIMARY KEY,
+                password TEXT NOT NULL,
+                parent_email TEXT NOT NULL,
+                streak INTEGER DEFAULT 0,
+                points INTEGER DEFAULT 0
+            )
+        """)
+        conn.commit() # commit the changes
+    except sqlite3.Error as e:
+        logging.error(f"Error creating user database: {e}")
+        raise
+    finally:
+        conn.close()
 
 def create_stories_db():
     story_conn = sqlite3.connect(STORY_DATA_FILE)

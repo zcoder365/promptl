@@ -5,9 +5,9 @@ from functools import wraps # preserves function metadata
 import logging
 
 # import other files
-from prompts import *
 from helpers.accounts import *
-from model import *
+from helpers.model import *
+from helpers.prompts import *
 import data.data as d
 
 # create databases

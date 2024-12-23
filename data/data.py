@@ -32,13 +32,28 @@ def create_user_db():
         conn.close()
 
 def create_stories_db():
-    story_conn = sqlite3.connect(STORY_DATA_FILE)
-    cur = story_conn.cursor()
-    
-    cur.execute("CREATE TABLE IF NOT EXISTS stories (story_author, story_title, story_contents, story_word_count, prompts)")
-    
-    story_conn.commit()
-    story_conn.close()
+    try:
+        conn = get_db_connection(STORY_DATA_FILE) # connect to the database
+        cur = conn.cursor() # create a cursor
+        
+        # create the table
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS stories (
+                story_author TEXT NOT NULL,
+                story_title TEXT NOT NULL,
+                story_contents TEXT NOT NULL,
+                story_word_count INTEGER NOT NULL,
+                prompts TEXT NOT NULL,
+                FOREIGN KEY (story_author) REFERENCES users(username)
+            )
+        """)
+        
+        conn.commit() # commit the table/changes
+    except sqlite3.Error as e:
+        logging.error(f"Error creating stories database: {e}")
+        raise
+    finally:
+        conn.close() # close the connection
 
 def create_databases():
     # create databases

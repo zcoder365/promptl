@@ -2,6 +2,7 @@
 from flask import *
 import os
 from functools import wraps # preserves function metadata
+import logging
 
 # import other files
 from prompts import *
@@ -38,7 +39,7 @@ def login_required(f):
 @login_required # call the function decorator
 def home():
     # generate the prompts
-    p = prompts.gen_all_prompts()
+    p = gen_all_prompts()
     
     # allocate each prompt to a variable
     name = p['name']
@@ -85,7 +86,7 @@ def signup():
             return render_template("signup.html")
         
         # add user and create session
-        accounts.add_user(username, password, parent_email)
+        add_user(username, password, parent_email)
         session['username'] = username
         
         # redirect the user to the home/writing page
@@ -108,7 +109,7 @@ def login():
             return render_template("login.html")
         
         # use the accounts module to check login
-        logged_in = accounts.login_check(username, password)
+        logged_in = login_check(username, password)
         
         if logged_in:
             # set the session
@@ -180,7 +181,7 @@ def save_writing():
         }
         
         # validate input
-        is_valid, error = model.validate_story_input(written, title, prompts)
+        is_valid, error = validate_story_input(written, title, prompts)
         if not is_valid:
             flash(error)
             return redirect(url_for("home"))
@@ -189,11 +190,11 @@ def save_writing():
             # process the story
             story = written.split() # split the story into a list
             word_count = len(story) # get the story length
-            points_earned = model.process_story_points(story, prompts, word_count) # get points earned
+            points_earned = process_story_points(story, prompts, word_count) # get points earned
             
             # if word count is >= 70, save the story
             if word_count >= 70:
-                model.save_story_to_db(session['username'], title, written, word_count, prompts)
+                save_story_to_db(session['username'], title, written, word_count, prompts)
                 
                 # update user stats
                 streak = int(d.get_user_streak(session['username'])) # CREATE GET_USER_STREAK

@@ -181,20 +181,9 @@ def save_writing():
             'bonus': request.form.get('bonus')
         }
         
-        # Validate input
-        is_valid, error = validate_story_input(written, title, prompts)
-        if not is_valid:
-            flash(error)
-            return redirect(url_for("home"))
-        
         # Process the story
         story = written.split()  # Split the story into words
         word_count = len(story)
-        
-        # Check minimum word count requirement
-        if word_count < 70:
-            flash("Your story must be at least 70 words long.")
-            return redirect(url_for("home"))
         
         # Calculate points earned for the story
         points_earned = process_story_points(story, prompts, word_count)

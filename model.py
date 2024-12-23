@@ -1,10 +1,7 @@
 def get_story_length_and_points(story, prompts):
     points = 0
-    words_used = 0 # was referenced, but never created
-    
-    # get it's length/number of words
-    words_written = len(story)
-    story_text = " ".join(story).upper() # need to fix the story checking since it's a list, not a string
+    words_written = len(story) # get story length
+    story_text = " ".join(story).upper() # convert story to a list
 
     if words_written >= 70:
         if prompts['name'] in story_text:

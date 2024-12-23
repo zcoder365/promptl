@@ -102,22 +102,18 @@ def view_all_user_data():
 
     user_conn.close()
     
-def find_user(user_name: str):
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    cur = user_conn.cursor()
-    
-    # query to check if the user exists
-    cur.execute("SELECT 1 FROM users WHERE username = ?", (user_name,))
-    result = cur.fetchone()
-    
-    user_conn.close()
-    
-    user_exists = False
-    
-    if result != None:
-        user_exists = True
-        
-    return user_exists
+def find_user(user_name: str) -> bool:
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute("SELECT 1 FROM users WHERE username = ?", (user_name,))
+        result = cur.fetchone()
+        return result is not None
+    except sqlite3.Error as e:
+        logging.error(f"Error finding user: {e}")
+        raise
+    finally:
+        conn.close()
 
 def login_user(username: str, password: str):
     user_conn = sqlite3.connect(USER_DATA_FILE)

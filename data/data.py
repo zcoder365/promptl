@@ -91,6 +91,7 @@ def add_story_data(story_data: list):
     finally:
         conn.close()
 
+# NEED???
 def view_all_user_data():
     # connect to the user database
     user_conn = sqlite3.connect(USER_DATA_FILE)

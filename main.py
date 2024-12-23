@@ -181,8 +181,8 @@ def save_writing():
             'bonus': request.form.get('bonus')
         }
         
-        # Process the story
-        story = written.split()  # Split the story into words
+        # process the story
+        story = written.split()  # split the story into words
         word_count = len(story)
         
         # Calculate points earned for the story

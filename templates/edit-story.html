@@ -4,7 +4,7 @@
 <div align='center'>
 	<h2>{{ story.title }}</h2>
 	<p style="font-size:18px"><b>Word Count:</b> {{ story.word_count }}</p>
-	<p style="font-sixe:18px"><b>Prompt:</b> {{ story.prompts.name }}, {{ story.prompts.job }}, {{ story.prompts.place }}, {{ story.prompts.object }}, {{ story.prompts.bonus }}</p>
+	<p style="font-size:18px"><b>Prompt:</b> {{ story.prompts.name }}, {{ story.prompts.job }}, {{ story.prompts.place }}, {{ story.prompts.object }}, {{ story.prompts.bonus }}</p>
 	<div style="width:80%">
 		<form action="/update-story/<storyID>" method="post">
 			<textarea name="updated_story" rows="10" cols="90">{{ story.story }}</textarea>

@@ -168,75 +168,68 @@ def my_account():
 def save_writing():
     # Handle POST request for saving the writing
     if request.method == "POST":
-        try:
-            # Get the story content and title from the form
-            written = request.form.get('story')
-            title = request.form.get('title')
-            
-            # Get the prompts from the form
-            prompts = {
-                'name': request.form.get('name'),
-                'job': request.form.get('job'),
-                'object': request.form.get('object'),
-                'place': request.form.get('place'),
-                'bonus': request.form.get('bonus')
-            }
-            
-            # Validate input
-            is_valid, error = validate_story_input(written, title, prompts)
-            if not is_valid:
-                flash(error)
-                return redirect(url_for("home"))
-            
-            # Process the story
-            story = written.split()  # Split the story into words
-            word_count = len(story)
-            
-            # Check minimum word count requirement
-            if word_count < 70:
-                flash("Your story must be at least 70 words long.")
-                return redirect(url_for("home"))
-            
-            # Calculate points earned for the story
-            points_earned = process_story_points(story, prompts, word_count)
-            
-            # Get current user stats
-            username = session.get('username')
-            if not username:
-                flash("Session expired. Please log in again.")
-                return redirect(url_for("login"))
-            
-            # Save story and update user stats
-            save_story_to_db(username, title, written, word_count, prompts)
-            
-            # Update user streak
-            streak = int(d.get_user_streak(username))
-            d.update_user_streak(username, streak + 1)
-            
-            # Update user points
-            current_points = d.get_user_points(username)
-            d.update_user_points(username, current_points + points_earned)
-            
-            # get the compliment
-            compliment = gen_compliment() 
-            
-            # Render success page
-            return render_template(
-                "congrats.html",
-                title=title,
-                story=written,
-                words=word_count,
-                compliment=compliment,
-                points=points_earned
-            )
-            
-        except Exception as e:
-            # Log the error with more detail
-            logging.error(f"Error saving story for user {session.get('username')}: {str(e)}")
-            flash("An error occurred while saving your story. Please try again.")
+        # Get the story content and title from the form
+        written = request.form.get('story')
+        title = request.form.get('title')
+        
+        # Get the prompts from the form
+        prompts = {
+            'name': request.form.get('name'),
+            'job': request.form.get('job'),
+            'object': request.form.get('object'),
+            'place': request.form.get('place'),
+            'bonus': request.form.get('bonus')
+        }
+        
+        # Validate input
+        is_valid, error = validate_story_input(written, title, prompts)
+        if not is_valid:
+            flash(error)
             return redirect(url_for("home"))
+        
+        # Process the story
+        story = written.split()  # Split the story into words
+        word_count = len(story)
+        
+        # Check minimum word count requirement
+        if word_count < 70:
+            flash("Your story must be at least 70 words long.")
+            return redirect(url_for("home"))
+        
+        # Calculate points earned for the story
+        points_earned = process_story_points(story, prompts, word_count)
+        
+        # Get current user stats
+        username = session.get('username')
+        if not username:
+            flash("Session expired. Please log in again.")
+            return redirect(url_for("login"))
+        
+        # Save story and update user stats
+        save_story_to_db(username, title, written, word_count, prompts)
+        
+        # Update user streak
+        streak = int(d.get_user_streak(username))
+        d.update_user_streak(username, streak + 1)
+        
+        # Update user points
+        current_points = d.get_user_points(username)
+        d.update_user_points(username, current_points + points_earned)
+        
+        # get the compliment
+        compliment = gen_compliment() 
+        
+        # Render success page
+        return render_template(
+            "congrats.html",
+            title=title,
+            story=written,
+            words=word_count,
+            compliment=compliment,
+            points=points_earned
+        )
     
-    # Handle GET request
+    # handle GET request
     return redirect(url_for('home'))
 
 # edit user's account page

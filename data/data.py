@@ -238,25 +238,19 @@ def get_user_points(username: str):
         user_conn.close()
 
 def update_user_points(username: str, new_points: int):
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    cursor = user_conn.cursor()
-
-    # SQL query to update the streak for a specific user
-    query = """
-    UPDATE users
-    SET points = ?
-    WHERE username = ?
-    """
-
-    cursor.execute(query, (new_points, username))
-    
-    # Commit the changes to the database
-    user_conn.commit()
-
-    # Close the connection
-    user_conn.close()
-
-    print(f"User {username}'s points have been updated to {new_points}.")
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE users SET points = ? WHERE username = ?",
+            (new_points, username)
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Error updating user points: {e}")
+        raise
+    finally:
+        conn.close()
     
 def find_story(story_title: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)

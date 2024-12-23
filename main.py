@@ -220,14 +220,7 @@ def save_writing():
         compliment = gen_compliment() 
         
         # Render success page
-        return render_template(
-            "congrats.html",
-            title=title,
-            story=written,
-            words=word_count,
-            compliment=compliment,
-            points=points_earned
-        )
+        return render_template("congrats.html", title=title, story=written, words=word_count, compliment=compliment, points=points_earned)
     
     # handle GET request
     return redirect(url_for('home'))

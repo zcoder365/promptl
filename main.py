@@ -162,7 +162,7 @@ def my_account():
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
 
-# save the user's writing
+# FIX - save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
 @login_required
 def save_writing():

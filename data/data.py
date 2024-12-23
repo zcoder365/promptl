@@ -55,8 +55,7 @@ def create_stories_db():
     finally:
         conn.close() # close the connection
 
-def create_databases():
-    # create databases
+def create_databases(): # create both databases
     create_user_db()
     create_stories_db()
 

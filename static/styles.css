@@ -33,7 +33,7 @@ nav button {
     height: 4cm;
     
     /* add the background image */
-    background-image: url("/static/library.png");
+    background-image: url("/static/assets/library.png");
     background-size: cover;
     background-repeat: no-repeat;
 

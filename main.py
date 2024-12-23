@@ -217,9 +217,8 @@ def save_writing():
             current_points = d.get_user_points(username)  # Added missing username parameter
             d.update_user_points(username, current_points + points_earned)
             
-            # Generate completion message
-            # Removed prompts.gen_compliment() as it's not a valid method
-            compliment = generate_compliment()  # Assume this is a separate function
+            # get the compliment
+            compliment = gen_compliment() 
             
             # Render success page
             return render_template(

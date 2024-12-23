@@ -169,7 +169,7 @@ def save_writing():
     # Handle POST request for saving the writing
     if request.method == "POST":
         # Get the story content and title from the form
-        written = request.form.get('story')
+        written_raw = request.form.get('story')
         title = request.form.get('title')
         
         # Get the prompts from the form
@@ -182,7 +182,7 @@ def save_writing():
         }
         
         # process the story
-        story = written.split()  # split the story into words
+        story = written_raw.split(" ")  # split the story into words
         word_count = len(story)
         
         # Calculate points earned for the story

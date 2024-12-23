@@ -197,20 +197,14 @@ def update_user_streak(username: str, new_streak: int):
 
 # STORY FUNCTIONS
 def add_story_data(story_data: tuple):
-    """Add a new story to the database."""
-    try:
-        conn = get_db_connection(STORY_DATA_FILE)
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO stories (story_author, story_title, story_contents, story_word_count, prompts) 
-            VALUES (?, ?, ?, ?, ?)
-        """, story_data)
-        conn.commit()
-    except sqlite3.Error as e:
-        logging.error(f"Error adding story data: {e}")
-        raise
-    finally:
-        conn.close()
+    conn = get_db_connection(STORY_DATA_FILE)
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO stories (story_author, story_title, story_contents, story_word_count, prompts) 
+        VALUES (?, ?, ?, ?, ?)
+    """, story_data)
+    conn.commit()
+    conn.close()
 
 def get_user_stories(username: str) -> List[Tuple]:
     """Get all stories by a user."""

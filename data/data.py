@@ -147,28 +147,21 @@ def get_user_stories(username: str):
         conn.close()
 
 def get_total_word_count(user_name):
-    story_conn = sqlite3.connect(STORY_DATA_FILE)
-    cursor = story_conn.cursor()
-
-    # Query to get the total word count for the specified user
-    query = """
-    SELECT SUM(story_word_count) AS total_words
-    FROM stories
-    WHERE story_author = ?
-    """
-    
     try:
-        cursor.execute(query, (user_name,))
-        total_word_count = cursor.fetchone()[0]
-        return total_word_count if total_word_count is not None else 0
-    
+        conn = get_db_connection(STORY_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT SUM(story_word_count) 
+            FROM stories 
+            WHERE story_author = ?
+        """, (username,))
+        result = cur.fetchone()[0]
+        return result if result is not None else 0
     except sqlite3.Error as e:
-        print(f"Database error: {e}")
+        logging.error(f"Error getting total word count: {e}")
         return 0
-    
-    finally: 
-        # close the connection
-        story_conn.close()
+    finally:
+        conn.close()
 
 def get_user_streak(username: str):
     story_conn = sqlite3.connect(STORY_DATA_FILE)

@@ -190,25 +190,19 @@ def get_user_streak(username: str):
     return streak_length if streak_length is not None else 0
 
 def update_user_streak(username, new_streak):
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    cursor = user_conn.cursor()
-
-    # SQL query to update the streak for a specific user
-    query = """
-    UPDATE users
-    SET streak = ?
-    WHERE username = ?
-    """
-
-    cursor.execute(query, (new_streak, username))
-    
-    # Commit the changes to the database
-    user_conn.commit()
-
-    # Close the connection
-    user_conn.close()
-
-    print(f"User {username}'s streak has been updated to {new_streak}.")
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE users SET streak = ? WHERE username = ?",
+            (new_streak, username)
+        )
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Error updating user streak: {e}")
+        raise
+    finally:
+        conn.close()
     
 def change_parent_email(parent_email, username):
     user_conn = sqlite3.connect(USER_DATA_FILE)

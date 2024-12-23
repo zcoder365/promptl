@@ -62,14 +62,19 @@ def create_databases(): # create both databases
 # FUNCTIONS FOR ACCESSING DATABASES
 def add_user_data(user_data: tuple):
     # connect to the user database
-    user_conn = sqlite3.connect(USER_DATA_FILE)
-    cur = user_conn.cursor()
-    
-    cur.execute("INSERT INTO users (username, password, parent_email, streak, points) VALUES (?, ?, ?, ?, ?)", user_data)
-    
-    # close the database objects
-    cur.close()
-    user_conn.close()
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO users (username, password, parent_email, streak, points) 
+            VALUES (?, ?, ?, ?, ?)
+        """, user_data)
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Error adding user data: {e}")
+        raise
+    finally:
+        conn.close()
 
 def add_story_data(story_data: list):
     story_conn = sqlite3.connect(STORY_DATA_FILE)

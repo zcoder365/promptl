@@ -1,3 +1,5 @@
+import data.data as d
+
 def get_story_length_and_points(story, prompts):
     points = 0
     words_written = len(story) # get story length
@@ -22,3 +24,32 @@ def get_story_length_and_points(story, prompts):
                 points += prompt_points[prompt_type]
         
     return {"story_length": words_written, "points": points}
+
+def validate_story_input(written: str, title: str, prompts: dict) -> tuple[bool, str]:
+    # validate story inputs
+    
+    if not written or not title:
+        return False, "Please provide both story content and title."
+        
+    if not all(prompts.values()):
+        return False, "Missing prompt values."
+        
+    return True, ""
+
+def process_story_points(story: list, prompts: dict, word_count: int) -> int:
+    # calculate points earned for the story
+    
+    story_info = get_story_length_and_points(story, prompts)
+    points_earned = story_info['points']
+    
+    # Bonus points for stories over 100 words
+    if word_count >= 100:
+        points_earned += 25
+        
+    return points_earned
+
+def save_story_to_db(username: str, title: str, content: str, word_count: int, prompts: dict):
+    # save the story to the database
+    
+    story_data = (username, title, content, word_count, str(prompts))
+    d.add_story_data(story_data)

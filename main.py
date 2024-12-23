@@ -4,9 +4,9 @@ import os
 from functools import wraps # preserves function metadata
 
 # import other files
-import prompts
-import accounts
-import model
+from prompts import *
+from accounts import *
+from model import *
 import data.data as d
 
 # create databases

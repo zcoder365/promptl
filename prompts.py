@@ -38,6 +38,4 @@ def gen_all_prompts():
 def gen_compliment():
 	compliments = ['Great Job!', 'Excellent Work!', 'Super Job!', 'Way to Go!']
 
-	compliment = random.choice(compliments)
-
-	return compliment
+	return random.choice(compliments)

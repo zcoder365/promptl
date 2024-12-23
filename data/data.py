@@ -1,7 +1,15 @@
 import sqlite3
+import logging
 
 USER_DATA_FILE = "data/users.db"
 STORY_DATA_FILE = "data/stories.db"
+
+def get_db_connection(db_file: str) -> sqlite3.Connection:
+    try:
+        return sqlite3.connect(db_file)
+    except sqlite3.Error as e:
+        logging.error(f"Error connecting to database {db_file}: {e}")
+        raise
 
 def create_user_db():
     user_conn = sqlite3.connect(USER_DATA_FILE)

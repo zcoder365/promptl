@@ -77,13 +77,19 @@ def add_user_data(user_data: tuple):
         conn.close()
 
 def add_story_data(story_data: list):
-    story_conn = sqlite3.connect(STORY_DATA_FILE)
-    cur = story_conn.cursor()
-    
-    cur.execute("""INSERT INTO stories (story_author, story_title, story_contents, story_word_count, prompts) VALUES (?, ?, ?, ?, ?)""", story_data)
-    
-    story_conn.commit() # add commit before closing connection
-    story_conn.close()
+    try:
+        conn = get_db_connection(STORY_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO stories (story_author, story_title, story_contents, story_word_count, prompts) 
+            VALUES (?, ?, ?, ?, ?)
+        """, story_data)
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Error adding story data: {e}")
+        raise
+    finally:
+        conn.close()
 
 def view_all_user_data():
     # connect to the user database

@@ -132,15 +132,19 @@ def login_user(username: str, password: str):
         conn.close()
         
 def get_user_stories(username: str):
-    story_conn = sqlite3.connect(STORY_DATA_FILE)
-    cur = story_conn.cursor()
-    
-    cur.execute("SELECT * FROM stories WHERE story_author = ?", (username,))
-    user_data = cur.fetchall()
-    
-    story_conn.close()
-    
-    return user_data
+    try:
+        conn = get_db_connection(STORY_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT * FROM stories WHERE story_author = ?", 
+            (username,)
+        )
+        return cur.fetchall()
+    except sqlite3.Error as e:
+        logging.error(f"Error getting user stories: {e}")
+        return []
+    finally:
+        conn.close()
 
 def get_total_word_count(user_name):
     story_conn = sqlite3.connect(STORY_DATA_FILE)

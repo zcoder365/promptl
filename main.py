@@ -214,7 +214,7 @@ def save_writing():
             d.update_user_streak(username, streak + 1)
             
             # Update user points
-            current_points = d.get_user_points(username)  # Added missing username parameter
+            current_points = d.get_user_points(username)
             d.update_user_points(username, current_points + points_earned)
             
             # get the compliment

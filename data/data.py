@@ -263,15 +263,6 @@ def get_total_word_count(username: str) -> int:
         conn.close()
 
 def get_user_streak(username: str) -> int:
-    """
-    Get a user's current streak count.
-    
-    Args:
-        username: Username to get streak for
-        
-    Returns:
-        Current streak count, or 0 if user not found or error occurs
-    """
     try:
         conn = get_db_connection(USER_DATA_FILE)
         cur = conn.cursor()

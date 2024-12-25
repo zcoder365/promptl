@@ -233,10 +233,8 @@ def save_writing():
 # edit user's account page
 @app.route("/my-account/edit")
 def edit_info():
-    # get the username of the current user
+    # get the username of the current user and their info from the database
     username = session['username']
-    
-    # find the user in the database
     user = d.find_user(username)
     
     # return the template for editing user info for the current user

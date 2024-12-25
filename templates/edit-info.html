@@ -6,7 +6,7 @@
 
 	<form action="/change-email/{{user._id}}" method='post'>
 		<label for="changed">Parent Email:</label>
-		<input type='email' name='changed' value="">
+		<input type='email' name='changed' value="{{ user.parent_email }}" required>
 
 		<br><br>
 

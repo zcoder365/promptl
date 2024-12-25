@@ -160,7 +160,7 @@ def my_account():
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
 
-# FIX - save the user's writing
+# save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
 @login_required
 def save_writing():
@@ -185,53 +185,47 @@ def save_writing():
             'bonus': request.form.get('bonus')
         }
         
-        try:
-            # process the story
-            story = written_raw.split(" ")
-            word_count = len(story)
-            points_earned = process_story_points(story, prompts, word_count)
+        # process the story
+        story = written_raw.split(" ")
+        word_count = len(story)
+        points_earned = process_story_points(story, prompts, word_count)
             
-            # calcualate how many prompts were used
-            words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+        # calcualate how many prompts were used
+        words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
             
-            # save story and update stats
-            save_story_to_db(username, title, written_raw, word_count, prompts)
+        # save story and update stats
+        save_story_to_db(username, title, written_raw, word_count, prompts)
             
-            # update user streak and points
-            with d.get_db_connection(d.USER_DATA_FILE) as conn:
-                cur = conn.cursor()
-                cur.execute('BEGIN TRANSACTION')
+        # update user streak and points
+        with d.get_db_connection(d.USER_DATA_FILE) as conn:
+            cur = conn.cursor()
+            cur.execute('BEGIN TRANSACTION')
                 
-                try:
-                    # update streak
-                    cur.execute("UPDATE users SET streak = streak + 1 WHERE username = ?", (username,))
-                    
-                    # update points
-                    cur.execute("UPDATE users SET points = points + ? WHERE username = ?", (points_earned, username))
-                    
-                    cur.execute('COMMIT')
-                except:
-                    cur.execute('ROLLBACK')
-                    raise
+            try:
+                # update streak
+                cur.execute("UPDATE users SET streak = streak + 1 WHERE username = ?", (username,))
+                
+                # update points
+                cur.execute("UPDATE users SET points = points + ? WHERE username = ?", (points_earned, username))
+                
+                cur.execute('COMMIT')
+            except:
+                cur.execute('ROLLBACK')
+                raise
+    
+        # get the compliment
+        compliment = gen_compliment() 
         
-            # get the compliment
-            compliment = gen_compliment() 
-            
-            # render success page
-            return render_template(
-                "congrats.html", 
-                title=title, 
-                story_len=word_count, 
-                words=words_used,
-                points=points_earned, 
-                compliment=compliment, 
-                prompts=prompts
-            )
-        
-        except Exception as e:
-            logging.error(f"Error saving writing: {e}")
-            flash("Error saving your writing. Please try again.")
-            return redirect(url_for("home"))
+        # render success page
+        return render_template(
+            "congrats.html", 
+            title=title, 
+            story_len=word_count, 
+            words=words_used,
+            points=points_earned, 
+            compliment=compliment, 
+            prompts=prompts
+        )
     
     # handle GET request
     return redirect(url_for('home'))

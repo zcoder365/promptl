@@ -260,6 +260,7 @@ def save_info():
 
 # read a story page
 @app.route("/read-story/<story_title>")
+@login_required
 def read_story(story_title):
     # get the story from the story database
     story = d.find_story(story_title)
@@ -269,7 +270,7 @@ def read_story(story_title):
         return redirect(url_for("prior_pieces"))
     
     # check if the logged-in user is the author
-    if story[0] != session["username"]: # assuming story[0] contains author username
+    if story[0] != session["username"]:
         flash("You don't have permission to view the story.")
         return redirect(url_for('prior_pieces'))
     

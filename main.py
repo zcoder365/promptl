@@ -15,7 +15,7 @@ d.create_databases()
 
 # create the flask app
 app = Flask(__name__)
-app.secret_key = 'key'
+app.secret_key = 'key' # move to an environment variable?
 
 # page when the user comes to promptl (change this so there's a landing page?)
 @app.route('/')

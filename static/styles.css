@@ -1,8 +1,3 @@
-input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
-    color:gray;
-    font-style:italic;
-}
-
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
@@ -42,4 +37,9 @@ nav button {
 
     /* optional: remove default button text */
     color: transparent;
+}
+
+input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
+    color:gray;
+    font-style:italic;
 }

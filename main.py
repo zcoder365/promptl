@@ -230,15 +230,16 @@ def edit_info():
 @app.route('/change-email/<userID>', methods=['POST', 'GET'])
 @login_required # add login check
 def save_info(userID):
-    # get the user's parent's email 
-    parent_email = request.form['changed']
-    
-    # only update if a parent email is provided
-    if parent_email:
-        d.change_parent_email(parent_email, session['username'])
-        flash("Email updated successfully!")
-    else:
-        flash("Please provide an email address.")
+    if request.method == 'POST':
+        # get the user's parent's email 
+        parent_email = request.form['changed']
+        
+        # only update if a parent email is provided
+        if parent_email:
+            d.change_parent_email(parent_email, session['username'])
+            flash("Email updated successfully!")
+        else:
+            flash("Please provide an email address.")
 
 	# return to the user's account page
     return redirect(url_for('my_account'))

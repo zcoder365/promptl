@@ -36,7 +36,6 @@ def login_required(f):
 
 # home page route
 @app.route('/home')
-@login_required # call the function decorator
 def home():
     # generate the prompts
     prps = gen_all_prompts()
@@ -102,19 +101,22 @@ def login():
         
         # check if username or password is empty
         if not username or not password:
-            flash("Please provide both username and password.")
+            print("Please provide both username and password.")
             return render_template("login.html")
         
         # use the accounts module to check login
         logged_in = login_check(username, password)
+        print(logged_in)
         
         if logged_in:
             # set the session
             session['username'] = username
             return redirect(url_for("home"))
         else:
-            flash("Invalid username or password.")
+            print("Invalid username or password.")
             return render_template("login.html")
+    
+    print(username, password)
     
     # if GET request, just show the login page
     return render_template("login.html")

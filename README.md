@@ -15,5 +15,4 @@ Click the "publish" button at the bottom of the page to save your work (don't wo
 You can view your prior stories and make changes to them by clicking "prior changes" in the navigation bar. This doesn't change the number of points you earn for the story though.
 
 ## Todo
-- [ ] Update prior pieces page
 - [ ] Make sure writing saves

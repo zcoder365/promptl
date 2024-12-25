@@ -227,9 +227,9 @@ def edit_info():
     return render_template("edit-info.html", user=user)
 
 # change parent email page
-@app.route('/change-email/<userID>', methods=['POST', 'GET'])
+@app.route('/change-email', methods=['POST', 'GET'])
 @login_required # add login check
-def save_info(userID):
+def save_info():
     if request.method == 'POST':
         # get the user's parent's email 
         parent_email = request.form['changed']

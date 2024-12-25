@@ -39,14 +39,14 @@ def login_required(f):
 @login_required # call the function decorator
 def home():
     # generate the prompts
-    p = gen_all_prompts()
+    prps = gen_all_prompts()
     
     # allocate each prompt to a variable
-    name = p['name']
-    job = p['job']
-    place = p['place']
-    object = p['object']
-    bonus = p['bonus']
+    name = prps['name']
+    job = prps['job']
+    place = prps['place']
+    object = prps['object']
+    bonus = prps['bonus']
 
 	# # update the prompts
     # prompts = {'name': name, 'job': job, 'place': place, 'object': object, 'bonus': bonus}

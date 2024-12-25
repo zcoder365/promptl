@@ -187,16 +187,31 @@ def save_writing():
             'bonus': request.form.get('bonus')
         }
         
-        # Save story and update user stats
-        save_story_to_db(username, title, written_raw, word_count, prompts)
-        
-        # Update user streak
-        streak = int(d.get_user_streak(username))
-        d.update_user_streak(username, streak + 1)
-        
-        # Update user points
-        current_points = d.get_user_points(username)
-        d.update_user_points(username, current_points + points_earned)
+        try:
+            # process the story
+            story = written_raw.split()
+            word_count = len(story)
+            points_earned = process_story_points(story, prompts, word_count)
+            
+            # save story and update stats
+            save_story_to_db(username, title, written_raw, word_count, prompts)
+            
+            # update user streak and points
+            with d.get_db_connection(d.USER_DATA_FILE) as conn:
+                cur = conn.cursor()
+                cur.execute('BEGIN TRANSACTION')
+                
+                try:
+                    # update streak
+                    cur.execute("UPDATE users SET streak = streak + 1 WHERE username = ?", (username,))
+                    
+                    # update points
+                    cur.execute("UPDATE users SET points = points + ? WHERE username = ?", (points_earned, username))
+                    
+                    cur.execute('COMMIT')
+                except:
+                    cur.execute('ROLLBACK')
+                    raise
         
         # get the compliment
         compliment = gen_compliment() 

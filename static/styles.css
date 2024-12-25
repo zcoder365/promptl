@@ -73,4 +73,12 @@ input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
     font-size: medium;
 }
 
-.help {}
+.help {
+    border-width: 0px;
+    border-radius: 100%;
+    padding: 0px;
+    margin-right: 10px;
+    border-radius:10px;
+    width: 2.25cm;
+    background-color: transparent;
+}

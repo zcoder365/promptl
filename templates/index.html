@@ -79,18 +79,17 @@
 		
 	<br>
 		
-		<form action='/save-writing' method='post'>
-			<label for='title' style='padding-right:10px'>Title:</label>
-			<input type="text" name='title' placeholder='Your Title Here...' value=''>
-	
-			<br><br>
+	<form action='/save-writing' method='post'>
+		<label for='title' style='padding-right:10px'>Title:</label>
+		<input type="text" name='title' placeholder='Your Title Here...' value=''>
 
-			<textarea name="story" rows="10" cols="90" placeholder='Start Typing Here...'></textarea>
-	
-			<br>
+		<br><br>
 
-			<input type="submit" class="save-writing">
-		</form>
-	</div>
+		<textarea name="story" rows="10" cols="90" placeholder='Start Typing Here...'></textarea>
+
+		<br>
+
+		<input type="submit" class="save-writing">
+	</form>
 </div>
 {% endblock %}

@@ -218,7 +218,7 @@ def save_writing():
             compliment = gen_compliment() 
             
             # Render success page
-            return render_template("congrats.html", title=title, story=written_raw, words=word_count, compliment=compliment, points=points_earned)
+            return render_template("congrats.html", title=title, story_len=len(written_raw), words=word_count, compliment=compliment, points=points_earned)
         
         except Exception as e:
             logging.error(f"Error saving writing: {e}")

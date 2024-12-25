@@ -295,4 +295,6 @@ def edit_story(story_title):
     # return the page for editing a story
     return render_template("edit-story.html", story=story)
 
-app.run(port="8080", debug=True)
+# run the app
+if __name__ == '__main__':
+    app.run(port=8080, debug=True) # port is integer, not string

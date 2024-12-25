@@ -212,6 +212,10 @@ def save_writing():
                 except:
                     cur.execute('ROLLBACK')
                     raise
+        except Exception as e:
+            logging.error(f"Error saving story: {e}")
+            flash("Error saving story.")
+            return redirect(url_for("home"))
         
         # get the compliment
         compliment = gen_compliment() 

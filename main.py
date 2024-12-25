@@ -48,9 +48,6 @@ def home():
     object = prps['object']
     bonus = prps['bonus']
 
-	# # update the prompts
-    # prompts = {'name': name, 'job': job, 'place': place, 'object': object, 'bonus': bonus}
-
 	# return the main page for writing with the prompts
     return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)
 
@@ -105,7 +102,7 @@ def login():
         
         # check if username or password is empty
         if not username or not password:
-            flash("Please provide boht username and password.")
+            flash("Please provide both username and password.")
             return render_template("login.html")
         
         # use the accounts module to check login

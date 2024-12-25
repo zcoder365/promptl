@@ -242,7 +242,7 @@ def edit_info():
 
 # change parent email page
 @app.route('/change-email', methods=['POST', 'GET'])
-@login_required # add login check
+@login_required
 def save_info():
     if request.method == 'POST':
         # get the user's parent's email 

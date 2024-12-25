@@ -173,6 +173,11 @@ def save_writing():
         title = request.form.get('title') # get the title from the form
         username = session.get('username') # get the username from the session
         
+        # validate required data
+        if not all([written_raw, title, username]):
+            flash("Missing required information.")
+            return redirect(url_for("home"))
+        
         # Get the prompts from the form
         prompts = {
             'name': request.form.get('name'),
@@ -181,11 +186,6 @@ def save_writing():
             'place': request.form.get('place'),
             'bonus': request.form.get('bonus')
         }
-        
-        # validate required data
-        if not all([written_raw, title, username]):
-            flash("Missing required information.")
-            return redirect(url_for("home"))
         
         # Save story and update user stats
         save_story_to_db(username, title, written_raw, word_count, prompts)

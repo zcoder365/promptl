@@ -169,8 +169,9 @@ def save_writing():
     # Handle POST request for saving the writing
     if request.method == "POST":
         # Get the story content and title from the form
-        written_raw = request.form.get('story')
-        title = request.form.get('title')
+        written_raw = request.form.get('story') # get the story from the form
+        title = request.form.get('title') # get the title from the form
+        username = session.get('username') # get the username from the session
         
         # Get the prompts from the form
         prompts = {

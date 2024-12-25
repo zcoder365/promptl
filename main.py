@@ -167,12 +167,12 @@ def my_account():
 @app.route('/save-writing', methods=['GET', 'POST'])
 @login_required
 def save_writing():
-    # Handle POST request for saving the writing
+    # handle POST request for saving the writing
     if request.method == "POST":
-        # Get the story content and title from the form
-        written_raw = request.form.get('story') # get the story from the form
-        title = request.form.get('title') # get the title from the form
-        username = session.get('username') # get the username from the session
+        # get the story content and title from the form
+        written_raw = request.form.get('story')
+        title = request.form.get('title')
+        username = session.get('username')
         
         # validate required data
         if not all([written_raw, title, username]):
@@ -217,8 +217,8 @@ def save_writing():
             # get the compliment
             compliment = gen_compliment() 
             
-            # Render success page
-            return render_template("congrats.html", title=title, story_len=word_count, words=len(prompts), compliment=compliment, points=points_earned)
+            # render success page
+            return render_template("congrats.html", title=title, story_len=word_count, prompts=prompts, compliment=compliment, points=points_earned)
         
         except Exception as e:
             logging.error(f"Error saving writing: {e}")

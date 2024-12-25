@@ -133,6 +133,7 @@ def logout():
 
 # prior pieces route
 @app.route('/prior-pieces')
+@login_required
 def prior_pieces():
     # find the user's stories
     stories = d.get_user_stories(session['username'])

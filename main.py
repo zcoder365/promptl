@@ -212,16 +212,17 @@ def save_writing():
                 except:
                     cur.execute('ROLLBACK')
                     raise
+        
+            # get the compliment
+            compliment = gen_compliment() 
+            
+            # Render success page
+            return render_template("congrats.html", title=title, story=written_raw, words=word_count, compliment=compliment, points=points_earned)
+        
         except Exception as e:
-            logging.error(f"Error saving story: {e}")
-            flash("Error saving story.")
-            return redirect(url_for("home"))
-        
-        # get the compliment
-        compliment = gen_compliment() 
-        
-        # Render success page
-        return render_template("congrats.html", title=title, story=written_raw, words=word_count, compliment=compliment, points=points_earned)
+        logging.error(f"Error saving writing: {e}")
+        flash("Error saving your writing. Please try again.")
+        return redirect(url_for("home"))
     
     # handle GET request
     return redirect(url_for('home'))

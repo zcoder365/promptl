@@ -113,6 +113,25 @@ def login_user(username: str, password: str) -> bool:
 
 # Parent email functions
 def get_parent_email(username: str) -> Optional[str]:
+    conn = None
+    try:
+        conn = get_db_connection(USER_DATA_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT parent_email FROM users WHERE username = ?",
+            (username,)
+        )
+        result = cur.fetchone()
+        return result[0] if result else None
+    
+    except sqlite3.Error as e:
+        logging.error(f"Error getting parent email: {e}")
+        return None
+    
+    finally:
+        if conn:
+            conn.close()
+    
     """Get a user's parent email."""
     try:
         conn = get_db_connection(USER_DATA_FILE)

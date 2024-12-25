@@ -4,7 +4,7 @@
 <div align='center'>
 	<h2 style="padding-top:10px">My Account</h2>
 
-	<form action="/change-email/{{user._id}}" method='post'>
+	<form action="/change-email" method='post'>
 		<label for="changed">Parent Email:</label>
 		<input type='email' name='changed' value="{{ user.parent_email }}" required>
 

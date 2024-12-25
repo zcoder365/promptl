@@ -1,13 +1,19 @@
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
+    width: auto;
 }
 
 nav {
     display: inline-flex;
-    width: auto;
+    width: max-content;
     margin-left: 10px;
     margin-right: 10px;
     padding-top: 10px;
+    font-family: inherit;
+}
+
+nav button {
+    font-family: inherit;
 }
 
 .logo-btn-nav {

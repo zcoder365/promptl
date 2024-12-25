@@ -179,7 +179,7 @@ def save_writing():
             flash("Missing required information.")
             return redirect(url_for("home"))
         
-        # Get the prompts from the form
+        # get the prompts from the form
         prompts = {
             'name': request.form.get('name'),
             'job': request.form.get('job'),
@@ -190,9 +190,12 @@ def save_writing():
         
         try:
             # process the story
-            story = written_raw.split()
+            story = written_raw.split(" ")
             word_count = len(story)
             points_earned = process_story_points(story, prompts, word_count)
+            
+            # calcualate how many prompts were used
+            words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
             
             # save story and update stats
             save_story_to_db(username, title, written_raw, word_count, prompts)

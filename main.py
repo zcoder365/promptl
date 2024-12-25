@@ -182,18 +182,10 @@ def save_writing():
             'bonus': request.form.get('bonus')
         }
         
-        # process the story
-        story = written_raw.split(" ")  # split the story into words
-        word_count = len(story)
-        
-        # Calculate points earned for the story
-        points_earned = process_story_points(story, prompts, word_count)
-        
-        # Get current user stats
-        username = session.get('username')
-        if not username:
-            flash("Session expired. Please log in again.")
-            return redirect(url_for("login"))
+        # validate required data
+        if not all([written_raw, title, username]):
+            flash("Missing required information.")
+            return redirect(url_for("home"))
         
         # Save story and update user stats
         save_story_to_db(username, title, written_raw, word_count, prompts)

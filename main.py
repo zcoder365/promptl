@@ -246,7 +246,7 @@ def edit_info():
 def save_info():
     if request.method == 'POST':
         # get the user's parent's email 
-        parent_email = request.form['changed']
+        parent_email = request.form.get('changed')
         
         # only update if a parent email is provided
         if parent_email:

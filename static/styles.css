@@ -72,3 +72,5 @@ input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
     font-family: inherit;
     font-size: medium;
 }
+
+.help {}

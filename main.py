@@ -106,7 +106,6 @@ def login():
         
         # use the accounts module to check login
         logged_in = login_check(username, password)
-        print(logged_in)
         
         if logged_in:
             # set the session
@@ -115,8 +114,6 @@ def login():
         else:
             print("Invalid username or password.")
             return render_template("login.html")
-    
-    print(username, password)
     
     # if GET request, just show the login page
     return render_template("login.html")

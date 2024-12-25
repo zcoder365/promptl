@@ -91,3 +91,9 @@ input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
     background-color: transparent;
     border: 0px solid black;
 }
+
+.promptl-text {
+    font-size:28px;
+    color:#FF5349;
+    font-size:28px;
+}

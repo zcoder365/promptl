@@ -147,21 +147,18 @@ def prior_pieces():
 
 # user's account page
 @app.route('/my-account')
-def my_account():
-    # get the user's username from the session
-    username = session['username']
-    
+def my_account():    
     # find the user in the database
-    user = d.find_user(username)
+    user = d.find_user(session['username'])
     
     # get user's info
-    num_stories = len(d.get_user_stories(username)) # get user's streak/stories written
-    total_words = d.get_total_word_count(username) # get user's total word count
-    points = d.get_user_points(username) # get user's points
-    parent_email = d.get_parent_email(username) # get parent email
+    num_stories = len(d.get_user_stories(user)) # num stories
+    total_words = d.get_total_word_count(user) # total word count
+    points = d.get_user_points(user) # points
+    parent_email = d.get_parent_email(user) # parent email
     
     # return a page that shows the user's information
-    return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
+    return render_template('my-account.html', username=session['username'], total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
 
 # FIX - save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])

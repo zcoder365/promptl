@@ -220,9 +220,9 @@ def save_writing():
             return render_template("congrats.html", title=title, story=written_raw, words=word_count, compliment=compliment, points=points_earned)
         
         except Exception as e:
-        logging.error(f"Error saving writing: {e}")
-        flash("Error saving your writing. Please try again.")
-        return redirect(url_for("home"))
+            logging.error(f"Error saving writing: {e}")
+            flash("Error saving your writing. Please try again.")
+            return redirect(url_for("home"))
     
     # handle GET request
     return redirect(url_for('home'))

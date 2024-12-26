@@ -189,21 +189,11 @@ def save_writing():
         save_story_to_db(username, title, written_raw, word_count, prompts)
             
         # update user streak and points
-        with get_db_connection(USER_DATA_FILE) as conn:
-            cur = conn.cursor()
-            cur.execute('BEGIN TRANSACTION')
-                
-            try:
-                # update streak
-                cur.execute("UPDATE users SET streak = streak + 1 WHERE username = ?", (username,))
-                
-                # update points
-                cur.execute("UPDATE users SET points = points + ? WHERE username = ?", (points_earned, username))
-                
-                cur.execute('COMMIT')
-            except:
-                cur.execute('ROLLBACK')
-                raise
+        try:
+            update_user_stats(username, points_earned)
+        except Exception as e:
+            flash("An error occurred while updating user stats.")
+            return redirect(url_for("home"))
     
         # get the compliment
         compliment = gen_compliment() 

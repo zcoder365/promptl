@@ -184,3 +184,18 @@ def get_user_streak(uri, db_name, username: str) -> int:
     except Exception as e:
         print(f"Error getting user streak: {e}")
         return 0
+    
+def update_user_stats(db_name: str, username: str, new_points: int, new_streak: int):
+    """Update a user's points and streak."""
+    try:
+        client = MongoClient(uri)
+        db = client[db_name]
+        collection = db["users"]
+        result = collection.update_one(
+            {"username": username},
+            {"$set": {"points": new_points, "streak": new_streak}}
+        )
+        return result.modified_count
+    except Exception as e:
+        print(f"Error updating user stats: {e}")
+        raise

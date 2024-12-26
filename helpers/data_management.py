@@ -62,7 +62,7 @@ def login_user(uri, db_name, username: str, password: str) -> bool:
         return False
 
 # Parent email functions
-def get_parent_email(uri, db_name, username: str) -> Optional[str]:
+def get_parent_email(uri, db_name, username: str):
     try:
         client = MongoClient(uri)
         db = client[db_name]

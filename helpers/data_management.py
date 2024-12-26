@@ -61,7 +61,7 @@ def login_user(uri, db_name, username: str, password: str) -> bool:
         print(f"Error during login: {e}")
         return False
 
-# Parent email functions
+# parent email functions
 def get_parent_email(uri, db_name, username: str):
     try:
         client = MongoClient(uri)
@@ -85,7 +85,7 @@ def change_parent_email(uri, db_name, parent_email: str, username: str):
         print(f"Error changing parent email: {e}")
         raise
 
-# Points and streak functions
+# points and streak functions
 def get_user_points(uri, db_name, username: str) -> int:
     """Get a user's points."""
     try:
@@ -122,7 +122,7 @@ def update_user_streak(uri, db_name, username: str, new_streak: int):
         print(f"Error updating user streak: {e}")
         raise
 
-# STORY FUNCTIONS
+# story functions
 def add_story_data(uri, db_name, story_data: dict):
     try:
         client = MongoClient(uri)

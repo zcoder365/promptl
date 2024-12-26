@@ -1,6 +1,5 @@
 # general imports
 from flask import *
-import os
 from functools import wraps # preserves function metadata
 
 # import other files
@@ -142,7 +141,6 @@ def my_account():
     
     # find the user in the database
     user = find_user(username)
-    
     # get user's info
     num_stories = len(get_user_stories(username)) # num stories
     total_words = get_total_word_count(username) # total word count
@@ -193,7 +191,7 @@ def save_writing():
             update_user_stats(username, points_earned)
         except Exception as e:
             flash("An error occurred while updating user stats.")
-            return redirect(url_for("home"))
+        except Exception:
     
         # get the compliment
         compliment = gen_compliment() 

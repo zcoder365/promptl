@@ -21,13 +21,10 @@ def index():
 # added to check if the user is logged in
 def login_required(f):
     @wraps(f)
-    
     def decorated_function(*args, **kwargs):
         if "username" not in session:
             return redirect(url_for('login'))
-    
         return f(*args, **kwargs)
-    
     return decorated_function
 
 # home page route
@@ -43,7 +40,7 @@ def home():
     object = prps['object']
     bonus = prps['bonus']
 
-	# return the main page for writing with the prompts
+    # return the main page for writing with the prompts
     return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)
 
 # generate a new prompt
@@ -73,7 +70,7 @@ def signup():
             return render_template("signup.html")
         
         # check if the user already exists
-        if d.find_user(username):
+        if find_user(username):
             flash("Username already exists.")
             return render_template("signup.html")
         
@@ -128,7 +125,7 @@ def logout():
 @login_required
 def prior_pieces():
     # find the user's stories
-    stories = d.get_user_stories(session['username'])
+    stories = get_user_stories(session['username'])
     
     # handle the case where users have no stories
     if not stories:
@@ -144,13 +141,13 @@ def my_account():
     username = session['username']
     
     # find the user in the database
-    user = d.find_user(username)
+    user = find_user(username)
     
     # get user's info
-    num_stories = len(d.get_user_stories(username)) # num stories
-    total_words = d.get_total_word_count(username) # total word count
-    points = d.get_user_points(username) # points
-    parent_email = d.get_parent_email(username) # parent email
+    num_stories = len(get_user_stories(username)) # num stories
+    total_words = get_total_word_count(username) # total word count
+    points = get_user_points(username) # points
+    parent_email = get_parent_email(username) # parent email
     
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
@@ -185,14 +182,14 @@ def save_writing():
         word_count = len(story)
         points_earned = process_story_points(story, prompts, word_count)
             
-        # calcualate how many prompts were used
+        # calculate how many prompts were used
         words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
             
         # save story and update stats
         save_story_to_db(username, title, written_raw, word_count, prompts)
             
         # update user streak and points
-        with d.get_db_connection(d.USER_DATA_FILE) as conn:
+        with get_db_connection(USER_DATA_FILE) as conn:
             cur = conn.cursor()
             cur.execute('BEGIN TRANSACTION')
                 
@@ -230,7 +227,7 @@ def save_writing():
 def edit_info():
     # get the username of the current user and their info from the database
     username = session['username']
-    user = d.find_user(username)
+    user = find_user(username)
     
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)
@@ -245,12 +242,12 @@ def save_info():
         
         # only update if a parent email is provided
         if parent_email:
-            d.change_parent_email(parent_email, session['username'])
+            change_parent_email(parent_email, session['username'])
             flash("Email updated successfully!")
         else:
             flash("Please provide an email address.")
 
-	# return to the user's account page
+    # return to the user's account page
     return redirect(url_for('my_account'))
 
 # read a story page
@@ -258,7 +255,7 @@ def save_info():
 @login_required
 def read_story(story_title):
     # get the story from the story database
-    story = d.find_story(story_title)
+    story = find_story(story_title)
     
     if not story:
         flash("Story not found.")
@@ -269,14 +266,14 @@ def read_story(story_title):
         flash("You don't have permission to view the story.")
         return redirect(url_for('prior_pieces'))
     
-	# return the page for reading the story
+    # return the page for reading the story
     return render_template("read-story.html", story=story)
 
 # edit a story, based on the story's ID
 @app.route("/edit-story/<story_title>")
 def edit_story(story_title):
     # get the story from the db
-    story = d.find_story(story_title)
+    story = find_story(story_title)
     
     if not story:
         flash("Story not found.")

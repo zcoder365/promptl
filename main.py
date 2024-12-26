@@ -2,7 +2,6 @@
 from flask import *
 import os
 from functools import wraps # preserves function metadata
-import logging
 
 # import other files
 from helpers.accounts import *

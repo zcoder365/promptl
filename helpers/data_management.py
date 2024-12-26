@@ -79,7 +79,7 @@ def change_parent_email(uri, db_name, parent_email: str, username: str):
         client = MongoClient(uri)
         db = client[db_name]
         collection = db["users"]
-        result = collection.update_one({"username": username}, {"set": {"parent_email": parent_email}})
+        result = collection.update_one({"username": username}, {"$set": {"parent_email": parent_email}})
         return result.modified_count
     except Exception as e:
         print(f"Error changing parent email: {e}")

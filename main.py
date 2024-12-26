@@ -8,10 +8,8 @@ import logging
 from helpers.accounts import *
 from helpers.model import *
 from helpers.prompts import *
-from data.data import *
-
-# create databases
-d.create_databases()
+import helpers.data_management
+# from data.data import *
 
 # create the flask app
 app = Flask(__name__)

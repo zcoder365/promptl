@@ -191,7 +191,7 @@ def save_writing():
             update_user_stats(username, points_earned)
         except Exception as e:
             flash("An error occurred while updating user stats.")
-        except Exception:
+        # except Exception:
     
         # get the compliment
         compliment = gen_compliment() 

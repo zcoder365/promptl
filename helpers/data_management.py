@@ -1,4 +1,5 @@
-import pymongo
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 def save_document_to_db(uri, db_name, collection_name, document):
     client = pymongo.MongoClient(uri)

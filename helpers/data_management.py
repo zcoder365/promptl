@@ -1,7 +1,10 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+import os
+from dotenv import load_dotenv
 
-uri = "" # create env var for this
+load_dotenv() # load env vars from .env file
+uri = os.getenv("MONGODB_URI") # get the uri from the env vars
 
 # create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi("1"))

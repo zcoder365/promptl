@@ -134,7 +134,7 @@ def add_story_data(uri, db_name, story_data: dict):
         print(f"Error adding story data: {e}")
         raise
 
-def get_user_stories(uri, db_name, username: str) -> List[dict]:
+def get_user_stories(uri, db_name, username: str):
     """Get all stories by a user."""
     try:
         client = MongoClient(uri)
@@ -146,7 +146,7 @@ def get_user_stories(uri, db_name, username: str) -> List[dict]:
         print(f"Error getting user stories: {e}")
         return []
 
-def find_story(uri, db_name, story_title: str) -> Optional[dict]:
+def find_story(uri, db_name, story_title: str):
     """Find a story by its title."""
     try:
         client = MongoClient(uri)

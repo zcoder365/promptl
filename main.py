@@ -8,7 +8,7 @@ import logging
 from helpers.accounts import *
 from helpers.model import *
 from helpers.prompts import *
-import helpers.data_management
+from helpers.data_management import *
 # from data.data import *
 
 # create the flask app

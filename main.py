@@ -293,4 +293,4 @@ def edit_story(story_title):
 
 # run the app
 if __name__ == '__main__':
-    app.run(port=8080, debug=True) # port is integer, not string
+    app.run(port=8080, debug=True)

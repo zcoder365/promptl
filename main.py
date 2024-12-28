@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = 'key' # move to an environment variable?
 
 # set up a mongodb manager instance
-data_manager = MongoDBManager()
+data_manager = MongoDBManager(data.MONGO_URI, "promptl")
 
 # page when the user comes to promptl
 @app.route('/')

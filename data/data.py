@@ -18,7 +18,7 @@ def get_mongo_client() -> MongoClient:
         logging.error(f"Error connecting to MongoDB: {e}")
         raise
 
-def login_user(username: str, password: str) -> Optional[dict]:
+def login_user(username: str, password: str):
     """Log in a user using MongoDB."""
     try:
         client = get_mongo_client()

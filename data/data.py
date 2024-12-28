@@ -4,15 +4,13 @@ from pymongo.errors import ConnectionFailure
 from dotenv import load_dotenv
 import os
 
+# load environment variables from .env file
+load_dotenv()
+
 # MongoDB connection details
 DATABASE_NAME = "promptl"
 USERS_COLLECTION = "users"
-
-# Load environment variables from .env file
-load_dotenv()
-
-# Get MongoDB URI from environment variables
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URI") # get MongoDB URI from environment variables
 
 def get_mongo_client() -> MongoClient:
     """Create a MongoDB client with proper error handling."""

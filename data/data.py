@@ -1,11 +1,18 @@
 import logging
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
+from dotenv import load_dotenv
+import os
 
 # MongoDB connection details
-MONGO_URI = "mongodb://localhost:27017/"
 DATABASE_NAME = "promptl"
 USERS_COLLECTION = "users"
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get MongoDB URI from environment variables
+MONGO_URI = os.getenv("MONGO_URI")
 
 def get_mongo_client() -> MongoClient:
     """Create a MongoDB client with proper error handling."""

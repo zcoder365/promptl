@@ -127,6 +127,7 @@ def prior_pieces():
     if 'username' not in session:
         flash("You need to be logged in to view your prior pieces.")
         return redirect(url_for('login'))
+    
     stories = get_user_stories(session['username'])
     
     # handle the case where users have no stories

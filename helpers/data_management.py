@@ -2,202 +2,176 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
 from dotenv import load_dotenv
+import hashlib
+from contextlib import contextmanager
+from typing import Optional, List, Dict, Any
 
-# load .env file and get the uri
+# Load environment variables
 load_dotenv()
-uri = os.getenv("MONGODB_URI")
+MONGODB_URI = os.getenv("MONGODB_URI")
 
-# create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi("1"))
+class DatabaseError(Exception):
+    """Custom exception for database operations"""
+    pass
 
-# # send a ping to confirm a successful connection
-# try:
-#     client.admin.command("ping")
-#     print("Successfully connected to the server.")
-# except Exception as e:
-#     print(e)
-
-def save_document_to_db(uri, db_name, collection_name, document):
-    client = MongoClient(uri)
-    db = client[db_name]
-    collection = db[collection_name]
-    result = collection.insert_one(document)
-    return result.inserted_id
-
-# user account functions
-def add_user_data(uri, db_name, user_data: dict):
-    """Add a new user to the database."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.insert_one(user_data)
-        return result.inserted_id
-    except Exception as e:
-        print(f"Error adding user data: {e}")
-        raise
-
-def find_user(uri, db_name, username: str) -> bool:
-    """Check if a user exists in the database."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.find_one({"username": username})
-        return result is not None
-    except Exception as e:
-        print(f"Error finding user: {e}")
-        raise
-
-def login_user(uri, db_name, username: str, password: str) -> bool:
-    """Verify user login credentials."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.find_one({"username": username, "password": password})
-        return result is not None
-    except Exception as e:
-        print(f"Error during login: {e}")
-        return False
-
-# parent email functions
-def get_parent_email(uri, db_name, username: str):
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.find_one({"username": username}, {"parent_email": 1})
-        return result["parent_email"] if result else None
-    except Exception as e:
-        print(f"Error getting parent email: {e}")
-        return None
-
-def change_parent_email(uri, db_name, parent_email: str, username: str):
-    """Update a user's parent email."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.update_one({"username": username}, {"$set": {"parent_email": parent_email}})
-        return result.modified_count
-    except Exception as e:
-        print(f"Error changing parent email: {e}")
-        raise
-
-# points and streak functions
-def get_user_points(uri, db_name, username: str) -> int:
-    """Get a user's points."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.find_one({"username": username}, {"points": 1})
-        return result["points"] if result else 0
-    except Exception as e:
-        print(f"Error getting user points: {e}")
-        return 0
-
-def update_user_points(uri, db_name, username: str, new_points: int):
-    """Update a user's points."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.update_one({"username": username}, {"$set": {"points": new_points}})
-        return result.modified_count
-    except Exception as e:
-        print(f"Error updating user points: {e}")
-        raise
-
-def update_user_streak(uri, db_name, username: str, new_streak: int):
-    """Update a user's streak count."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.update_one({"username": username}, {"$set": {"streak": new_streak}})
-        return result.modified_count
-    except Exception as e:
-        print(f"Error updating user streak: {e}")
-        raise
-
-# story functions
-def add_story_data(uri, db_name, story_data: dict):
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["stories"]
-        result = collection.insert_one(story_data)
-        return result.inserted_id
-    except Exception as e:
-        print(f"Error adding story data: {e}")
-        raise
-
-def get_user_stories(uri, db_name, username: str):
-    """Get all stories by a user."""
-    client = MongoClient(uri)
-    try:
-        db = client[db_name]
-        collection = db["stories"]
-        result = collection.find({"story_author": username})
-        return list(result)
-    except Exception as e:
-        print(f"Error getting user stories: {e}")
-        return []
-    finally:
-        client.close()
-
-def find_story(uri, db_name, story_title: str):
-    """Find a story by its title."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["stories"]
-        result = collection.find_one({"story_title": story_title})
-        return result
-    except Exception as e:
-        print(f"Error finding story: {e}")
-        return None
-
-def get_total_word_count(uri, db_name, username: str) -> int:
-    """Get total word count for a user's stories."""
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["stories"]
-        result = collection.aggregate([
-            {"$match": {"story_author": username}},
-            {"$group": {"_id": None, "total_word_count": {"$sum": "$story_word_count"}}}
-        ])
-        total_word_count = next(result, {}).get("total_word_count", 0)
-        return total_word_count
-    except Exception as e:
-        print(f"Error getting total word count: {e}")
-        return 0
-
-def get_user_streak(uri, db_name, username: str) -> int:
-    try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.find_one({"username": username}, {"streak": 1})
-        return result["streak"] if result else 0
-    except Exception as e:
-        print(f"Error getting user streak: {e}")
-        return 0
+@contextmanager
+def get_db_connection(uri: str):
+    """
+    Context manager for database connections to ensure proper resource management.
     
-def update_user_stats(db_name: str, username: str, new_points: int, new_streak: int):
-    """Update a user's points and streak."""
+    Args:
+        uri (str): MongoDB connection URI
+    Yields:
+        MongoClient: MongoDB client instance
+    """
+    client = None
     try:
-        client = MongoClient(uri)
-        db = client[db_name]
-        collection = db["users"]
-        result = collection.update_one(
-            {"username": username},
-            {"$set": {"points": new_points, "streak": new_streak}}
-        )
-        return result.modified_count
+        client = MongoClient(uri, server_api=ServerApi('1'))
+        # Test connection
+        client.admin.command('ping')
+        yield client
     except Exception as e:
-        print(f"Error updating user stats: {e}")
-        raise
+        raise DatabaseError(f"Database connection error: {str(e)}")
+    finally:
+        if client:
+            client.close()
+
+def hash_password(password: str) -> str:
+    """
+    Hash a password using SHA-256.
+    
+    Args:
+        password (str): Plain text password
+    Returns:
+        str: Hashed password
+    """
+    return hashlib.sha256(password.encode()).hexdigest()
+
+class MongoDBManager:
+    def __init__(self, uri: str, db_name: str):
+        self.uri = uri
+        self.db_name = db_name
+
+    def save_document(self, collection_name: str, document: Dict[str, Any]) -> str:
+        """
+        Save a document to specified collection.
+        
+        Args:
+            collection_name (str): Name of the collection
+            document (Dict[str, Any]): Document to save
+        Returns:
+            str: Inserted document ID
+        """
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db[collection_name].insert_one(document)
+            return str(result.inserted_id)
+
+    def add_user(self, user_data: Dict[str, Any]) -> str:
+        """
+        Add a new user to the database with hashed password.
+        
+        Args:
+            user_data (Dict[str, Any]): User data including username and password
+        Returns:
+            str: User ID
+        """
+        if 'password' in user_data:
+            user_data['password'] = hash_password(user_data['password'])
+        return self.save_document('users', user_data)
+
+    def find_user(self, username: str) -> Optional[Dict[str, Any]]:
+        """Find user by username."""
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            return db.users.find_one({"username": username})
+
+    def login_user(self, username: str, password: str) -> bool:
+        """
+        Verify user login credentials using hashed password.
+        """
+        hashed_password = hash_password(password)
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db.users.find_one({
+                "username": username,
+                "password": hashed_password
+            })
+            return result is not None
+
+    def update_user_field(self, username: str, field: str, value: Any) -> bool:
+        """
+        Generic method to update any user field.
+        """
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db.users.update_one(
+                {"username": username},
+                {"$set": {field: value}}
+            )
+            return result.modified_count > 0
+
+    def get_parent_email(self, username: str) -> Optional[str]:
+        """Get parent email for a user."""
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db.users.find_one(
+                {"username": username},
+                {"parent_email": 1}
+            )
+            return result.get("parent_email") if result else None
+
+    def get_user_points(self, username: str) -> int:
+        """Get user points."""
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db.users.find_one(
+                {"username": username},
+                {"points": 1}
+            )
+            return result.get("points", 0) if result else 0
+
+    def update_user_stats(self, username: str, points: Optional[int] = None,
+                         streak: Optional[int] = None) -> bool:
+        """
+        Update user statistics (points and/or streak).
+        """
+        update_dict = {}
+        if points is not None:
+            update_dict["points"] = points
+        if streak is not None:
+            update_dict["streak"] = streak
+            
+        if not update_dict:
+            return False
+            
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db.users.update_one(
+                {"username": username},
+                {"$set": update_dict}
+            )
+            return result.modified_count > 0
+
+    def add_story(self, story_data: Dict[str, Any]) -> str:
+        """Add a new story."""
+        return self.save_document('stories', story_data)
+
+    def get_user_stories(self, username: str) -> List[Dict[str, Any]]:
+        """Get all stories by a user."""
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            return list(db.stories.find({"story_author": username}))
+
+    def get_total_word_count(self, username: str) -> int:
+        """Get total word count for a user's stories."""
+        with get_db_connection(self.uri) as client:
+            db = client[self.db_name]
+            result = db.stories.aggregate([
+                {"$match": {"story_author": username}},
+                {"$group": {
+                    "_id": None,
+                    "total_word_count": {"$sum": "$story_word_count"}
+                }}
+            ])
+            return next(result, {}).get("total_word_count", 0)

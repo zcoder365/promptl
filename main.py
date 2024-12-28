@@ -140,7 +140,8 @@ def my_account():
     username = session['username']
     
     # find the user in the database
-    user = find_user(username)
+    # find the user in the database
+    find_user(username)
     # get user's info
     num_stories = len(get_user_stories(username)) # num stories
     total_words = get_total_word_count(username) # total word count
@@ -185,13 +186,6 @@ def save_writing():
             
         # save story and update stats
         save_story_to_db(username, title, written_raw, word_count, prompts)
-            
-        # update user streak and points
-        try:
-            update_user_stats(username, points_earned)
-        except Exception as e:
-            flash("An error occurred while updating user stats.")
-        # except Exception:
     
         # get the compliment
         compliment = gen_compliment() 

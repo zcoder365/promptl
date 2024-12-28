@@ -11,7 +11,7 @@ def add_user(username: str, password: str, email: str):
         user_data = (username, password, email, 0, 0)
         
         # add the data using the function in the data.py file in the data folder
-        d.add_user_data(user_data)
+        data.add_user_data(user_data)
     
 def login_check(username: str, password: str):
     logged_in = data.login_user(username, password)

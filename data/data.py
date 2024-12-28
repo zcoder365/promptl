@@ -2,10 +2,6 @@ import logging
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
-# Database file paths
-USER_DATA_FILE = "data/users.db"
-STORY_DATA_FILE = "data/stories.db"
-
 # MongoDB connection details
 MONGO_URI = "mongodb://localhost:27017/"
 DATABASE_NAME = "promptl"

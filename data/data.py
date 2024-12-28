@@ -19,6 +19,7 @@ def get_mongo_client() -> MongoClient:
         # The ismaster command is cheap and does not require auth.
         client.admin.command('ismaster')
         return client
+    
     except ConnectionFailure as e:
         logging.error(f"Error connecting to MongoDB: {e}")
         raise
@@ -33,11 +34,14 @@ def login_user(username: str, password: str):
         if user:
             logging.info(f"User {username} logged in successfully.")
             return user
+        
         else:
             logging.warning(f"Login failed for user {username}. Incorrect username or password.")
             return None
+    
     except Exception as e:
         logging.error(f"Error logging in user {username}: {e}")
         raise
+    
     finally:
         client.close()

@@ -14,6 +14,7 @@ MONGO_URI = os.getenv("MONGO_URI") # get MongoDB URI from environment variables
 
 def get_mongo_client() -> MongoClient:
     """Create a MongoDB client with proper error handling."""
+    client = None
     try:
         client = MongoClient(MONGO_URI)
         # The ismaster command is cheap and does not require auth.
@@ -23,6 +24,10 @@ def get_mongo_client() -> MongoClient:
     except ConnectionFailure as e:
         logging.error(f"Error connecting to MongoDB: {e}")
         raise
+    
+    finally:
+        if client:
+            client.close()
 
 def login_user(username: str, password: str):
     """Log in a user using MongoDB."""

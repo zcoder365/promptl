@@ -12,19 +12,13 @@ from helpers.data_management import *
 app = Flask(__name__)
 app.secret_key = 'key' # move to an environment variable?
 
+# set up a mongodb manager instance
+data_manager = MongoDBManager()
+
 # page when the user comes to promptl
 @app.route('/')
 def index():
     return render_template('signup.html')
-
-# # added to check if the user is logged in
-# def login_required(f):
-#     @wraps(f)
-#     def decorated_function(*args, **kwargs):
-#         if "username" not in session:
-#             return redirect(url_for('login'))
-#         return f(*args, **kwargs)
-#     return decorated_function
 
 # home page route
 @app.route('/home')
@@ -69,7 +63,7 @@ def signup():
             return render_template("signup.html")
         
         # check if the user already exists
-        if find_user(username):
+        if data_manager.find_user(username):
             flash("Username already exists.")
             return render_template("signup.html")
         
@@ -128,7 +122,7 @@ def prior_pieces():
         flash("You need to be logged in to view your prior pieces.")
         return redirect(url_for('login'))
     
-    stories = get_user_stories(session['username'])
+    stories = data_manager.get_user_stories(session['username'])
     
     # handle the case where users have no stories
     if not stories:
@@ -144,13 +138,12 @@ def my_account():
     username = session['username']
     
     # find the user in the database
-    # find the user in the database
-    find_user(username)
+    data_manager.find_user(username)
     # get user's info
-    num_stories = len(get_user_stories(username)) # num stories
-    total_words = get_total_word_count(username) # total word count
-    points = get_user_points(username) # points
-    parent_email = get_parent_email(username) # parent email
+    num_stories = len(data_manager.get_user_stories(username)) # num stories
+    total_words = data_manager.get_total_word_count(username) # total word count
+    points = data_manager.get_user_points(username) # points
+    parent_email = data_manager.get_parent_email(username) # parent email
     
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
@@ -213,7 +206,7 @@ def save_writing():
 def edit_info():
     # get the username of the current user and their info from the database
     username = session['username']
-    user = find_user(username)
+    user = data_manager.find_user(username)
     
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)
@@ -228,7 +221,7 @@ def save_info():
         
         # only update if a parent email is provided
         if parent_email:
-            change_parent_email(parent_email, session['username'])
+            data_manager.change_parent_email(parent_email, session['username'])
             flash("Email updated successfully!")
         else:
             flash("Please provide an email address.")
@@ -241,7 +234,7 @@ def save_info():
 # @login_required
 def read_story(story_title):
     # get the story from the story database
-    story = find_story(story_title)
+    story = data_manager.find_story(story_title)
     
     if not story:
         flash("Story not found.")
@@ -259,7 +252,7 @@ def read_story(story_title):
 @app.route("/edit-story/<story_title>")
 def edit_story(story_title):
     # get the story from the db
-    story = find_story(story_title)
+    story = data_manager.find_story(story_title)
     
     if not story:
         flash("Story not found.")

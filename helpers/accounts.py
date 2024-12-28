@@ -1,7 +1,7 @@
-import data.data as d
+import data.data as data
 
 def add_user(username: str, password: str, email: str):
-    is_user = d.find_user(username)
+    is_user = data.find_user(username)
     
     if is_user:
         return "User already exists. Can't create a new account with this username."
@@ -14,6 +14,6 @@ def add_user(username: str, password: str, email: str):
         d.add_user_data(user_data)
     
 def login_check(username: str, password: str):
-    logged_in = d.login_user(username, password)
+    logged_in = data.login_user(username, password)
     
     return logged_in

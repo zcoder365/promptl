@@ -26,6 +26,7 @@ def get_mongo_client() -> MongoClient:
 
 def login_user(username: str, password: str):
     """Log in a user using MongoDB."""
+    client = None
     try:
         client = get_mongo_client()
         db = client[DATABASE_NAME]

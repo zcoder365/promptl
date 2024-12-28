@@ -136,8 +136,8 @@ def add_story_data(uri, db_name, story_data: dict):
 
 def get_user_stories(uri, db_name, username: str):
     """Get all stories by a user."""
+    client = MongoClient(uri)
     try:
-        client = MongoClient(uri)
         db = client[db_name]
         collection = db["stories"]
         result = collection.find({"story_author": username})
@@ -145,6 +145,8 @@ def get_user_stories(uri, db_name, username: str):
     except Exception as e:
         print(f"Error getting user stories: {e}")
         return []
+    finally:
+        client.close()
 
 def find_story(uri, db_name, story_title: str):
     """Find a story by its title."""

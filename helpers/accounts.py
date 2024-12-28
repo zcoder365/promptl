@@ -1,4 +1,4 @@
-import data.data as data
+from data import data
 
 def add_user(username: str, password: str, email: str):
     is_user = data.find_user(username)

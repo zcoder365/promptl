@@ -1,6 +1,6 @@
 # general imports
 from flask import *
-from functools import wraps # preserves function metadata
+# from functools import wraps # preserves function metadata
 
 # import other files
 from helpers.accounts import *
@@ -17,14 +17,14 @@ app.secret_key = 'key' # move to an environment variable?
 def index():
     return render_template('signup.html')
 
-# added to check if the user is logged in
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "username" not in session:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+# # added to check if the user is logged in
+# def login_required(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         if "username" not in session:
+#             return redirect(url_for('login'))
+#         return f(*args, **kwargs)
+#     return decorated_function
 
 # home page route
 @app.route('/home')
@@ -121,7 +121,7 @@ def logout():
 
 # prior pieces route
 @app.route('/prior-pieces')
-@login_required
+# @login_required
 def prior_pieces():
     # find the user's stories
     stories = get_user_stories(session['username'])
@@ -152,7 +152,7 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def save_writing():
     # handle POST request for saving the writing
     if request.method == "POST":
@@ -222,7 +222,7 @@ def edit_info():
 
 # change parent email page
 @app.route('/change-email', methods=['POST', 'GET'])
-@login_required
+# @login_required
 def save_info():
     if request.method == 'POST':
         # get the user's parent's email 
@@ -240,7 +240,7 @@ def save_info():
 
 # read a story page
 @app.route("/read-story/<story_title>")
-@login_required
+# @login_required
 def read_story(story_title):
     # get the story from the story database
     story = find_story(story_title)

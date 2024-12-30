@@ -147,4 +147,5 @@ class DatabaseManager:
         finally:
             client.close()
 
-db = DatabaseManager() # create a single instance to be imported by other modules
+# create a single instance to be imported by other modules
+db = DatabaseManager()

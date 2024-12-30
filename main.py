@@ -85,21 +85,13 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
         
-        # check if username or password is empty
-        if not username or not password:
-            print("Please provide both username and password.")
-            return render_template("login.html")
-        
-        # use the accounts module to check login
-        logged_in = login_check(username, password)
-        
-        if logged_in:
-            # set the session
+        # simplified login check
+        if db.verify_login(username, password):
             session['username'] = username
-            return redirect(url_for("home"))
+            return redirect(url_for('home'))
         else:
-            print("Invalid username or password.")
-            return render_template("login.html")
+            flash("Invalid credentials")
+            return redirect(url_for('login'))
     
     # if GET request, just show the login page
     return render_template("login.html")

@@ -195,7 +195,7 @@ def save_writing():
 def edit_info():
     # get the username of the current user and their info from the database
     username = session['username']
-    user = data_manager.find_user(username)
+    user = db.find_user(username)
     
     # return the template for editing user info for the current user
     return render_template("edit-info.html", user=user)
@@ -210,7 +210,7 @@ def save_info():
         
         # only update if a parent email is provided
         if parent_email:
-            data_manager.change_parent_email(parent_email, session['username'])
+            db.change_parent_email(parent_email, session['username'])
             flash("Email updated successfully!")
         else:
             flash("Please provide an email address.")
@@ -223,7 +223,7 @@ def save_info():
 # @login_required
 def read_story(story_title):
     # get the story from the story database
-    story = data_manager.find_story(story_title)
+    story = db.find_story(story_title)
     
     if not story:
         flash("Story not found.")
@@ -241,7 +241,7 @@ def read_story(story_title):
 @app.route("/edit-story/<story_title>")
 def edit_story(story_title):
     # get the story from the db
-    story = data_manager.find_story(story_title)
+    story = db.find_story(story_title)
     
     if not story:
         flash("Story not found.")

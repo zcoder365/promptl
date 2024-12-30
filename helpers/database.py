@@ -146,3 +146,5 @@ class DatabaseManager:
             return False
         finally:
             client.close()
+
+db = DatabaseManager()

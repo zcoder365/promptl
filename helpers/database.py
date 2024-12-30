@@ -187,5 +187,15 @@ class DatabaseManager:
         user = db.users.find_one({"username": username})
         return user
 
+    def change_parent_email(self, new_email: str, username: str) -> bool:
+        db = self._get_connection()[self.db_name]
+        
+        result = db.users.update_one(
+            {"username": username},
+            {"$set": {"parent_email": new_email}}
+        )
+        
+        return result.modified_count > 0
+
 # create a single instance to be imported by other modules
 db = DatabaseManager()

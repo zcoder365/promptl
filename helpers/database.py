@@ -170,6 +170,16 @@ class DatabaseManager:
         )
         
         return user.get("points", 0) if user else 0
+    
+    def get_parent_email(self, username: str) -> Optional[str]:
+        db = self._get_connection()[self.db_name]
+        
+        user = db.users.find_one(
+            {"username": username},
+            {"parent_email": 1} # there exists a parent email
+        )
+        
+        return user.get("parent_email") if user else None
 
 # create a single instance to be imported by other modules
 db = DatabaseManager()

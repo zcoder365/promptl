@@ -180,6 +180,12 @@ class DatabaseManager:
         )
         
         return user.get("parent_email") if user else None
+    
+    def find_user(self, username: str) -> Optional[Dict]:
+        db = self._get_connection()[self.db_name]
+        
+        user = db.users.find_one({"username": username})
+        return user
 
 # create a single instance to be imported by other modules
 db = DatabaseManager()

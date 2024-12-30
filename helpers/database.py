@@ -146,6 +146,20 @@ class DatabaseManager:
             return False
         finally:
             client.close()
+    
+    def get_total_word_count(self, username: str):
+        db = self._get_connection()[self.db_name]
+        
+        result = db.stories.aggregate([
+            {"$match": {"story_author": username}},
+            {"$group":{
+                "_id": None,
+                "total_words": {"$sum": "$story_word_count"}
+            }}
+        ])
+        
+        agg_result = next(result, {"total_words": 0})
+        return agg_result['total_words']
 
 # create a single instance to be imported by other modules
 db = DatabaseManager()

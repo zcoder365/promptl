@@ -160,6 +160,16 @@ class DatabaseManager:
         
         agg_result = next(result, {"total_words": 0})
         return agg_result['total_words']
+    
+    def get_user_points(self, username: str) -> int:
+        db = self._get_connection()[self.db_name]
+        
+        user = db.users.find_one(
+            {"username": username},
+            {"points": 1} # why?
+        )
+        
+        return user.get("points", 0) if user else 0
 
 # create a single instance to be imported by other modules
 db = DatabaseManager()

@@ -196,6 +196,12 @@ class DatabaseManager:
         )
         
         return result.modified_count > 0
+    
+    def find_story(self, story_id: str) -> Optional[Dict]:
+        db = self._get_connection()[self.db_name]
+        
+        story = db.stories.find_one({"_id": story_id})
+        return story
 
 # create a single instance to be imported by other modules
 db = DatabaseManager()

@@ -166,7 +166,7 @@ class DatabaseManager:
         
         user = db.users.find_one(
             {"username": username},
-            {"points": 1} # why?
+            {"points": 1} # make sure the user has points
         )
         
         return user.get("points", 0) if user else 0

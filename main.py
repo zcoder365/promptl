@@ -60,7 +60,7 @@ def signup():
             return render_template("signup.html")
         
         # check if the user already exists
-        if data_manager.find_user(username):
+        if db.find_user(username):
             flash("Username already exists.")
             return render_template("signup.html")
         

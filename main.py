@@ -111,7 +111,7 @@ def prior_pieces():
         flash("You need to be logged in to view your prior pieces.")
         return redirect(url_for('login'))
     
-    stories = data_manager.get_user_stories(session['username'])
+    stories = db.get_user_stories(session['username'])
     
     # handle the case where users have no stories
     if not stories:
@@ -127,12 +127,12 @@ def my_account():
     username = session['username']
     
     # find the user in the database
-    data_manager.find_user(username)
+    db.find_user(username)
     # get user's info
-    num_stories = len(data_manager.get_user_stories(username)) # num stories
-    total_words = data_manager.get_total_word_count(username) # total word count
-    points = data_manager.get_user_points(username) # points
-    parent_email = data_manager.get_parent_email(username) # parent email
+    num_stories = len(db.get_user_stories(username)) # num stories
+    total_words = db.get_total_word_count(username) # total word count
+    points = db.get_user_points(username) # points
+    parent_email = db.get_parent_email(username) # parent email
     
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)

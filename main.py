@@ -13,6 +13,9 @@ from helpers.database import db
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") # move to an environment variable
 
+# global variables
+prps = None
+
 # login required decorator
 def login_required(f):
     @wraps(f)
@@ -157,9 +160,9 @@ def save_writing():
     # handle POST request for saving the writing
     if request.method == "POST":
         # get the story content and title from the form
-        written_raw = request.form.get('story')
-        title = request.form.get('title')
-        username = session.get('username')
+        written_raw = request.form['story']
+        title = request.form['title']
+        username = session['username']
         
         # validate required data
         if not all([written_raw, title, username]):
@@ -169,11 +172,11 @@ def save_writing():
         
         # get the prompts from the form
         prompts = {
-            'name': request.form.get('name'),
-            'job': request.form.get('job'),
-            'object': request.form.get('object'),
-            'place': request.form.get('place'),
-            'bonus': request.form.get('bonus')
+            'name': prps['name'],
+            'job': prps['job'],
+            'object': prps['object'],
+            'place': prps['place'],
+            'bonus': prps['bonus']
         }
         
         # process the story

@@ -15,7 +15,8 @@ csrf = CSRFProtect()
 
 # create the flask app
 app = Flask(__name__)
-app.secret_key = 'key' # move to an environment variable?
+app.secret_key = os.getenv("FLASK_SECRET_KEY") # move to an environment variable
+csrf.init_app(app) # enable CSRF protection
 
 # page when the user comes to promptl
 @app.route('/')

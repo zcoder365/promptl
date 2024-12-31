@@ -68,8 +68,11 @@ class DatabaseManager:
             client.close()
             
     def verify_login(self, username: str, password: str) -> bool:
+        # create client connection
+        client = self._get_connection()
+        
         try:
-            client = self._get_connection()
+            # get the database
             db = client[self.db_name]
             
             hashed_pw = self._hash_password(password)

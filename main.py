@@ -28,3 +28,33 @@ class Story(db.Model):
 # create all of the databases
 with app.app_context():
     db.create_all()
+
+# login required decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# page when the user comes to promptl
+@app.route('/')
+def index():
+    return render_template('signup.html')
+
+# home page route
+@app.route('/home')
+def home():
+    # generate the prompts
+    prps = gen_all_prompts()
+    
+    # allocate each prompt to a variable
+    name = prps['name']
+    job = prps['job']
+    place = prps['place']
+    object = prps['object']
+    bonus = prps['bonus']
+
+    # return the main page for writing with the prompts
+    return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)

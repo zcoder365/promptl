@@ -15,10 +15,6 @@ class DatabaseManager:
         self.uri = os.getenv("MONGODB_URI")
         self.db_name = "promptl"
         self.client = None
-
-        # setup logging
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger(__name__)
         
         # verify we have the necessary environment variables
         if not self.uri:

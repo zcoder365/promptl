@@ -72,11 +72,13 @@ def signup():
         # check if all required fields are filled
         if not username or not password or not parent_email:
             # flash("Please fill in all fields.")
+            print("[ Error ] Please fill in all fields.")
             return render_template("signup.html")
         
         # check if the user already exists
         if db.find_user(username):
             # flash("Username already exists.")
+            print("[ Error ] Username already exists.")
             return render_template("signup.html")
         
         # add user and create session
@@ -103,6 +105,7 @@ def login():
             return redirect(url_for('home'))
         else:
             # flash("Invalid credentials")
+            print("[ Error ] Invalid credentials")
             return redirect(url_for('login'))
     
     # if GET request, just show the login page
@@ -124,6 +127,7 @@ def prior_pieces():
     # find the user's stories
     if 'username' not in session:
         # flash("You need to be logged in to view your prior pieces.")
+        print("[ Error ] You need to be logged in to view your prior pieces")
         return redirect(url_for('login'))
     
     stories = db.get_user_stories(session['username'])
@@ -166,6 +170,7 @@ def save_writing():
         # validate required data
         if not all([written_raw, title, username]):
             # flash("Missing required information.")
+            print("[ Error ] Missing information.")
             return redirect(url_for("home"))
         
         # get the prompts from the form
@@ -227,8 +232,10 @@ def save_info():
         if parent_email:
             db.change_parent_email(parent_email, session['username'])
             # flash("Email updated successfully!")
-        # else:
+            print("[ Success ] Email updated successfully.")
+        else:
             # flash("Please provide an email address.")
+            print("[ Error ] Please enter a valid email address.")
 
     # return to the user's account page
     return redirect(url_for('my_account'))
@@ -242,11 +249,13 @@ def read_story(story_title):
     
     if not story:
         # flash("Story not found.")
+        print("[ Error ] Story not found.")
         return redirect(url_for("prior_pieces"))
     
     # check if the logged-in user is the author
     if story[0] != session["username"]:
         # flash("You don't have permission to view the story.")
+        print("[ Error ] You don't have permission to view the story.")
         return redirect(url_for('prior_pieces'))
     
     # return the page for reading the story
@@ -260,11 +269,13 @@ def edit_story(story_title):
     
     if not story:
         # flash("Story not found.")
+        print("[ Error ] Story not found.")
         return redirect(url_for("prior_pieces"))
     
     # check if the logged-in user is the author
     if story[0] != session['username']:  # assuming story[0] contains author username
         # flash('You do not have permission to edit this story.')
+        print("[ Error ] You don't have permission to edit this story.")
         return redirect(url_for('prior_pieces'))
     
     # return the page for editing a story

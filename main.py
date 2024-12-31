@@ -60,9 +60,9 @@ def about_page():
 def signup():
     if request.method == "POST":
         # get username, password, and parent email
-        username = request.form.get("username")
-        password = request.form.get("password")
-        parent_email = request.form.get("parent-email")
+        username = request.form["username"]
+        password = request.form["password"]
+        parent_email = request.form["parent-email"]
         
         # check if all required fields are filled
         if not username or not password or not parent_email:
@@ -91,8 +91,8 @@ def signup():
 def login():
     if request.method == "POST":
         # get username and password from the form
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form["username"]
+        password = request.form["password"]
         
         # simplified login check
         if db.verify_login(username, password):

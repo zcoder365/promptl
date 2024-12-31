@@ -33,6 +33,17 @@ def validate_story_input(written: str, title: str, prompts: dict) -> tuple[bool,
         
     if not all(prompts.values()):
         return False, "Missing prompt values."
+    
+    # Add length validation
+    if len(title) > 100:  # Arbitrary max length
+        return False, "Title is too long"
+        
+    if len(written) > 10000:  # Arbitrary max length
+        return False, "Story is too long"
+    
+    # Add character validation
+    if not title.isprintable() or not written.isprintable():
+        return False, "Invalid characters in input"
         
     return True, ""
 

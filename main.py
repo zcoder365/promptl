@@ -18,6 +18,15 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") # move to an environment variable
 csrf.init_app(app) # enable CSRF protection
 
+# login required decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # page when the user comes to promptl
 @app.route('/')
 def index():

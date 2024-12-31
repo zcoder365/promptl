@@ -65,7 +65,7 @@ def signup():
         # get username, password, and parent email
         username = request.form["username"]
         password = request.form["password"]
-        parent_email = request.form["parent-email"]
+        parent_email = request.form["parent_email"]
         
         # check if all required fields are filled
         if not username or not password or not parent_email:

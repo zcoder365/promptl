@@ -66,21 +66,27 @@ def signup():
         password = request.form["password"]
         parent_email = request.form["parent_email"]
         
-        # check if all required fields are filled
-        if not username or not password or not parent_email:
-            # flash("Please fill in all fields.")
-            print("[ Error ] Please fill in all fields.")
-            return render_template("signup.html")
+        # # check if all required fields are filled
+        # if not username or not password or not parent_email:
+        #     # flash("Please fill in all fields.")
+        #     print("[ Error ] Please fill in all fields.")
+        #     return render_template("signup.html")
         
-        # check if the user already exists
-        if db.find_user(username):
-            # flash("Username already exists.")
-            print("[ Error ] Username already exists.")
-            return render_template("signup.html")
+        # # check if the user already exists
+        # if db.find_user(username):
+        #     # flash("Username already exists.")
+        #     print("[ Error ] Username already exists.")
+        #     return render_template("signup.html")
         
-        # add user and create session
-        add_user(username, password, parent_email)
-        session['username'] = username
+        # # add user and create session
+        # add_user(username, password, parent_email)
+        # session['username'] = username
+        
+        # create a new user with SQLAlchemy
+        new_user = User(username=username, password=password, parent_email=parent_email)
+        
+        session.add(new_user)
+        session.commit
         
         # redirect the user to the home/writing page
         return redirect(url_for("home"))

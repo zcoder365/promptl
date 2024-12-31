@@ -48,28 +48,29 @@ class DatabaseManager:
     # user management methods
     def add_user(self, username: str, password: str, email: str) -> bool:
         try:
-            client = self._get_connection()
-            db = client[self.db_name]
-            
-            # check if the user already exists
-            if db.users.find_one({"username": username}):
-                return False
-            
-            # create a user document
-            user_doc = {
-                "username": username,
-                "password": password,
-                "parent_email": email,
-                "points": 0,
-                "streak": 0
-            }
-            
-            result = db.users.insert_one(user_doc)
-            
-            return bool(result.inserted_id)
+            with self._get_connection() as client:
+                db = client[self.db_name]
+                
+                # check if the user already exists
+                if db.users.find_one({"username": username}):
+                    return False
+                
+                # create a user document
+                user_doc = {
+                    "username": username,
+                    "password": password,
+                    "parent_email": email,
+                    "points": 0,
+                    "streak": 0
+                }
+                
+                result = db.users.insert_one(user_doc)
+                
+                return bool(result.inserted_id)
         except Exception as e:
             self.logger.error(f"Error adding user {username}: {str(e)}")
             return False
+        
         finally:
             client.close()
             

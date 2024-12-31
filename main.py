@@ -1,8 +1,9 @@
 # general imports
 import os
-from flask import Flask, request, session, redirect, url_for, render_template
+from flask import Flask, request, session, redirect, url_for, render_template, flash
 from functools import wraps # preserves function metadata
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # import other files
 from utils.accounts import *

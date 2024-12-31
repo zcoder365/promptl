@@ -32,10 +32,7 @@ class DatabaseManager:
         
     def _get_connection(self) -> MongoClient:
         try:
-            client = MongoClient(self.uri, server_api=ServerApi('1'), **self.client_options)
-            
-            # test the connection
-            client.admin.command('ping')
+            client = MongoClient(self.uri, server_api=ServerApi('1'))
             return client
         
         except Exception as e:

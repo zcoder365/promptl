@@ -89,6 +89,7 @@ class DatabaseManager:
         except Exception as e:
             self.logger.error(f"Error verifying login for {username}: {str(e)}")
             return False
+        
         finally:
             client.close()
     

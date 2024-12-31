@@ -64,3 +64,9 @@ def home():
 def new_prompt():
     # reload the page to get a new 5 prompts
     return redirect(url_for("home"))
+
+# about page
+@app.route('/about')
+def about_page():
+    # return the page about the game
+    return render_template('about.html')

@@ -14,6 +14,6 @@ def add_user(username: str, password: str, email: str):
         db.add_user_data(user_data)
     
 def login_check(username: str, password: str):
-    logged_in = db.login_user(username, password)
+    logged_in = db.verify_login(username, password)
     
     return logged_in

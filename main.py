@@ -71,12 +71,12 @@ def signup():
         
         # check if all required fields are filled
         if not username or not password or not parent_email:
-            flash("Please fill in all fields.")
+            # flash("Please fill in all fields.")
             return render_template("signup.html")
         
         # check if the user already exists
         if db.find_user(username):
-            flash("Username already exists.")
+            # flash("Username already exists.")
             return render_template("signup.html")
         
         # add user and create session

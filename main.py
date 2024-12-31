@@ -2,6 +2,7 @@
 import os
 from flask import Flask, request, session, redirect, url_for, render_template
 from functools import wraps # preserves function metadata
+from flask_sqlalchemy import SQLAlchemy
 
 # import other files
 from utils.accounts import *
@@ -9,7 +10,9 @@ from utils.prompts import *
 
 # create the flask app
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY")
+app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_URI') # get the URI for the database
+db = SQLAlchemy(app) # set up the SQLAlchemy database
 
 # global variables
 prps = None

@@ -99,7 +99,6 @@ def login():
             session['username'] = username
             return redirect(url_for('home'))
         else:
-            # flash("Invalid credentials")
             print("[ Error ] Invalid credentials")
             return redirect(url_for('login'))
     

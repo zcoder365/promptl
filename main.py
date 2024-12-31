@@ -192,8 +192,23 @@ def save_writing():
         # calculate how many prompts were used
         words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
             
-        # save story and update stats
-        save_story_to_db(username, title, written_raw, word_count, prompts)
+        # create a new story with SQLAlchemy
+        new_story = Story(
+            prompt=str(prompts),
+            word_count=word_count,
+            author_id=session['user_id']
+        )
+        
+        # add the story to the database
+        session.add(new_story)
+        
+        # update user's stotal word count
+        user = session.query(User).get(session['user_id'])
+        user.total_word_count += word_count
+        user.points += points_earned
+        
+        # commit changes
+        session.commit()
     
         # get the compliment
         compliment = gen_compliment() 

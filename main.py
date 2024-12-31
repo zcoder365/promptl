@@ -70,3 +70,23 @@ def new_prompt():
 def about_page():
     # return the page about the game
     return render_template('about.html')
+
+# let the user signup
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+    if request.method == "POST":
+        # get username and password
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        # create a new user with SQLAlchemy
+        new_user = User(username, password)
+        
+        session.add(new_user)
+        session.commit
+        
+        # redirect the user to the home/writing page
+        return redirect(url_for("home"))
+    
+    # if GET request, just show signup page
+    return render_template("signup.html")

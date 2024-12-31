@@ -58,3 +58,9 @@ def home():
 
     # return the main page for writing with the prompts
     return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)
+
+# generate a new prompt
+@app.route('/new-prompt')
+def new_prompt():
+    # reload the page to get a new 5 prompts
+    return redirect(url_for("home"))

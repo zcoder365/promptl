@@ -94,3 +94,25 @@ def signup():
     
     # if GET request, just show signup page
     return render_template("signup.html")
+
+# login route
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        # get username and password from the form
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        # find the user in the database
+        user = User.query.filter_by(username=request.form['username']).first()
+        
+        # if the user exists and the passwords match, create the session with the user id
+        if user and check_password_hash(user.password, request.form['password']):
+            session['user_id'] = user.id
+            return redirect(url_for("index"))
+
+        # flash error message for incorrect username or password
+        flash("Invalid username or password.")
+    
+    # if GET request, just show the login page
+    return render_template("login.html")

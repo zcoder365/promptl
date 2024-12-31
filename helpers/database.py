@@ -16,19 +16,23 @@ class DatabaseManager:
         self.db_name = "promptl"
         self.client = None
         
-        # verify we have the necessary environment variables
-        if not self.uri:
-            raise ValueError("MongoDB URI not found in environment variables")
+        # add connection pooling settings
+        self.client_options.update({
+            "maxPoolSize": 50,
+            "retryWrites": True,
+            "w": "majority"
+        })
         
-        # add connection timeout
-        self.client_options = {
-            "serverSelectionTimeoutMS": 5000,
-            "connectTimeoutMS": 10000
-        }
+        # initialize client once
+        self.client = MongoClient(self.uri, self.client_options)
         
     def _get_connection(self) -> MongoClient:
-        client = MongoClient(self.uri, server_api=ServerApi('1'))
-        return client
+        return self.client
+
+    def __del__(self):
+        # proper cleanup
+        if self.client:
+            self.client.close()
     
     def _hash_password(self, password: str) -> str:
         return hashlib.sha256(password.encode()).hexdigest()

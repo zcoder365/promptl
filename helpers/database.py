@@ -198,6 +198,8 @@ class DatabaseManager:
         
         # find the user by username
         user = users.find_one({"username": username})
+        
+        # return the user
         return user
 
     def change_parent_email(self, new_email: str, username: str) -> bool:

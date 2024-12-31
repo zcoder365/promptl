@@ -46,3 +46,17 @@ class Story(Base):
     
     # many stories can belong to a user/author
     author = relationship("User", back_populates="stories")
+
+def calculate_points(word_count, prompts_used):
+    points = 0
+    
+    # only award points if story meets minimum length
+    if word_count >= 70:
+        # award 10 points per prompt used
+        points += prompts_used * 10
+        
+        # bonus points for longer stories
+        if word_count >= 100:
+            points += 25
+    
+    return points

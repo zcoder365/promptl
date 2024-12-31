@@ -126,13 +126,10 @@ def logout():
 @app.route('/prior-pieces')
 # @login_required
 def prior_pieces():
-    # find the user's stories
-    if 'username' not in session:
-        # flash("You need to be logged in to view your prior pieces.")
-        print("[ Error ] You need to be logged in to view your prior pieces")
-        return redirect(url_for('login'))
+    user = session.query(User).get(session['user_id'])
+    stories = user.stories # use SQLAlchemy relation to get the stories
     
-    stories = db.get_user_stories(session['username'])
+    # stories = db.get_user_stories(session['username'])
     
     # handle the case where users have no stories
     if not stories:

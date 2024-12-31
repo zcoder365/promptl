@@ -169,11 +169,11 @@ def save_writing():
         title = request.form['title']
         username = session['username']
         
-        # validate required data
-        if not all([written_raw, title, username]):
-            # flash("Missing required information.")
-            print("[ Error ] Missing information.")
-            return redirect(url_for("home"))
+        # # validate required data
+        # if not all([written_raw, title, username]):
+        #     # flash("Missing required information.")
+        #     print("[ Error ] Missing information.")
+        #     return redirect(url_for("home"))
         
         # get the prompts from the form
         prompts = {

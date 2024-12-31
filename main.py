@@ -154,7 +154,7 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-# @login_required
+@login_required # apply the decorator so the route is protected
 def save_writing():
     # handle POST request for saving the writing
     if request.method == "POST":

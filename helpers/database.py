@@ -193,11 +193,8 @@ class DatabaseManager:
         # get the database connection
         db = self._get_connection()[self.db_name]
         
-        # acess users database
-        users = db.users
-        
         # find the user by username
-        user = users.find_one({"username": username})
+        user = db['users'].find_one({"username": username})
         
         # return the user
         return user

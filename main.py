@@ -83,7 +83,7 @@ def signup():
         # session['username'] = username
         
         # create a new user with SQLAlchemy
-        new_user = User(username=username, password=password, parent_email=parent_email)
+        new_user = User(username, password, parent_email)
         
         session.add(new_user)
         session.commit

@@ -187,7 +187,7 @@ def save_writing():
         # process the story
         story = written_raw.split(" ")
         word_count = len(story)
-        points_earned = process_story_points(story, prompts, word_count)
+        points_earned = calculate_points(story, prompts, word_count)
             
         # calculate how many prompts were used
         words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))

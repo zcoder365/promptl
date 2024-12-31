@@ -171,14 +171,19 @@ class DatabaseManager:
             return 0
     
     def get_user_points(self, username: str) -> int:
-        db = self._get_connection()[self.db_name]
+        try:
+            db = self._get_connection()[self.db_name]
+            
+            user = db.users.find_one(
+                {"username": username},
+                {"points": 1}
+            )
+            
+            return user.get("points", 0) if user else 0
         
-        user = db.users.find_one(
-            {"username": username},
-            {"points": 1} # make sure the user has points
-        )
-        
-        return user.get("points", 0) if user else 0
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            return 0
     
     def get_parent_email(self, username: str) -> Optional[str]:
         db = self._get_connection()[self.db_name]

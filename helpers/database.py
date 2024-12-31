@@ -32,12 +32,13 @@ class DatabaseManager:
         
     def _get_connection(self) -> MongoClient:
         try:
-            client = MongoClient(self.uri, server_api=ServerApi('1'))
+            client = MongoClient(self.uri, server_api=ServerApi('1'), **self.client_options)
             
             # test the connection
             client.admin.command('ping')
             self.logger.info("Successfully connected to MongoDB")
             return client
+        
         except Exception as e:
             self.logger.error(f"Failed to connect to MongoDB: {str(e)}")
             raise ConnectionFailure(f"Could not connect to database: {str(e)}")

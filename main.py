@@ -4,9 +4,8 @@ from flask import Flask, request, session, redirect, url_for, render_template
 from functools import wraps # preserves function metadata
 
 # import other files
-from helpers.accounts import *
-from helpers.model import *
-from helpers.prompts import *
+from utils.accounts import *
+from utils.prompts import *
 
 # create the flask app
 app = Flask(__name__)

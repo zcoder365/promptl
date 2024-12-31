@@ -24,6 +24,12 @@ class DatabaseManager:
         if not self.uri:
             raise ValueError("MongoDB URI not found in environment variables")
         
+        # add connection timeout
+        self.client_options = {
+            "serverSelectionTimeoutMS": 5000,
+            "connectTimeoutMS": 10000
+        }
+        
     def _get_connection(self) -> MongoClient:
         try:
             client = MongoClient(self.uri, server_api=ServerApi('1'))

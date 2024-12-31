@@ -1,6 +1,6 @@
 # general imports
 import os
-from flask import Flask, request, session, redirect, url_for, render_template, flash
+from flask import Flask, request, session, redirect, url_for, render_template
 from functools import wraps # preserves function metadata
 # from flask_wtf.csrf import CSRFProtect
 
@@ -102,7 +102,7 @@ def login():
             session['username'] = username
             return redirect(url_for('home'))
         else:
-            flash("Invalid credentials")
+            # flash("Invalid credentials")
             return redirect(url_for('login'))
     
     # if GET request, just show the login page
@@ -123,7 +123,7 @@ def logout():
 def prior_pieces():
     # find the user's stories
     if 'username' not in session:
-        flash("You need to be logged in to view your prior pieces.")
+        # flash("You need to be logged in to view your prior pieces.")
         return redirect(url_for('login'))
     
     stories = db.get_user_stories(session['username'])
@@ -165,7 +165,7 @@ def save_writing():
         
         # validate required data
         if not all([written_raw, title, username]):
-            flash("Missing required information.")
+            # flash("Missing required information.")
             return redirect(url_for("home"))
         
         # get the prompts from the form
@@ -226,9 +226,9 @@ def save_info():
         # only update if a parent email is provided
         if parent_email:
             db.change_parent_email(parent_email, session['username'])
-            flash("Email updated successfully!")
-        else:
-            flash("Please provide an email address.")
+            # flash("Email updated successfully!")
+        # else:
+            # flash("Please provide an email address.")
 
     # return to the user's account page
     return redirect(url_for('my_account'))
@@ -241,12 +241,12 @@ def read_story(story_title):
     story = db.find_story(story_title)
     
     if not story:
-        flash("Story not found.")
+        # flash("Story not found.")
         return redirect(url_for("prior_pieces"))
     
     # check if the logged-in user is the author
     if story[0] != session["username"]:
-        flash("You don't have permission to view the story.")
+        # flash("You don't have permission to view the story.")
         return redirect(url_for('prior_pieces'))
     
     # return the page for reading the story
@@ -259,12 +259,12 @@ def edit_story(story_title):
     story = db.find_story(story_title)
     
     if not story:
-        flash("Story not found.")
+        # flash("Story not found.")
         return redirect(url_for("prior_pieces"))
     
     # check if the logged-in user is the author
     if story[0] != session['username']:  # assuming story[0] contains author username
-        flash('You do not have permission to edit this story.')
+        # flash('You do not have permission to edit this story.')
         return redirect(url_for('prior_pieces'))
     
     # return the page for editing a story

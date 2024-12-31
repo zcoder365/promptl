@@ -10,13 +10,9 @@ from helpers.model import *
 from helpers.prompts import *
 from helpers.database import db
 
-# # initialize CSRF protection
-# csrf = CSRFProtect()
-
 # create the flask app
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") # move to an environment variable
-# csrf.init_app(app) # enable CSRF protection
 
 # login required decorator
 def login_required(f):

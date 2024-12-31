@@ -59,6 +59,7 @@ class DatabaseManager:
                 result = db.users.insert_one(user_doc)
                 
                 return bool(result.inserted_id)
+        
         except Exception as e:
             self.logger.error(f"Error adding user {username}: {str(e)}")
             return False
@@ -151,18 +152,23 @@ class DatabaseManager:
             client.close()
     
     def get_total_word_count(self, username: str):
-        db = self._get_connection()[self.db_name]
+        try:
+            db = self._get_connection()[self.db_name]
+            
+            result = db.stories.aggregate([
+                {"$match": {"story_author": username}},
+                {"$group":{
+                    "_id": None,
+                    "total_words": {"$sum": "$story_word_count"}
+                }}
+            ])
+            
+            agg_result = next(result, {"total_words": 0})
+            
+            return agg_result['total_words']
         
-        result = db.stories.aggregate([
-            {"$match": {"story_author": username}},
-            {"$group":{
-                "_id": None,
-                "total_words": {"$sum": "$story_word_count"}
-            }}
-        ])
-        
-        agg_result = next(result, {"total_words": 0})
-        return agg_result['total_words']
+        except Exception as e:
+            return 0
     
     def get_user_points(self, username: str) -> int:
         db = self._get_connection()[self.db_name]

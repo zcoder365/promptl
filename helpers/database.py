@@ -193,8 +193,11 @@ class DatabaseManager:
         # get the database connection
         db = self._get_connection()[self.db_name]
         
+        # acess users database
+        users = db.users
+        
         # find the user by username
-        user = db["users"].find_one({"username": username})
+        user = users.find_one({"username": username})
         return user
 
     def change_parent_email(self, new_email: str, username: str) -> bool:

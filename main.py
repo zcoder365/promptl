@@ -9,7 +9,7 @@ from utils.prompts import *
 
 # create the flask app
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY") # move to an environment variable
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # global variables
 prps = None

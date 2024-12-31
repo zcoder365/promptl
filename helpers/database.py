@@ -82,7 +82,7 @@ class DatabaseManager:
             db = client[self.db_name]
             
             hashed_pw = self._hash_password(password)
-            user = db.users.findone({"username": username, "password": hashed_pw})
+            user = db.users.find_one({"username": username, "password": hashed_pw})
             
             return bool(user)
         

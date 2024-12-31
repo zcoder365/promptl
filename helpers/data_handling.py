@@ -42,7 +42,7 @@ class Story(Base):
     word_count = Column(Integer)
     
     # foreign key linking to the user who wrote this story
-    author_id = Column(Integer, ForeignKey=True)
+    author_id = Column(Integer, ForeignKey('users.id'))
     
     # many stories can belong to a user/author
     author = relationship("User", back_populates="stories")

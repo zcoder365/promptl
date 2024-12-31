@@ -129,8 +129,6 @@ def prior_pieces():
     user = session.query(User).get(session['user_id'])
     stories = user.stories # use SQLAlchemy relation to get the stories
     
-    # stories = db.get_user_stories(session['username'])
-    
     # handle the case where users have no stories
     if not stories:
         stories = []

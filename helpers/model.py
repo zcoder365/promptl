@@ -1,4 +1,4 @@
-import data.data as d
+import helpers.database as db
 
 def get_story_length_and_points(story, prompts):
     points = 0
@@ -52,4 +52,4 @@ def save_story_to_db(username: str, title: str, content: str, word_count: int, p
     # save the story to the database
     
     story_data = (username, title, content, word_count, str(prompts))
-    d.add_story_data(story_data)
+    db.add_story(story_data)

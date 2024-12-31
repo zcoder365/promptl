@@ -117,3 +117,14 @@ def login():
     
     # if GET request, just show the login page
     return render_template("login.html")
+
+# logout route
+@app.route('/logout')
+def logout():
+    # clear the session
+    session.pop('user_id', None)
+    return redirect('/login') # redirect to login page
+
+# mainloop
+if __name__ == "__main__":
+    app.run(port=8080, debug=True)

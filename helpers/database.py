@@ -190,8 +190,10 @@ class DatabaseManager:
         return user.get("parent_email") if user else None
     
     def find_user(self, username: str) -> Optional[Dict]:
+        # get the database connection
         db = self._get_connection()[self.db_name]
         
+        # find the user by username
         user = db.users.find_one({"username": username})
         return user
 

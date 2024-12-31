@@ -36,7 +36,6 @@ class DatabaseManager:
             
             # test the connection
             client.admin.command('ping')
-            self.logger.info("Successfully connected to MongoDB")
             return client
         
         except Exception as e:

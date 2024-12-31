@@ -79,14 +79,18 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         
-        # create a new user with SQLAlchemy
-        new_user = User(username, password)
+        # hash the password
+        hashed_pw = generate_password_hash(request.form['password'])
         
-        session.add(new_user)
-        session.commit
+        # create the user
+        user = User(username=request.form['username'], password=hashed_pw)
         
-        # redirect the user to the home/writing page
-        return redirect(url_for("home"))
+        # add the user to the database and save the changes
+        db.session.add(user)
+        db.session.commit()
+        
+        # return the login page so the user can log in
+        return redirect(url_for("login"))
     
     # if GET request, just show signup page
     return render_template("signup.html")

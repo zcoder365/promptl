@@ -230,6 +230,7 @@ def save_info():
             db.change_parent_email(parent_email, session['username'])
             # flash("Email updated successfully!")
             print("[ Success ] Email updated successfully.")
+        
         else:
             # flash("Please provide an email address.")
             print("[ Error ] Please enter a valid email address.")

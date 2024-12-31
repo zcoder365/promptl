@@ -31,13 +31,8 @@ class DatabaseManager:
         }
         
     def _get_connection(self) -> MongoClient:
-        try:
-            client = MongoClient(self.uri, server_api=ServerApi('1'))
-            return client
-        
-        except Exception as e:
-            self.logger.error(f"Failed to connect to MongoDB: {str(e)}")
-            raise ConnectionFailure(f"Could not connect to database: {str(e)}")
+        client = MongoClient(self.uri, server_api=ServerApi('1'))
+        return client
     
     def _hash_password(self, password: str) -> str:
         return hashlib.sha256(password.encode()).hexdigest()

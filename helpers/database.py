@@ -190,7 +190,7 @@ class DatabaseManager:
         
         user = db.users.find_one(
             {"username": username},
-            {"parent_email": 1} # there exists a parent email
+            {"parent_email": 1}
         )
         
         return user.get("parent_email") if user else None

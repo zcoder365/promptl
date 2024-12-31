@@ -4,6 +4,9 @@ from flask import Flask, request, session, redirect, url_for, render_template, f
 from functools import wraps # preserves function metadata
 from flask_wtf.csrf import CSRFProtect
 
+# initialize CSRF protection
+csrf = CSRFProtect()
+
 # import other files
 from helpers.accounts import *
 from helpers.model import *

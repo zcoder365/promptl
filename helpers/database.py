@@ -17,14 +17,14 @@ class DatabaseManager:
         self.client = None
         
         # add connection pooling settings
-        self.client_options.update({
+        self.client_options = {
             "maxPoolSize": 50,
             "retryWrites": True,
             "w": "majority"
-        })
+        }
         
         # initialize client once
-        self.client = MongoClient(self.uri, self.client_options)
+        self.client = MongoClient(self.uri, **self.client_options)
         
     def _get_connection(self) -> MongoClient:
         return self.client

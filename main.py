@@ -7,7 +7,6 @@ from functools import wraps # preserves function metadata
 from helpers.accounts import *
 from helpers.model import *
 from helpers.prompts import *
-from helpers.database import db
 
 # create the flask app
 app = Flask(__name__)

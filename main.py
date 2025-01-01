@@ -228,7 +228,7 @@ def save_writing():
             # commit changes to the database
             db.session.commit()
             
-            return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
+            return render_template("congrats.html", title=title, story_len=word_count, words=prompts_used, points=points_earned, prompts=prps)
             
         except Exception as e:
             db.session.rollback()

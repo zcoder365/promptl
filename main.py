@@ -126,6 +126,7 @@ def login():
         # if the user exists and the passwords match, create the session with the user id
         if user and check_password_hash(user.password, request.form['password']):
             session['user_id'] = user.id
+            session['username'] = user.username
             return redirect(url_for("index"))
 
         # flash error message for incorrect username or password

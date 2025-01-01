@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 # import other files
 from utils.accounts import *
 from utils.prompts import *
+from utils.model import *
 
 # create the flask app
 app = Flask(__name__)

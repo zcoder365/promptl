@@ -6,17 +6,19 @@ body {
 }
 
 nav {
-    display: block;
-    width: fit-content;
+    display: flex;
+    width: inherit;
     margin-left: 10px;
     margin-right: 10px;
     padding-top: 10px;
     padding-bottom: 50px;
+    align-items: center; /* centers vertically */
 }
 
 .navigation {
-    width: inherit;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    flex-grow: 1; /* allow navigation to take remaining space */
 }
 
 .navigation button {

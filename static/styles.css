@@ -23,9 +23,11 @@ nav {
     font-size: medium;
     height: 50px;
     width: 150px;
-    border: none;
+    border: 2px solid #FF5349;
     margin-left: 2px;
     margin-right: 2px;
+    color: #FF5349;
+    background-color: transparent;
 }
 
 nav button {

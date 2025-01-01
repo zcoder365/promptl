@@ -137,7 +137,7 @@ def login():
         # if the user exists and the passwords match, create the session with the user id
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            return redirect(url_for("index"))
+            return redirect("/home")
 
         # return error message if the user doesn't exist or the passwords don't match
         return "Invalid username or password."

@@ -97,10 +97,10 @@ def signup():
         password = request.form["password"]
         
         # hash the password
-        hashed_pw = generate_password_hash(request.form['password'])
+        hashed_pw = generate_password_hash(password)
         
         # create the user
-        user = User(username=request.form['username'], password=hashed_pw)
+        user = User(username=username, password=hashed_pw, points=0, total_word_count=0)
         
         # add the user to the database and save the changes
         db.session.add(user)

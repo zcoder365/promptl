@@ -101,18 +101,24 @@ def signup():
         if existing_user:
             return render_template("signup.html", message="Username already exists.")
         
-        # hash the password
-        hashed_pw = generate_password_hash(password)
+        try:
+            # hash the password
+            hashed_pw = generate_password_hash(password)
+            
+            # create the user
+            user = User(username=username, password=hashed_pw, points=0, total_word_count=0)
+            
+            # add the user to the database and save the changes
+            db.session.add(user)
+            db.session.commit()
+            
+            # return the login page so the user can log in
+            return redirect(url_for("login"))
         
-        # create the user
-        user = User(username=username, password=hashed_pw, points=0, total_word_count=0)
-        
-        # add the user to the database and save the changes
-        db.session.add(user)
-        db.session.commit()
-        
-        # return the login page so the user can log in
-        return redirect(url_for("login"))
+        except Exception as e:
+            # rollback the session in case of any other errors
+            db.session.rollback()
+            return render_template("signup.html", message="An error occurred during signup.")
     
     # if GET request, just show signup page
     return render_template("signup.html")

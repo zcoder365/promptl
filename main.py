@@ -176,10 +176,13 @@ def save_writing():
         title = request.form['title']
         username = session['username']
         
+        # calculate the number of prompts used
+        prompts_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+        
         # process the story
         story = written_raw.split(" ")
         word_count = len(story)
-        points_earned = calculate_points(story, prompts, word_count)
+        points_earned = calculate_points(word_count, prompts_used)
             
         # calculate how many prompts were used
         words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))

@@ -195,43 +195,50 @@ def save_writing():
         written_raw = request.form['story']
         title = request.form['title']
         
+        # add explicit return for invalid inputs
         if not all([written_raw, title]):
-            return "Invalid request."
+            # added status code for clarity
+            return "Invalid request.", 400
         
-        # get the word count
-        story_words = written_raw.split(" ")
-        word_count = len(story_words)
-        
-        # calculate the prompts used
-        prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
-        
-        # get the points earned for writing the story
-        points_earned = calculate_points(prompts_used, written_raw)
-        
-        # create a new story with SQLAlchemy
-        new_story = Story(
-            title=title, # get the title from the form
-            story_content=written_raw, # get the story content
-            prompt=str(prps), # make the prompts a string
-            word_count=word_count, # get the word count
-            author_id=session['user_id'] # use the user_id consistently
-        )
-        
-        # add story to the database
-        db.session.add(new_story)
-        
-        # update the user
-        user = User.query.get(session['user_id'])
-        user.total_word_count += word_count
-        user.points += points_earned
-        
-        # commit changes to the database
-        db.session.commit()
-        
-        # return the results page
-        return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
+        try:
+            # get the word count
+            story_words = written_raw.split(" ")
+            word_count = len(story_words)
+            
+            # calculate the prompts used
+            prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
+            
+            # get the points earned for writing the story
+            points_earned = calculate_points(prompts_used, written_raw)
+            
+            # create a new story with SQLAlchemy
+            new_story = Story(
+                title=title, # get the title from the form
+                story_content=written_raw, # get the story content
+                prompt=str(prps), # make the prompts a string
+                word_count=word_count, # get the word count
+                author_id=session['user_id'] # use the user_id consistently
+            )
+            
+            # add story to the database
+            db.session.add(new_story)
+            
+            # update the user
+            user = User.query.get(session['user_id'])
+            user.total_word_count += word_count
+            user.points += points_earned
+            
+            # commit changes to the database
+            db.session.commit()
+            
+            # return the results page
+            return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
+        except Exception as e:
+            # add error handling
+            db.session.rollback() # rollback any database changes
+            return f"An error occurred {str(e)}", 500
     
-    # if the method is GET, return the home page
+    # GET request
     return redirect('/home')
 
 # read a story page

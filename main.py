@@ -4,6 +4,7 @@ from flask import Flask, request, session, redirect, url_for, render_template, f
 from functools import wraps # preserves function metadata
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import relationship
 
 # import other files
 from utils.accounts import *

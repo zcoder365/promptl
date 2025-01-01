@@ -33,6 +33,9 @@ class Story(db.Model):
 # create all of the databases
 with app.app_context():
     db.create_all()
+    
+# GLOBAL VARIABLES
+prps = gen_all_prompts() # generate the prompts
 
 # login required decorator
 def login_required(f):
@@ -51,9 +54,9 @@ def index():
 # home page route
 @app.route('/home')
 def home():
-    # generate the prompts
+    # regenerate the prompts if the page is reloaded
     prps = gen_all_prompts()
-    
+        
     # allocate each prompt to a variable
     name = prps['name']
     job = prps['job']
@@ -182,7 +185,7 @@ def save_writing():
             return "Invalid request."
         
         # calculate how many prompts were used
-        prompts_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+        prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story))
         
         # process the story
         story = written_raw.split(" ")

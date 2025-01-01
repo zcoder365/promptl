@@ -1,6 +1,8 @@
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    width: auto;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 nav {

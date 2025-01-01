@@ -33,6 +33,11 @@ nav {
     background-color: #00008B;
 }
 
+.navigation button:hover {
+    background-color: #FF5349;
+    border: 2px solid #FF5349;
+}
+
 .logo-btn-nav {
     height: 50px;
     display: inline-flex;

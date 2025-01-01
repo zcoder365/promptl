@@ -177,7 +177,8 @@ def save_writing():
         username = session['username']
         
         # calculate the number of prompts used
-        prompts_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+        if not all([written_raw, title, username]):
+            return "Invalid request."
         
         # process the story
         story = written_raw.split(" ")
@@ -189,9 +190,10 @@ def save_writing():
             
         # create a new story with SQLAlchemy
         new_story = Story(
-            prompt=str(prompts),
-            word_count=word_count,
-            author_id=session['user_id']
+            title=title, # add the title from the form
+            prompt=str(prompts), # get the prompts used
+            word_count=word_count, # get the word count
+            author_id=session['username'] # add username as author
         )
         
         # add the story to the database

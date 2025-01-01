@@ -1,5 +1,3 @@
-from helpers.database import db
-
 def add_user(username: str, password: str, email: str):
     is_user = db.find_user(username)
     

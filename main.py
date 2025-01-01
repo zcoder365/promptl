@@ -137,9 +137,8 @@ def login():
 # logout route
 @app.route('/logout')
 def logout():
-    # clear the session
-    session.pop('user_id', None)
-    return redirect('/login') # redirect to login page
+    session.clear() # clear the session
+    return redirect('/login') # redirect to the login page
 
 # prior pieces route
 @app.route('/prior-pieces')

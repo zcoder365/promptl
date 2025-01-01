@@ -1,4 +1,4 @@
-def calculate_points(prompts, story):
+def calculate_points(prompts, story) -> int:
     story = story.lower()   # make the story lowercase
     points = 0              # keep track of points
     used_prompts = []       # keep track of the used prompts
@@ -20,4 +20,5 @@ def calculate_points(prompts, story):
         if len(story) >= 100:
             points += 25
     
+    # return the points earned from writing the story
     return points

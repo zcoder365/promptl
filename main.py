@@ -1,6 +1,7 @@
 # general imports
 import os
 from functools import wraps
+from dotenv import load_dotenv
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -10,6 +11,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # from utils.accounts import *
 from utils.prompts import *
 from utils.model import *
+
+# load the .env file
+load_dotenv()
 
 # create the flask app
 app = Flask(__name__)

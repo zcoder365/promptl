@@ -155,9 +155,10 @@ def logout():
 @app.route('/prior-pieces')
 # @login_required
 def prior_pieces():
-    # find the user in the users database
-    user = User.query.filter_by(username=session['user_id']).first()
+    # find the user in the users database to use the user_id variable, rather than the username
+    user = User.query.get(['user_id'])
     
+    # if the user doesn't exist, return an error
     if not user:
         return "User not found."
     

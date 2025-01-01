@@ -132,10 +132,10 @@ def login():
         password = request.form["password"]
         
         # find the user in the database
-        user = User.query.filter_by(username=request.form['username']).first()
+        user = User.query.filter_by(username=username).first()
         
         # if the user exists and the passwords match, create the session with the user id
-        if user and check_password_hash(user.password, request.form['password']):
+        if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             return redirect(url_for("index"))
 

@@ -164,7 +164,20 @@ def prior_pieces():
 
 # user's account page
 @app.route('/my-account')
+@login_required # add login required decorator
 def my_account(): 
+    # get the user
+    user = User.query.get(session['user_id'])
+    
+    # if there isn't a user, make the user login
+    if not user:
+        return redirect(url_for('login'))
+    
+    # otherwise, return the my account page
+    return render_template('my-account.html', username=user.username, total_words=user.total_word_count, points=user.points, streak=len(user.stories))
+    
+    
+    
     # get the user's username
     username = session['username']
     

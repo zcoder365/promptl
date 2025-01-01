@@ -232,7 +232,7 @@ def save_writing():
         return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
     
     # if the method is GET, return the home page
-    return redirect(url_for('home'))
+    return redirect('/home')
 
 # read a story page
 @app.route("/read-story/<story_title>")

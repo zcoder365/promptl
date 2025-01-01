@@ -228,6 +228,7 @@ def save_writing():
     # handle GET request
     return redirect(url_for('home'))
 
+# NEEDED?
 # # edit user's account page
 # @app.route("/my-account/edit")
 # def edit_info():

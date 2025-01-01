@@ -195,7 +195,7 @@ def save_writing():
         # create a new story with SQLAlchemy
         new_story = Story(
             title=title, # add the title from the form
-            prompt=str(prompts), # get the prompts used
+            prompt=str(prps), # get the prompts used
             word_count=word_count, # get the word count
             author_id=session['username'] # add username as author
         )
@@ -219,10 +219,10 @@ def save_writing():
             "congrats.html", 
             title=title, 
             story_len=word_count, 
-            words=words_used,
+            words=word_count,
             points=points_earned, 
             compliment=compliment, 
-            prompts=prompts
+            prompts=prps
         )
     
     # handle GET request

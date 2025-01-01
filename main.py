@@ -34,6 +34,7 @@ class Story(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
     story_content = db.Column(db.String(800), nullable=False)
+    author = relationship("User", back_populates="stories")
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 # create all of the databases

@@ -21,18 +21,15 @@ nav {
 nav button {
     font-family: inherit;
     font-size: medium;
-}
-
-.logo-btn-nav {
-    height: 50px;
-}
-
-nav button {
     height: 50px;
     width: 150px;
     border: none;
     margin-left: 2px;
     margin-right: 2px;
+}
+
+.logo-btn-nav {
+    height: 50px;
 }
 
 .save-writing {

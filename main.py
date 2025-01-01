@@ -185,61 +185,66 @@ def my_account():
     # otherwise, return the my account page
     return render_template('my-account.html', username=user.username, total_words=user.total_word_count, points=user.points, streak=len(user.stories))
 
-# save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required # apply the decorator so the route is protected
+@login_required
 def save_writing():
-    # handle POST request for saving the writing
-    if request.method == "POST":
-        # get the story content and title from the form
+    try:
+        # Handle GET requests
+        if request.method == "GET":
+            return redirect('/home')
+        
+        # Handle POST request - ensure we have the required form data
+        if 'story' not in request.form or 'title' not in request.form:
+            return "Missing required form data", 400
+            
         written_raw = request.form['story']
         title = request.form['title']
         
-        # add explicit return for invalid inputs
         if not all([written_raw, title]):
-            # added status code for clarity
-            return "Invalid request.", 400
+            return "Invalid request", 400
         
-        try:
-            # get the word count
-            story_words = written_raw.split(" ")
-            word_count = len(story_words)
-            
-            # calculate the prompts used
-            prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
-            
-            # get the points earned for writing the story
-            points_earned = calculate_points(prompts_used, written_raw)
-            
-            # create a new story with SQLAlchemy
-            new_story = Story(
-                title=title, # get the title from the form
-                story_content=written_raw, # get the story content
-                prompt=str(prps), # make the prompts a string
-                word_count=word_count, # get the word count
-                author_id=session['user_id'] # use the user_id consistently
-            )
-            
-            # add story to the database
-            db.session.add(new_story)
-            
-            # update the user
-            user = User.query.get(session['user_id'])
-            user.total_word_count += word_count
-            user.points += points_earned
-            
-            # commit changes to the database
-            db.session.commit()
-            
-            # return the results page
-            return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
-        except Exception as e:
-            # add error handling
-            db.session.rollback() # rollback any database changes
-            return f"An error occurred {str(e)}", 500
+        # Process the story
+        story_words = written_raw.split(" ")
+        word_count = len(story_words)
+        
+        prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
+        points_earned = calculate_points(prompts_used, written_raw)
+        
+        # Database operations
+        new_story = Story(
+            title=title,
+            story_content=written_raw,
+            prompt=str(prps),
+            word_count=word_count,
+            author_id=session['user_id']
+        )
+        
+        db.session.add(new_story)
+        
+        user = User.query.get(session['user_id'])
+        user.total_word_count += word_count
+        user.points += points_earned
+        
+        db.session.commit()
+        
+        # Ensure we return a response
+        return render_template(
+            "congrats.html",
+            title=title,
+            story_len=word_count,
+            words=word_count,
+            points=points_earned,
+            prompts=prps
+        )
     
-    # GET request
-    return redirect('/home')
+    except Exception as e:
+        # If anything goes wrong, rollback the database and return an error
+        if 'db' in globals() and hasattr(db, 'session'):
+            db.session.rollback()
+        return f"An error occurred: {str(e)}", 500
+
+    # Fallback return in case something unexpected happens
+    return "An unexpected error occurred", 500
 
 # read a story page
 @app.route("/read-story/<story_title>")

@@ -34,6 +34,8 @@ class Story(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), unique=True, nullable=False)
     story_content = db.Column(db.String(800), nullable=False)
+    word_count = db.Column(db.Integer(100), nullable=False)
+    prompt = db.Column(db.String(100), nullable=False)
     author = relationship("User", back_populates="stories")
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

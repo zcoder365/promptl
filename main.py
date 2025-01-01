@@ -188,21 +188,26 @@ def my_account():
 @app.route('/save-writing', methods=['GET', 'POST'])
 @login_required
 def save_writing():
+    print("Starting save_writing function")  # Debug point 1
     try:
         # Handle GET requests
         if request.method == "GET":
+            print("Returning GET redirect")  # Debug point 2
             return redirect('/home')
         
-        # Handle POST request - ensure we have the required form data
+        # Handle POST request
         if 'story' not in request.form or 'title' not in request.form:
+            print("Missing form data")  # Debug point 3
             return "Missing required form data", 400
             
         written_raw = request.form['story']
         title = request.form['title']
         
         if not all([written_raw, title]):
+            print("Invalid request - empty data")  # Debug point 4
             return "Invalid request", 400
         
+        print(f"Processing story: {title[:20]}...")  # Debug point 5
         # Process the story
         story_words = written_raw.split(" ")
         word_count = len(story_words)
@@ -210,6 +215,7 @@ def save_writing():
         prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
         points_earned = calculate_points(prompts_used, written_raw)
         
+        print("Creating new story in database")  # Debug point 6
         # Database operations
         new_story = Story(
             title=title,
@@ -225,8 +231,10 @@ def save_writing():
         user.total_word_count += word_count
         user.points += points_earned
         
+        print("Committing to database")  # Debug point 7
         db.session.commit()
         
+        print("Rendering template")  # Debug point 8
         # Ensure we return a response
         return render_template(
             "congrats.html",
@@ -238,12 +246,12 @@ def save_writing():
         )
     
     except Exception as e:
-        # If anything goes wrong, rollback the database and return an error
+        print(f"Exception occurred: {str(e)}")  # Debug point 9
         if 'db' in globals() and hasattr(db, 'session'):
             db.session.rollback()
         return f"An error occurred: {str(e)}", 500
 
-    # Fallback return in case something unexpected happens
+    print("Reached end of function")  # Debug point 10
     return "An unexpected error occurred", 500
 
 # read a story page

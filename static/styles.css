@@ -5,11 +5,15 @@ body {
 
 nav {
     display: inline-flex;
-    width: inherit;
+    width: max-content;
     margin-left: 10px;
     margin-right: 10px;
     padding-top: 10px;
     padding-bottom: 50px;
+}
+
+.navigation {
+    width: inherit;
 }
 
 nav button {

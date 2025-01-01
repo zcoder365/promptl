@@ -1,7 +1,7 @@
 def calculate_points(prompts, story):
-    story = story.lower()
-    points = 0
-    used_prompts = []
+    story = story.lower()   # make the story lowercase
+    points = 0              # keep track of points
+    used_prompts = []       # keep track of the used prompts
     
     # only check prompts if the story length is greater than or equal to 70
     if len(story) >= 70:

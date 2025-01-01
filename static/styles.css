@@ -5,7 +5,7 @@ body {
 
 nav {
     display: inline-flex;
-    width: max-content;
+    width: fit-content;
     margin-left: 10px;
     margin-right: 10px;
     padding-top: 10px;
@@ -13,7 +13,7 @@ nav {
 }
 
 .navigation {
-    width: inherit;
+    width: inline;
 }
 
 nav button {

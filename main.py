@@ -181,13 +181,13 @@ def save_writing():
         if not all([written_raw, title, username]):
             return "Invalid request."
         
+        # calculate how many prompts were used
+        prompts_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+        
         # process the story
         story = written_raw.split(" ")
         word_count = len(story)
-        points_earned = calculate_points(word_count, prompts_used)
-            
-        # calculate how many prompts were used
-        words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+        points_earned = calculate_points(prompts_used, story)
             
         # create a new story with SQLAlchemy
         new_story = Story(

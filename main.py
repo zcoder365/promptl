@@ -3,8 +3,8 @@ import os
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # import other files
 # from utils.accounts import *

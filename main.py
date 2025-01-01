@@ -165,6 +165,60 @@ def my_account():
     # return a page that shows the user's information
     return render_template('my-account.html', username=username, total_words=total_words, points=points, streak=num_stories)
 
+# save the user's writing
+@app.route('/save-writing', methods=['GET', 'POST'])
+@login_required # apply the decorator so the route is protected
+def save_writing():
+    # handle POST request for saving the writing
+    if request.method == "POST":
+        # get the story content and title from the form
+        written_raw = request.form['story']
+        title = request.form['title']
+        username = session['username']
+        
+        # process the story
+        story = written_raw.split(" ")
+        word_count = len(story)
+        points_earned = calculate_points(story, prompts, word_count)
+            
+        # calculate how many prompts were used
+        words_used = sum(1 for prompt in prompts.values() if prompt and prompt.lower() in map(str.lower, story))
+            
+        # create a new story with SQLAlchemy
+        new_story = Story(
+            prompt=str(prompts),
+            word_count=word_count,
+            author_id=session['user_id']
+        )
+        
+        # add the story to the database
+        session.add(new_story)
+        
+        # update user's stotal word count
+        user = session.query(User).get(session['user_id'])
+        user.total_word_count += word_count
+        user.points += points_earned
+        
+        # commit changes
+        session.commit()
+    
+        # get the compliment
+        compliment = gen_compliment() 
+        
+        # render success page
+        return render_template(
+            "congrats.html", 
+            title=title, 
+            story_len=word_count, 
+            words=words_used,
+            points=points_earned, 
+            compliment=compliment, 
+            prompts=prompts
+        )
+    
+    # handle GET request
+    return redirect(url_for('home'))
+
 # mainloop
 if __name__ == "__main__":
     app.run(port=8080, debug=True)

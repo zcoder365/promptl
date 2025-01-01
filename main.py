@@ -8,7 +8,6 @@ from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # import other files
-# from utils.accounts import *
 from utils.prompts import *
 from utils.model import *
 

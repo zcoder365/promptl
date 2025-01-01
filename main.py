@@ -148,7 +148,7 @@ def prior_pieces():
     user = User.query.filter_by(username=session['user_id']).first()
     
     if not user:
-        return []
+        return "User not found."
     
     # get all stories using the relationship defined between the databases
     stories = user.stories

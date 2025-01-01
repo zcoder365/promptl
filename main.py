@@ -27,6 +27,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     points = db.Column(db.Integer, default=0)
+    total_word_count = db.Column(db.Integer, default=0) # keep track of total word count for the user
     stories = relationship("Story", back_populates="author")
 
 # create stories database

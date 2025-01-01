@@ -160,7 +160,7 @@ def my_account():
     # get the user info
     num_stories = len(user.stories)
     total_words = sum(story.word_count for story in user.stories)
-    points = 
+    points = user.points
     
     
     # find the user in the database

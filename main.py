@@ -96,6 +96,11 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         
+        # check if username already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return render_template("signup.html", message="Username already exists.")
+        
         # hash the password
         hashed_pw = generate_password_hash(password)
         

@@ -16,7 +16,7 @@ nav {
 
 .navigation {
     width: inherit;
-    display: inline;
+    display: inline-block;
 }
 
 .navigation button {

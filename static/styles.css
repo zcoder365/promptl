@@ -18,6 +18,16 @@ nav {
     width: inline;
 }
 
+.navigation button {
+    font-family: inherit;
+    font-size: medium;
+    height: 50px;
+    width: 150px;
+    border: none;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
 nav button {
     font-family: inherit;
     font-size: medium;

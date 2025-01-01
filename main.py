@@ -55,6 +55,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# add a context processor
+@app.context_processor
+def utility_processor():
+    def get_username():
+        if 'username' in session:
+            return session['username']
+        return None
+    return dict(get_username=get_username)
+
 # page when the user comes to promptl
 @app.route('/')
 def index():

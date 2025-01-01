@@ -32,7 +32,7 @@ class User(db.Model):
 # create stories database
 class Story(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), unique=True, nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     story_content = db.Column(db.String(800), nullable=False)
     word_count = db.Column(db.Integer, nullable=False)
     prompt = db.Column(db.String(100), nullable=False)

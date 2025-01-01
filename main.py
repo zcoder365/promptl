@@ -50,7 +50,7 @@ prps = gen_all_prompts() # generate the prompts
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "username" not in session:
+        if "user_id" not in session:
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
@@ -126,7 +126,6 @@ def login():
         # if the user exists and the passwords match, create the session with the user id
         if user and check_password_hash(user.password, request.form['password']):
             session['user_id'] = user.id
-            session['username'] = user.username
             return redirect(url_for("index"))
 
         # flash error message for incorrect username or password

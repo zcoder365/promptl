@@ -1,6 +1,10 @@
 {% extends "template.html" %}
 {% block content %}
 
+{% if error %}
+	<div style="color:red">{{ error }}</div>
+{% endif %}
+
 <div align='center'>
 
 	<img src="/static/assets/logo.png" align='center' style='width:10cm'>

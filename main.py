@@ -206,7 +206,7 @@ def save_writing():
         prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
         
         # get the points earned for writing the story
-        points_earned = calculate_points(prompts_used, story_words)
+        points_earned = calculate_points(prompts_used, written_raw)
         
         # create a new story with SQLAlchemy
         new_story = Story(

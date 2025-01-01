@@ -17,7 +17,7 @@ load_dotenv()
 
 # create the flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') # get the URI for the database
 db = SQLAlchemy(app) # set up the SQLAlchemy database
 

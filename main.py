@@ -20,6 +20,7 @@ db = SQLAlchemy(app) # set up the SQLAlchemy database
 class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    points = db.Column(db.Integer, default=0)
     stories = relationship("Story", back_populates="author")
 
 # create stories database
@@ -146,6 +147,32 @@ def prior_pieces():
     
     # return a page with the user's prior stories
     return render_template('prior-pieces.html', writing=stories)
+
+# user's account page
+@app.route('/my-account')
+def my_account(): 
+    # get the user's username
+    username = session['username']
+    
+    # find the user in the database
+    user = User.query.filter_by(username).first()
+    
+    # get the user info
+    num_stories = len(user.stories)
+    total_words = sum(story.word_count for story in user.stories)
+    points = 
+    
+    
+    # find the user in the database
+    db.find_user(username)
+    # get user's info
+    num_stories = len(db.get_user_stories(username)) # num stories
+    total_words = db.get_total_word_count(username) # total word count
+    points = db.get_user_points(username) # points
+    parent_email = db.get_parent_email(username) # parent email
+    
+    # return a page that shows the user's information
+    return render_template('my-account.html', username=username, total_words=total_words, parent_email=parent_email, points=points, streak=num_stories)
 
 # mainloop
 if __name__ == "__main__":

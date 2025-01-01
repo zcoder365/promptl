@@ -153,23 +153,18 @@ def logout():
 
 # prior pieces route
 @app.route('/prior-pieces')
-# @login_required
+@login_required  # Re-enable the login required decorator
 def prior_pieces():
-    # find the user in the users database to use the user_id variable, rather than the username
-    user = User.query.get(['user_id'])
+    user = User.query.get(session['user_id'])  # Fixed from User.query.get(['user_id'])
     
-    # if the user doesn't exist, return an error
     if not user:
         return "User not found."
     
-    # get all stories using the relationship defined between the databases
     stories = user.stories
     
-    # handle the case where users have no stories
     if not stories:
         stories = []
     
-    # return a page with the user's prior stories
     return render_template('prior-pieces.html', writing=stories)
 
 # user's account page

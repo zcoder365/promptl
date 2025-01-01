@@ -175,22 +175,6 @@ def my_account():
     
     # otherwise, return the my account page
     return render_template('my-account.html', username=user.username, total_words=user.total_word_count, points=user.points, streak=len(user.stories))
-    
-    
-    
-    # get the user's username
-    username = session['username']
-    
-    # find the user in the database
-    user = User.query.filter_by(username).first()
-    
-    # get the user info
-    num_stories = len(user.stories)
-    total_words = sum(story.word_count for story in user.stories)
-    points = user.points
-    
-    # return a page that shows the user's information
-    return render_template('my-account.html', username=username, total_words=total_words, points=points, streak=num_stories)
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])

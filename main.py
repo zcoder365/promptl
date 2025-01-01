@@ -243,20 +243,14 @@ def save_writing():
 @app.route("/read-story/<story_title>")
 # @login_required
 def read_story(story_title):
-    # get the story from the story database
-    story = db.find_story(story_title)
+    # get the story from the database
+    story = Story.query.filter_by(title=story_title).first()
     
+    # if the story doesn't exist, return an error
     if not story:
-        # flash("Story not found.")
         print("[ Error ] Story not found.")
         return redirect(url_for("prior_pieces"))
-    
-    # check if the logged-in user is the author
-    if story[0] != session["username"]:
-        # flash("You don't have permission to view the story.")
-        print("[ Error ] You don't have permission to view the story.")
-        return redirect(url_for('prior_pieces'))
-    
+
     # return the page for reading the story
     return render_template("read-story.html", story=story)
 

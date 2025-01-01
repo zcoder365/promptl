@@ -49,11 +49,6 @@ nav button {
     color: transparent;
 }
 
-input[type=search]::-webkit-input-placeholder { /* Safari, Chrome(, Opera?) */
-    color:gray;
-    font-style:italic;
-}
-
 #story {
     display: inline-block;
     margin-top: 10px;

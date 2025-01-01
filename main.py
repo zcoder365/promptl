@@ -185,74 +185,54 @@ def my_account():
     # otherwise, return the my account page
     return render_template('my-account.html', username=user.username, total_words=user.total_word_count, points=user.points, streak=len(user.stories))
 
+# save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required
+@login_required # apply the decorator so the route is protected
 def save_writing():
-    print("Starting save_writing function")  # Debug point 1
-    try:
-        # Handle GET requests
-        if request.method == "GET":
-            print("Returning GET redirect")  # Debug point 2
-            return redirect('/home')
-        
-        # Handle POST request
-        if 'story' not in request.form or 'title' not in request.form:
-            print("Missing form data")  # Debug point 3
-            return "Missing required form data", 400
-            
+    # handle POST request for saving the writing
+    if request.method == "POST":
+        # get the story content and title from the form
         written_raw = request.form['story']
         title = request.form['title']
         
         if not all([written_raw, title]):
-            print("Invalid request - empty data")  # Debug point 4
-            return "Invalid request", 400
+            return "Invalid request."
         
-        print(f"Processing story: {title[:20]}...")  # Debug point 5
-        # Process the story
+        # get the word count
         story_words = written_raw.split(" ")
         word_count = len(story_words)
         
+        # calculate the prompts used
         prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
+        
+        # get the points earned for writing the story
         points_earned = calculate_points(prompts_used, written_raw)
         
-        print("Creating new story in database")  # Debug point 6
-        # Database operations
+        # create a new story with SQLAlchemy
         new_story = Story(
-            title=title,
-            story_content=written_raw,
-            prompt=str(prps),
-            word_count=word_count,
-            author_id=session['user_id']
+            title=title, # get the title from the form
+            story_content=written_raw, # get the story content
+            prompt=str(prps), # make the prompts a string
+            word_count=word_count, # get the word count
+            author_id=session['user_id'] # use the user_id consistently
         )
         
+        # add story to the database
         db.session.add(new_story)
         
+        # update the user
         user = User.query.get(session['user_id'])
         user.total_word_count += word_count
         user.points += points_earned
         
-        print("Committing to database")  # Debug point 7
+        # commit changes to the database
         db.session.commit()
         
-        print("Rendering template")  # Debug point 8
-        # Ensure we return a response
-        return render_template(
-            "congrats.html",
-            title=title,
-            story_len=word_count,
-            words=word_count,
-            points=points_earned,
-            prompts=prps
-        )
+        # return the results page
+        return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
     
-    except Exception as e:
-        print(f"Exception occurred: {str(e)}")  # Debug point 9
-        if 'db' in globals() and hasattr(db, 'session'):
-            db.session.rollback()
-        return f"An error occurred: {str(e)}", 500
-
-    print("Reached end of function")  # Debug point 10
-    return "An unexpected error occurred", 500
+    # if the method is GET, return the home page
+    return redirect('/home')
 
 # read a story page
 @app.route("/read-story/<story_title>")

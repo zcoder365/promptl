@@ -228,17 +228,6 @@ def save_writing():
     # handle GET request
     return redirect(url_for('home'))
 
-# NEEDED?
-# # edit user's account page
-# @app.route("/my-account/edit")
-# def edit_info():
-#     # get the username of the current user and their info from the database
-#     username = session['username']
-#     user = db.find_user(username)
-    
-#     # return the template for editing user info for the current user
-#     return render_template("edit-info.html", user=user)
-
 # read a story page
 @app.route("/read-story/<story_title>")
 # @login_required

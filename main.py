@@ -188,54 +188,44 @@ def save_writing():
         # get the story content and title from the form
         written_raw = request.form['story']
         title = request.form['title']
-        username = session['username']
         
-        # calculate the number of prompts used
-        if not all([written_raw, title, username]):
+        if not all([written_raw, title]):
             return "Invalid request."
         
-        # calculate how many prompts were used
-        prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story))
+        # get the word count
+        story_words = written_raw.split(" ")
+        word_count = len(story_words)
         
-        # process the story
-        story = written_raw.split(" ")
-        word_count = len(story)
-        points_earned = calculate_points(prompts_used, story)
-            
+        # calculate the prompts used
+        prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
+        
+        # get the points earned for writing the story
+        points_earned = calculate_points(prompts_used, story_words)
+        
         # create a new story with SQLAlchemy
         new_story = Story(
-            title=title, # add the title from the form
-            prompt=str(prps), # get the prompts used
+            title=title, # get the title from the form
+            story_content=written_raw, # get the story content
+            prompt=str(prps), # make the prompts a string
             word_count=word_count, # get the word count
-            author_id=session['username'] # add username as author
+            author_id=session['user_id'] # use the user_id consistently
         )
         
-        # add the story to the database
-        session.add(new_story)
+        # add story to the database
+        db.session.add(new_story)
         
-        # update user's stotal word count
-        user = session.query(User).get(session['user_id'])
+        # update the user
+        user = User.query.get(session['user_id'])
         user.total_word_count += word_count
         user.points += points_earned
         
-        # commit changes
-        session.commit()
-    
-        # get the compliment
-        compliment = gen_compliment() 
+        # commit changes to the database
+        db.session.commit()
         
-        # render success page
-        return render_template(
-            "congrats.html", 
-            title=title, 
-            story_len=word_count, 
-            words=word_count,
-            points=points_earned, 
-            compliment=compliment, 
-            prompts=prps
-        )
+        # return the results page
+        return render_template("congrats.html", title=title, story_len=word_count, words=word_count, points=points_earned, prompts=prps)
     
-    # handle GET request
+    # if the method is GET, return the home page
     return redirect(url_for('home'))
 
 # read a story page

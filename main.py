@@ -139,8 +139,8 @@ def login():
             session['user_id'] = user.id
             return redirect(url_for("index"))
 
-        # flash error message for incorrect username or password
-        flash("Invalid username or password.")
+        # return error message if the user doesn't exist or the passwords don't match
+        return "Invalid username or password."
     
     # if GET request, just show the login page
     return render_template("login.html")

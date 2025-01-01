@@ -19,6 +19,7 @@ db = SQLAlchemy(app) # set up the SQLAlchemy database
 class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    stories = relationship("Story", back_populates="author")
 
 # create stories database
 class Story(db.Model):
@@ -124,6 +125,26 @@ def logout():
     # clear the session
     session.pop('user_id', None)
     return redirect('/login') # redirect to login page
+
+# prior pieces route
+@app.route('/prior-pieces')
+# @login_required
+def prior_pieces():
+    # find the user in the users database
+    user = User.query.filter_by(username=session['user_id']).first()
+    
+    if not user:
+        return []
+    
+    # get all stories using the relationship defined between the databases
+    stories = user.stories
+    
+    # handle the case where users have no stories
+    if not stories:
+        stories = []
+    
+    # return a page with the user's prior stories
+    return render_template('prior-pieces.html', writing=stories)
 
 # mainloop
 if __name__ == "__main__":

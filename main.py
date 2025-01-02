@@ -158,14 +158,18 @@ def logout():
 def prior_pieces():
     user = User.query.get(session['user_id'])  # Fixed from User.query.get(['user_id'])
     
+    # if the user doesn't exist, return error msg
     if not user:
         return "User not found."
     
+    # get the stories
     stories = user.stories
     
+    # if there aren't any stories, return an empty list
     if not stories:
         stories = []
     
+    # return the prior pieces page
     return render_template('prior-pieces.html', writing=stories)
 
 # user's account page

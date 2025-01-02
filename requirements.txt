@@ -1,0 +1,2 @@
+flask==2.0.1 # make sure latest flask is installed
+gunicorn==20.1.0 # render needs this to run the app

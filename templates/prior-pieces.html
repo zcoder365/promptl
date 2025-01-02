@@ -13,16 +13,16 @@
 			</tr>
 	{% for story in writing %}
 			<tr>
-				<td style="padding-left:50px">
+				<td class="table-data">
 					{{ story.title }}
 				</td>
-				<td style="padding-left:50px">
+				<td class="table-data">
 					{{ story.word_count }}
 				</td>
-				<td style="padding-left:50px">
+				<td class="table-data">
 					{{ story.points }}
 				</td>
-				<td>
+				<td class="table-data">
 					<a href="/read-story/{{story._id}}" style="text-decoration:none; color:blue">Read</a> | <a href="/edit-story/{{story._id}}" style="text-decoration:none; color:forestgreen">Edit</a>
 				</td>
 			</tr>

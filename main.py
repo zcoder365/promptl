@@ -1,3 +1,5 @@
+ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
+
 # general imports
 import os
 from functools import wraps

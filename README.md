@@ -1,6 +1,6 @@
 ![Header image](./static/assets/logo.png)
 
-# Pr💡mptl (promptl.com)
+# Pr![image](./static/assets/favicon.png)mptl (promptl.com)
 A web app to make writing fun and rewarding for kids with learning differences.
 
 ## Overview 📖

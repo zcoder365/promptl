@@ -10,3 +10,6 @@ Click the "publish" button at the bottom of the page to save your work (don't wo
 
 ### Edit prior stories!
 You can view your prior stories and make changes to them by clicking "prior changes" in the navigation bar. This doesn't change the number of points you earn for the story though.
+
+## To Do
+- [ ] Link to domain

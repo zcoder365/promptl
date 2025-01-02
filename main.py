@@ -215,7 +215,8 @@ def save_writing():
             story_content=written_raw,
             prompt=str(prps),
             word_count=word_count,
-            author_id=user.id  # Use user.id instead of session['user_id']
+            points=points_earned, # add points to the story
+            author_id=user.id  # use user.id instead of session['user_id']
         )
         
         # add story to the database

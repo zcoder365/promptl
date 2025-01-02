@@ -111,3 +111,8 @@ nav {
     color:#00008B;
     padding-left:5px;
 }
+
+.table-data {
+    border-collapse: collapse;
+    text-align: center;
+}

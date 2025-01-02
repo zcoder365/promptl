@@ -37,8 +37,8 @@ class Story(db.Model):
     word_count = db.Column(db.Integer, nullable=False)
     prompt = db.Column(db.String(100), nullable=False)
     points = db.Column(db.Integer, default=0)
-    author = relationship("User", back_populates="stories")
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = relationship("User", back_populates="stories")
 
 # create all of the databases
 with app.app_context():

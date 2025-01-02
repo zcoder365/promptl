@@ -1,3 +1,5 @@
+![Header image](./static/assets/logo.png)
+
 # Pr💡mptl (promptl.com)
 A web app to make writing fun and rewarding for kids with learning differences.
 

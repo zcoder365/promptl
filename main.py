@@ -170,7 +170,7 @@ def prior_pieces():
         stories = []
     
     # return the prior pieces page
-    return render_template('prior-pieces.html', writing=stories)
+    return render_template('prior-pieces.html', stories=stories)
 
 # user's account page
 @app.route('/my-account')

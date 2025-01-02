@@ -14,7 +14,7 @@ from utils.model import *
 # load the .env file
 load_dotenv()
 
-# create the flask app
+# create the flask app and add configurations
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') # get the URI for the database

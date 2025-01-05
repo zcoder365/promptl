@@ -4,7 +4,7 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 # general imports
 import os
 from functools import wraps
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from flask import Flask, request, session, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -14,8 +14,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from utils.prompts import *
 from utils.model import *
 
-# load the .env file
-load_dotenv()
+# # load the .env file
+# load_dotenv()
 
 # create the flask app and add configurations
 app = Flask(__name__)

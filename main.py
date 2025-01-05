@@ -1,3 +1,4 @@
+# add allowed hosts
 ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
 # general imports

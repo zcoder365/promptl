@@ -3,6 +3,7 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
 # general imports
 import os
+from dotenv import load_dotenv
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,8 +17,12 @@ from utils.model import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
+# get info from dotenv file
+load_dotenv()
+MONGODB_URI = os.getenv("MONGODB_URI") # get db uri
+
 # MongoDB connection
-client = MongoClient(MONGODB_URI) # GET URI
+client = MongoClient(MONGODB_URI)
 db = client['promptl_db'] # change to db name
 users_collection = db['users'] # get users collection connection
 stories_collection = db['stories'] # get stories collection connection

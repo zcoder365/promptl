@@ -25,11 +25,6 @@ app.config['SECRET_KEY'] = "key"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///promptl.db"
 db = SQLAlchemy(app) # set up the SQLAlchemy database
 
-# properly create database
-Base = declarative_base()
-engine = create_engine("sqlite:///promptl.db")
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 # create user database
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -178,17 +178,24 @@ def prior_pieces():
 
 # user's account page
 @app.route('/my-account')
-@login_required # add login required decorator
-def my_account(): 
-    # get the user
-    user = User.query.get(session['user_id'])
+def my_account():
+    try:
+        # get the user's id and find the user
+        user_id = ObjectId(session['user_id'])
+        user = users_collection.find_one({"_id": user_id})
+        
+        # if the user doesn't exist/isn't in the session, redirect user to login page
+        if not user:
+            return redirect(url_for('login'))
+        
+        # get story count for streak
+        story_count = stories_collection.count_documents({"author_id": user_id})
+        
+        return render_template('my-account.html', username=user['username'], total_words=user['total_word_count'], points=user['points'], streak=story_count)
     
-    # if there isn't a user, make the user login
-    if not user:
+    except Exception as e:
+        print(f"Error accessing account: {e}")
         return redirect(url_for('login'))
-    
-    # otherwise, return the my account page
-    return render_template('my-account.html', username=user.username, total_words=user.total_word_count, points=user.points, streak=len(user.stories))
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])

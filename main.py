@@ -251,18 +251,21 @@ def save_writing():
 
 # read a story page
 @app.route("/read-story/<story_title>")
-# @login_required
 def read_story(story_title):
-    # get the story from the database
-    story = Story.query.filter_by(title=story_title).first()
-    
-    # if the story doesn't exist, return an error
-    if not story:
-        print("[ Error ] Story not found.")
-        return redirect(url_for("prior_pieces"))
+    try:
+        # find a specific story in the user's database
+        story = stories_collection.find_one({"title": story_title})
+        
+        # if the story doesn't exist, return error message and the prior pieces page
+        if not story:
+            print("[ Error ] Story not found.")
+            return redirect(url_for("prior_pieces"))
 
-    # return the page for reading the story
-    return render_template("read-story.html", story=story)
+        return render_template("read-story.html", story=story)
+    
+    except Exception as e:
+        print(f"Error reading story: {e}")
+        return redirect(url_for("prior_pieces"))
 
 # mainloop
 if __name__ == "__main__":

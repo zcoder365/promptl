@@ -1,6 +1,6 @@
 flask==3.0.0
 gunicorn==20.1.0
 Werkzeug>=3.0.1
-python-dotenv>=2.5.0
+python-dotenv>=1.01
 dnspython>=2.5.0    # required for MongoDB connection
 bson>=0.1.10        # for ObjectID handling

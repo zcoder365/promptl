@@ -223,7 +223,7 @@ def save_writing():
         prompts_used = sum(1 for prompt in prps.values() if prompt and prompt.lower() in map(str.lower, story_words))
         
         # get the points earned for writing the story
-        points_earned = calculate_points(prompts_used, written_raw)
+        points_earned = calculate_points(prps, written_raw)
         
         # get the user first to ensure they exist
         user = User.query.get(session['user_id'])

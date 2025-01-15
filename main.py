@@ -23,12 +23,20 @@ app.config['SECRET_KEY'] = "key"
 load_dotenv()
 MONGODB_URI = os.getenv("MONGODB_URI") # get db uri
 
-# MongoDB connection
-client = MongoClient(MONGODB_URI)
+# mongodb connection with proper error handling
+try:
+    client = MongoClient(MONGODB_URI, server_api=ServerApi('1'))
+    # send a ping for confirmation
+    client.admin.command('ping')
+    print("Successfully created to MongoDB")
+except Exception as e:
+    print(f"Error connecting to MongoDB: {e}")
+    raise
+
 db = client['promptl_db'] # change to db name
 users_collection = db['users'] # get users collection connection
 stories_collection = db['stories'] # get stories collection connection
-    
+
 # GLOBAL VARIABLES
 prps = gen_all_prompts() # generate the prompts
 

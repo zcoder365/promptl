@@ -4,4 +4,4 @@ Werkzeug>=3.0.1
 python-dotenv>=1.0.1
 pymongo==3.12.1
 dnspython>=2.5.0    # required for MongoDB connection
-bson>=0.1.10        # for ObjectID handling
+# bson>=0.1.10        # for ObjectID handling

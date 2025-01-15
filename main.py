@@ -31,16 +31,16 @@ engine = create_engine("sqlite:///promptl.db")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # create user database
-class User(Base):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     points = db.Column(db.Integer, default=0)
-    total_word_count = db.Column(db.Integer, default=0) # keep track of total word count for the user
-    stories = relationship("Story", back_populates="author")
+    total_word_count = db.Column(db.Integer, default=0)
+    stories = db.relationship("Story", back_populates="author")
 
 # create stories database
-class Story(Base):
+class Story(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     story_content = db.Column(db.String(800), nullable=False)
@@ -48,7 +48,7 @@ class Story(Base):
     prompt = db.Column(db.String(100), nullable=False)
     points = db.Column(db.Integer, default=0)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = relationship("User", back_populates="stories")
+    author = db.relationship("User", back_populates="stories")
 
 # create all of the databases
 with app.app_context():

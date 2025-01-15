@@ -135,16 +135,20 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         
+        # check for empty fields
+        if not username or not password:
+            return render_template("login.html", message="Please fill in all fields.")
+        
         # find the user in the database
         user = User.query.filter_by(username=username).first()
         
         # if the user exists and the passwords match, create the session with the user id
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            return redirect("/home")
+            return redirect(url_for('home'))
 
         # return error message if the user doesn't exist or the passwords don't match
-        return "Invalid username or password."
+        return render_template("login.html", message="Invalid username or password.")
     
     # if GET request, just show the login page
     return render_template("login.html")

@@ -20,7 +20,7 @@ from utils.model import *
 # create the flask app and add configurations
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') # get the URI for the database
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///promptl.db"
 db = SQLAlchemy(app) # set up the SQLAlchemy database
 
 # create user database

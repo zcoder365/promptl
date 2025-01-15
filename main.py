@@ -6,11 +6,11 @@ import os
 from functools import wraps
 # from dotenv import load_dotenv
 from flask import Flask, request, session, redirect, url_for, render_template
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
+# from flask_sqlalchemy import SQLAlchemy
+# from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import declarative_base, sessionmaker
+# from sqlalchemy import create_engine, Column, Integer, String
+# from sqlalchemy.orm import declarative_base, sessionmaker
 
 # import other files
 from utils.prompts import *

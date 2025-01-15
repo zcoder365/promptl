@@ -86,11 +86,9 @@ def about_page():
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if request.method == "POST":
-        # get username and password
         username = request.form["username"]
         password = request.form["password"]
         
-        # validate input
         if not username or not password:
             return render_template("signup.html", message="Please fill in all fields.")
         
@@ -100,31 +98,30 @@ def signup():
         if len(username) < 3:
             return render_template("signup.html", message="Username must be at least 3 characters.")
         
-        # check if user exists
-        existing_user = User.query.filter_by(username=username).first()
+        # Check if user exists using MongoDB
+        existing_user = users_collection.find_one({"username": username})
         if existing_user:
             return render_template("signup.html", message="Username already exists.")
         
         try:
-            # hash the password
-            hashed_pw = generate_password_hash(password)
+            # Create new user document
+            new_user = {
+                "username": username,
+                "password": generate_password_hash(password),
+                "points": 0,
+                "total_word_count": 0,
+                "created_at": datetime.utcnow()
+            }
             
-            # create the user
-            user = User(username=username, password=hashed_pw, points=0, total_word_count=0)
+            # Insert into MongoDB
+            result = users_collection.insert_one(new_user)
             
-            # add the user to the database and save the changes
-            db.session.add(user)
-            db.session.commit()
-            
-            # return the login page so the user can log in
             return redirect(url_for("login"))
         
         except Exception as e:
-            # rollback the session in case of any other errors
-            db.session.rollback()
+            print(f"Error during signup: {e}")
             return render_template("signup.html", message="An error occurred during signup.")
     
-    # if GET request, just show signup page
     return render_template("signup.html")
 
 # login route

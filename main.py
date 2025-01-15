@@ -100,7 +100,17 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         
-        # check if username already exists
+        # validate input
+        if not username or not password:
+            return render_template("signup.html", message="Please fill in all fields.")
+        
+        if len(password) < 6:
+            return render_template("signup.html", message="Password must be at least 6 characters.")
+        
+        if len(username) < 3:
+            return render_template("signup.html", message="Username must be at least 3 characters.")
+        
+        # check if user exists
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return render_template("signup.html", message="Username already exists.")

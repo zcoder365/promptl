@@ -11,6 +11,7 @@ from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 # from sqlalchemy import create_engine, Column, Integer, String
 # from sqlalchemy.orm import declarative_base, sessionmaker
+from pymongo import MongoClient
 
 # import other files
 from utils.prompts import *
@@ -22,32 +23,38 @@ from utils.model import *
 # create the flask app and add configurations
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///promptl.db"
-db = SQLAlchemy(app) # set up the SQLAlchemy database
+# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///promptl.db"
+# db = SQLAlchemy(app) # set up the SQLAlchemy database
 
-# create user database
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    points = db.Column(db.Integer, default=0)
-    total_word_count = db.Column(db.Integer, default=0)
-    stories = db.relationship("Story", back_populates="author")
+# MongoDB connection
+client = MongoClient(MONGODB_URI) # GET URI
+db = client['promptl_db'] # change to db name
+users_collection = db['users'] # get users collection connection
+stories_collection = db['stories'] # get stories collection connection
 
-# create stories database
-class Story(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    story_content = db.Column(db.String(800), nullable=False)
-    word_count = db.Column(db.Integer, nullable=False)
-    prompt = db.Column(db.String(100), nullable=False)
-    points = db.Column(db.Integer, default=0)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = db.relationship("User", back_populates="stories")
+# # create user database
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(80), unique=True, nullable=False)
+#     password = db.Column(db.String(120), nullable=False)
+#     points = db.Column(db.Integer, default=0)
+#     total_word_count = db.Column(db.Integer, default=0)
+#     stories = db.relationship("Story", back_populates="author")
 
-# create all of the databases
-with app.app_context():
-    db.create_all()
+# # create stories database
+# class Story(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(100), nullable=False)
+#     story_content = db.Column(db.String(800), nullable=False)
+#     word_count = db.Column(db.Integer, nullable=False)
+#     prompt = db.Column(db.String(100), nullable=False)
+#     points = db.Column(db.Integer, default=0)
+#     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+#     author = db.relationship("User", back_populates="stories")
+
+# # create all of the databases
+# with app.app_context():
+#     db.create_all()
     
 # GLOBAL VARIABLES
 prps = gen_all_prompts() # generate the prompts

@@ -130,26 +130,24 @@ def signup():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
-        # get username and password from the form
+        # get info from form
         username = request.form["username"]
         password = request.form["password"]
         
-        # check for empty fields
+        # validate input
         if not username or not password:
             return render_template("login.html", message="Please fill in all fields.")
         
-        # find the user in the database
-        user = User.query.filter_by(username=username).first()
+        # find user in MongoDB
+        user = users_collection.find_one({"username": username})
         
-        # if the user exists and the passwords match, create the session with the user id
-        if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
+        # confirm passwords match
+        if user and check_password_hash(user['password'], password):
+            session['user_id'] = str(user['_id'])  # Convert ObjectId to string
             return redirect(url_for('home'))
 
-        # return error message if the user doesn't exist or the passwords don't match
         return render_template("login.html", message="Invalid username or password.")
     
-    # if GET request, just show the login page
     return render_template("login.html")
 
 # logout route

@@ -3,7 +3,7 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
 # general imports
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
 # get info from dotenv file
-load_dotenv()
+# load_dotenv()
 MONGODB_URI = os.getenv("MONGODB_URI") # get db uri
 
 # mongodb connection with proper error handling

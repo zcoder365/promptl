@@ -158,23 +158,23 @@ def logout():
 
 # prior pieces route
 @app.route('/prior-pieces')
-@login_required  # Re-enable the login required decorator
 def prior_pieces():
-    user = User.query.get(session['user_id'])  # Fixed from User.query.get(['user_id'])
+    # get user's stories from MongoDB
+    try:
+        # get user id
+        user_id = ObjectId(session['user_id'])
+        
+        # find stories based on user's id
+        stories = stories_collection.find({"author_id": user_id})
+        
+        # convert cursor to a list
+        stories_list = list(stories)
+        
+        return render_template('prior-pieces.html', stories=stories_list)
     
-    # if the user doesn't exist, return error msg
-    if not user:
-        return "User not found."
-    
-    # get the stories
-    stories = user.stories
-    
-    # if there aren't any stories, return an empty list
-    if not stories:
-        stories = []
-    
-    # return the prior pieces page
-    return render_template('prior-pieces.html', stories=stories)
+    except Exception as e:
+        print(f"Error retrieving stories: {e}")
+        return render_template('prior-pieces.html', stories=[])
 
 # user's account page
 @app.route('/my-account')

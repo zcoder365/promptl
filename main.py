@@ -6,7 +6,7 @@ import os
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
-from pymongo import MongoClient
+from pymongo import MongoClient, ServerApi
 
 # import other files
 from utils.prompts import *

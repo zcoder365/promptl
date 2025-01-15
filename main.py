@@ -86,9 +86,11 @@ def about_page():
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if request.method == "POST":
+        # get info from form
         username = request.form["username"]
         password = request.form["password"]
         
+        # validate input
         if not username or not password:
             return render_template("signup.html", message="Please fill in all fields.")
         
@@ -98,13 +100,13 @@ def signup():
         if len(username) < 3:
             return render_template("signup.html", message="Username must be at least 3 characters.")
         
-        # Check if user exists using MongoDB
+        # check if user exists using MongoDB
         existing_user = users_collection.find_one({"username": username})
         if existing_user:
             return render_template("signup.html", message="Username already exists.")
         
         try:
-            # Create new user document
+            # create new user document
             new_user = {
                 "username": username,
                 "password": generate_password_hash(password),
@@ -113,7 +115,7 @@ def signup():
                 "created_at": datetime.utcnow()
             }
             
-            # Insert into MongoDB
+            # insert into MongoDB
             result = users_collection.insert_one(new_user)
             
             return redirect(url_for("login"))

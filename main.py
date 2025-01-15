@@ -9,6 +9,8 @@ from flask import Flask, request, session, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # import other files
 from utils.prompts import *
@@ -23,8 +25,13 @@ app.config['SECRET_KEY'] = "key"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///promptl.db"
 db = SQLAlchemy(app) # set up the SQLAlchemy database
 
+# properly create database
+Base = declarative_base()
+engine = create_engine("sqlite:///promptl.db")
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 # create user database
-class User(db.Model):
+class User(Base):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
@@ -33,7 +40,7 @@ class User(db.Model):
     stories = relationship("Story", back_populates="author")
 
 # create stories database
-class Story(db.Model):
+class Story(Base):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     story_content = db.Column(db.String(800), nullable=False)

@@ -260,7 +260,7 @@ def save_writing():
                 stories_collection.delete_one({"_id": story_result.inserted_id})
                 raise Exception("Failed to update user statistics")
             
-            return render_template("congrats.html", title=title, story_len=word_count, points=story_points, prompts=prompts, words=used_prompts)
+            return render_template("congrats.html", title=title, story_len=word_count, points=story_points, words=len(used_prompts))
 
         except Exception as e:
             print(f"Error saving writing: {e}")

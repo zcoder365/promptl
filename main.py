@@ -139,15 +139,24 @@ def login():
         if not username or not password:
             return render_template("login.html", message="Please fill in all fields.")
         
-        # find user in MongoDB
-        user = users_collection.find_one({"username": username})
-        
-        # confirm passwords match
-        if user and check_password_hash(user['password'], password):
-            session['user_id'] = str(user['_id'])  # Convert ObjectId to string
-            return redirect(url_for('home'))
+        try:
+            # find user in MongoDB
+            user = users_collection.find_one({"username": username})
 
-        return render_template("login.html", message="Invalid username or password.")
+            # check if user exists
+            if not user:
+                return render_template("login.html", message="Username not found.")
+            
+            # confirm passwords match
+            if check_password_hash(user['password'], password):
+                session['user_id'] = str(user['_id'])  # convert ObjectId to string
+                return redirect(url_for('home'))
+            else:
+                return render_template("login.html", message="Invalid password.")
+
+        except Exception as e:
+            print(f"Error during login: {e}")
+            return render_template("login.html", message="An error occurred during login.")
     
     return render_template("login.html")
 

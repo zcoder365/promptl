@@ -203,36 +203,46 @@ def my_account():
 def save_writing():
     if request.method == "POST":
         try:
-            # get the info from the form
-            written_raw = request.form['story']
-            title = request.form['title']
+            # Get the info from the form
+            written_raw = request.form.get('story')
+            title = request.form.get('title')
+            prompts = request.form.get('prompts')  # Add this to get prompts from the form
             
-            # if all parts of the form aren't saved, return error message
-            if not all([written_raw, title]):
-                return "Invalid request."
+            # Validate all required fields are present
+            if not all([written_raw, title, prompts]):
+                return render_template("index.html", 
+                    message="Please fill in all required fields (story, title, and prompts).")
             
-            # calculate variables needed for saving the writing
+            # Calculate variables needed for saving the writing
             story_words = written_raw.split()
             word_count = len(story_words)
-            points_earned = calculate_points(prps, written_raw)
+            points_earned = calculate_points(prompts, written_raw)  # Using prompts from form
             
-            # get the user's id from the session
-            user_id = ObjectId(session['user_id'])
+            # Get the user's id from the session
+            try:
+                user_id = ObjectId(session.get('user_id'))
+            except:
+                return render_template("index.html", 
+                    message="User session expired. Please log in again.")
             
-            # create a new story document
+            # Create a new story document
             new_story = {
                 "title": title,
                 "story_content": written_raw,
-                "prompt": str(prps),
+                "prompt": prompts,
                 "word_count": word_count,
                 "points": points_earned,
                 "author_id": user_id,
                 "created_at": datetime.utcnow()
             }
             
-            # insert story and update user stats
-            stories_collection.insert_one(new_story)
-            users_collection.update_one(
+            # Insert story and verify success
+            story_result = stories_collection.insert_one(new_story)
+            if not story_result.inserted_id:
+                raise Exception("Failed to save story to database")
+            
+            # Update user stats and verify success
+            user_result = users_collection.update_one(
                 {"_id": user_id},
                 {
                     "$inc": {
@@ -241,12 +251,24 @@ def save_writing():
                     }
                 }
             )
+            if user_result.modified_count == 0:
+                # Rollback story insertion if user update fails
+                stories_collection.delete_one({"_id": story_result.inserted_id})
+                raise Exception("Failed to update user statistics")
             
-            return render_template("congrats.html", title=title, story_len=word_count, points=points_earned, prompts=prps)
+            return render_template("congrats.html", 
+                title=title, 
+                story_len=word_count, 
+                points=points_earned, 
+                prompts=prompts)
 
         except Exception as e:
             print(f"Error saving writing: {e}")
-            return render_template("index.html", message="An error occurred while saving your story.")
+            # Log the full error for debugging
+            import traceback
+            traceback.print_exc()
+            return render_template("index.html", 
+                message=f"An error occurred while saving your story: {str(e)}")
     
     return redirect(url_for("home"))
 

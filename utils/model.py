@@ -24,5 +24,10 @@ def calculate_points(prompts, story) -> int:
         if len(story) >= 100:
             points += 25
     
+    results = {
+        "points": points,
+        "used_prompts": used_prompts
+    }
+    
     # return the points earned from writing the story
-    return points
+    return results

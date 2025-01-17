@@ -3,6 +3,12 @@ def calculate_points(prompts, story) -> int:
     points = 0              # keep track of points
     used_prompts = []       # keep track of the used prompts
     
+    results = {
+        "story": story,
+        "points": points,
+        "used_prompts": used_prompts
+    }
+    
     # only check prompts if the story length is greater than or equal to 70
     if len(story) >= 70:
         # check each prompt

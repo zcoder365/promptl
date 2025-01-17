@@ -216,7 +216,11 @@ def save_writing():
             # Calculate variables needed for saving the writing
             story_words = written_raw.split()
             word_count = len(story_words)
-            points_earned = calculate_points(prompts, written_raw)  # Using prompts from form
+            
+            # get the story points and used prompts
+            story_results = calculate_points(prompts, written_raw)  # Using prompts from form
+            story_points = story_results['points']
+            used_prompts = story_results['used_prompts']
             
             # Get the user's id from the session
             try:
@@ -231,9 +235,9 @@ def save_writing():
                 "story_content": written_raw,
                 "prompt": prompts,
                 "word_count": word_count,
-                "points": points_earned,
+                "points": story_points,
                 "author_id": user_id,
-                "created_at": datetime.utcnow()
+                "created_at": datetime.now()
             }
             
             # Insert story and verify success
@@ -247,7 +251,7 @@ def save_writing():
                 {
                     "$inc": {
                         "total_word_count": word_count,
-                        "points": points_earned
+                        "points": story_points
                     }
                 }
             )
@@ -256,11 +260,7 @@ def save_writing():
                 stories_collection.delete_one({"_id": story_result.inserted_id})
                 raise Exception("Failed to update user statistics")
             
-            return render_template("congrats.html", 
-                title=title, 
-                story_len=word_count, 
-                points=points_earned, 
-                prompts=prompts)
+            return render_template("congrats.html", title=title, story_len=word_count, points=story_points, prompts=prompts, words=used_prompts)
 
         except Exception as e:
             print(f"Error saving writing: {e}")

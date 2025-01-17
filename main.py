@@ -206,10 +206,12 @@ def save_writing():
             # Get the info from the form
             written_raw = request.form.get('story')
             title = request.form.get('title')
-            prompts = request.form.get('prompts')  # Add this to get prompts from the form
+            
+            # create a function specific prompts variable for prps
+            prompts = prps
             
             # Validate all required fields are present
-            if not all([written_raw, title, prompts]):
+            if not all([written_raw, title]):
                 return render_template("index.html", 
                     message="Please fill in all required fields (story, title, and prompts).")
             
@@ -220,7 +222,7 @@ def save_writing():
             # get the story points and used prompts
             story_results = calculate_points(prompts, written_raw)  # Using prompts from form
             story_points = story_results['points']
-            used_prompts = story_results['used_prompts']
+            num_used_prompts = story_results['num_used_prompts']
             
             # Get the user's id from the session
             try:
@@ -260,7 +262,7 @@ def save_writing():
                 stories_collection.delete_one({"_id": story_result.inserted_id})
                 raise Exception("Failed to update user statistics")
             
-            return render_template("congrats.html", title=title, story_len=word_count, points=story_points, words=len(used_prompts))
+            return render_template("congrats.html", title=title, story_len=word_count, points=story_points, words=len(num_used_prompts))
 
         except Exception as e:
             print(f"Error saving writing: {e}")

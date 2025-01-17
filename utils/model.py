@@ -8,7 +8,11 @@ def calculate_points(prompts, story) -> int:
         # check each prompt
         for prompt_type, prompt in prompts.items():
             if prompt.lower() in story: # check if the prompt is in the story
-                points += 10 # add the points
+                if prompt_type == "bonus":
+                    points += 20
+                
+                elif prompt_type != "bonus":
+                    points += 10 # add the points
                 
                 # add the prompt to the used prompts list
                 used_prompts.append({

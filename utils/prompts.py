@@ -21,23 +21,15 @@ def gen_prompt(file_name):
 
 # generate all the prompts using all the files
 def gen_all_prompts():
+    # keep track of prompts
     prompts = {}
     
-    # add keys to the prompts dict to be able to generate the variables
-    for file in prompt_file_names:
-        if "bonus" in file:
-            key = "bonus"
-        elif "jobs" in file:
-            key = "job"
-        elif "names" in file:
-            key = "name"
-        elif "objects" in file:
-            key = "object"
-        elif "places" in file:
-            key = "place"
-        
-        # generate the prompts using the gen_prompt()  function
-        prompts[key] = gen_prompt(file)
+    # generate prompts for the dict
+    prompts['name'] = gen_prompt(NAMES_FILE)
+    prompts['job'] = gen_prompt(JOBS_FILE)
+    prompts['objects'] = gen_prompt(OBJECTS_FILE)
+    prompts['location'] = gen_prompt(PLACES_FILE)
+    prompts['bonus'] = gen_prompt(BONUS_FILE)
     
     # return the prompts
     return prompts

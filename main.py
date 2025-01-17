@@ -22,7 +22,7 @@ app.config['SECRET_KEY'] = "key"
 
 # get info from dotenv file
 # load_dotenv()
-MONGODB_URI = os.getenv("MONGODB_URI") # get db uri
+MONGODB_URI = os.getenv("MONGODB_URI") # get MongoDB URI
 
 # mongodb connection with proper error handling
 try:

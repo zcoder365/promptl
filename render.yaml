@@ -4,3 +4,4 @@ name: promptl
 env: python
 buildCommand: pip install -r requirements.txt
 startCommand: gunicorn app:main
+plan: free

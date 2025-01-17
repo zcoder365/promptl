@@ -64,7 +64,7 @@ def home():
     # allocate each prompt to a variable
     name = prps['name']
     job = prps['job']
-    place = prps['place']
+    place = prps['location']
     object = prps['object']
     bonus = prps['bonus']
 

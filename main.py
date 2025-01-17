@@ -113,13 +113,17 @@ def signup():
                 "password": generate_password_hash(password),
                 "points": 0,
                 "total_word_count": 0,
-                "created_at": datetime.utcnow()
+                "created_at": datetime.now()
             }
             
             # insert into MongoDB
             result = users_collection.insert_one(new_user)
             
-            return redirect(url_for("login"))
+            if result:
+                return redirect(url_for("login"))
+            
+            elif not result:
+                return "There was an error in creating your account."
         
         except Exception as e:
             print(f"Error during signup: {e}")

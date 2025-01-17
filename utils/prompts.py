@@ -27,7 +27,7 @@ def gen_all_prompts():
     # generate prompts for the dict
     prompts['name'] = gen_prompt(NAMES_FILE)
     prompts['job'] = gen_prompt(JOBS_FILE)
-    prompts['objects'] = gen_prompt(OBJECTS_FILE)
+    prompts['object'] = gen_prompt(OBJECTS_FILE)
     prompts['location'] = gen_prompt(PLACES_FILE)
     prompts['bonus'] = gen_prompt(BONUS_FILE)
     

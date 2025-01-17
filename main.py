@@ -132,8 +132,8 @@ def signup():
 def login():
     if request.method == "POST":
         # get info from form
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form.get("username")
+        password = request.form.get("password")
         
         # validate input
         if not username or not password:

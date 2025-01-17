@@ -155,6 +155,7 @@ def login():
             if check_password_hash(user['password'], password):
                 session['user_id'] = str(user['_id'])  # convert ObjectId to string
                 return redirect(url_for('home'))
+            
             else:
                 return render_template("login.html", message="Invalid password.")
 

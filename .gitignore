@@ -1,4 +1,5 @@
 .env.uri
+.env
 .venv
 env/
 venv/

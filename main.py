@@ -2,8 +2,6 @@
 ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
 # general imports
-import os
-# from dotenv import load_dotenv
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,7 +19,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
 # connect to the database
-users_collection, stories_collection = connect_db()
+# users_collection, stories_collection = connect_db()
 
 # GLOBAL VARIABLES
 prps = gen_all_prompts() # generate the prompts

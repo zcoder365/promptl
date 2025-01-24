@@ -1,7 +1,8 @@
 def calculate_points(prompts: dict, story: str) -> dict:
-    story = story.lower() # make the story lowercase
-    points = 0 # keep track of points
-    used_prompts_count = 0 # keep track of the used prompts
+    # set vars to keep track of story, points, and used prompts
+    story = story.lower()
+    points = 0
+    used_prompts_count = 0
     
     results = {
         "story": story,

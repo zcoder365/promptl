@@ -20,19 +20,8 @@ from utils.model import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
-# get info from dotenv file
-# load_dotenv()
-MONGODB_URI = os.getenv("MONGODB_URI") # get MongoDB URI
-
-# mongodb connection with proper error handling
-try:
-    client = MongoClient(MONGODB_URI, server_api=ServerApi('1'))
-    # send a ping for confirmation
-    client.admin.command('ping')
-    print("Successfully created to MongoDB")
-except Exception as e:
-    print(f"Error connecting to MongoDB: {e}")
-    raise
+# connect to the database
+db = connect_db()
 
 db = client['promptl_db'] # change to db name
 users_collection = db['users'] # get users collection connection

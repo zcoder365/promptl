@@ -33,3 +33,60 @@ def calculate_points(prompts: dict, story: str) -> dict:
     
     # return the points earned from writing the story
     return results
+
+def validate_writing_input(written_raw, title):
+    """Validate that all required fields are present"""
+    if not all([written_raw, title]):
+        return False, "Please fill in all required fields (story, title, and prompts)."
+    return True, None
+
+def process_story_metrics(written_raw, prompts):
+    """Calculate word count and points for the story"""
+    story_words = written_raw.split()
+    word_count = len(story_words)
+    story_results = calculate_points(prompts, written_raw)
+    
+    return {
+        'word_count': word_count,
+        'points': story_results['points'],
+        'num_used_prompts': story_results['num_used_prompts']
+    }
+
+def create_story_document(title, written_raw, prompts, metrics, user_id):
+    """Create a new story document for database insertion"""
+    return {
+        "title": title,
+        "story_content": written_raw,
+        "prompt": prompts,
+        "word_count": metrics['word_count'],
+        "points": metrics['points'],
+        "author_id": user_id,
+        "created_at": datetime.now()
+    }
+
+def save_story_to_db(story_doc, user_id, metrics):
+    """Save story and update user stats in database"""
+    try:
+        # Insert story
+        story_result = stories_collection.insert_one(story_doc)
+        if not story_result.inserted_id:
+            raise Exception("Failed to save story to database")
+        
+        # Update user stats
+        user_result = users_collection.update_one(
+            {"_id": user_id},
+            {
+                "$inc": {
+                    "total_word_count": metrics['word_count'],
+                    "points": metrics['points']
+                }
+            }
+        )
+        if user_result.modified_count == 0:
+            stories_collection.delete_one({"_id": story_result.inserted_id})
+            raise Exception("Failed to update user statistics")
+            
+        return True, story_doc
+        
+    except Exception as e:
+        return False, str(e)

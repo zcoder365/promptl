@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def calculate_points(prompts: dict, story: str) -> dict:
     # set vars to keep track of story, points, and used prompts
     story = story.lower()

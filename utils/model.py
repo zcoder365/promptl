@@ -1,7 +1,7 @@
+import os
 from datetime import datetime
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-import os
 
 def connect_db():
     """Initialize MongoDB connection and return collections"""

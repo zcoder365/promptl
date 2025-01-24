@@ -18,20 +18,8 @@ from utils.model import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
-# connect to the database
-# users_collection, stories_collection = connect_db()
-
 # GLOBAL VARIABLES
 prps = gen_all_prompts() # generate the prompts
-
-# # login required decorator
-# def login_required(f):
-#     @wraps(f)
-#     def decorated_function(*args, **kwargs):
-#         if "user_id" not in session:
-#             return redirect(url_for('login'))
-#         return f(*args, **kwargs)
-#     return decorated_function
 
 # page when the user comes to promptl
 @app.route('/')

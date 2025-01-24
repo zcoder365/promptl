@@ -1,4 +1,22 @@
 from datetime import datetime
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+import os
+
+def connect_db():
+    """Initialize MongoDB connection and return collections"""
+    MONGODB_URI = os.getenv("MONGODB_URI")
+    
+    try:
+        client = MongoClient(MONGODB_URI, server_api=ServerApi('1'))
+        client.admin.command('ping')
+        print("Successfully connected to MongoDB")
+        
+        db = client['promptl_db']
+        return db['users'], db['stories']
+    except Exception as e:
+        print(f"Error connecting to MongoDB: {e}")
+        raise
 
 def calculate_points(prompts: dict, story: str) -> dict:
     # set vars to keep track of story, points, and used prompts

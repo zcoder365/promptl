@@ -14,6 +14,7 @@ def connect_db():
         
         db = client['promptl_db']
         return db['users'], db['stories']
+    
     except Exception as e:
         print(f"Error connecting to MongoDB: {e}")
         raise
@@ -105,6 +106,7 @@ def save_story_to_db(story_doc, user_id, metrics):
                 }
             }
         )
+        
         if user_result.modified_count == 0:
             stories_collection.delete_one({"_id": story_result.inserted_id})
             raise Exception("Failed to update user statistics")

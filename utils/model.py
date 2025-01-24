@@ -18,6 +18,9 @@ def connect_db():
         print(f"Error connecting to MongoDB: {e}")
         raise
 
+# connect to databases
+users_collection, stories_collection = connect_db()
+
 def calculate_points(prompts: dict, story: str) -> dict:
     # set vars to keep track of story, points, and used prompts
     story = story.lower()

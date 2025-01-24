@@ -5,7 +5,7 @@ from pymongo.server_api import ServerApi
 
 def connect_db():
     """Initialize MongoDB connection and return collections"""
-    MONGODB_URI = os.getenv("MONGODB_URI")
+    MONGODB_URI = os.getenv(MONGODB_URI)
     
     try:
         client = MongoClient(MONGODB_URI, server_api=ServerApi('1'))

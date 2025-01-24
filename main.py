@@ -217,74 +217,39 @@ def my_account():
 def save_writing():
     if request.method == "POST":
         try:
-            # Get the info from the form
             written_raw = request.form.get('story')
             title = request.form.get('title')
             
-            # create a function specific prompts variable for prps
-            prompts = prps
+            # Validate input
+            is_valid, error_message = validate_writing_input(written_raw, title)
+            if not is_valid:
+                return render_template("index.html", message=error_message)
             
-            # Validate all required fields are present
-            if not all([written_raw, title]):
-                return render_template("index.html", 
-                    message="Please fill in all required fields (story, title, and prompts).")
-            
-            # Calculate variables needed for saving the writing
-            story_words = written_raw.split()
-            word_count = len(story_words)
-            
-            # get the story points and used prompts
-            story_results = calculate_points(prompts, written_raw)  # Using prompts from form
-            story_points = story_results['points']
-            num_used_prompts = story_results['num_used_prompts']
-            
-            # Get the user's id from the session
+            # Get user ID
             try:
                 user_id = ObjectId(session.get('user_id'))
             except:
-                return render_template("index.html", 
-                    message="User session expired. Please log in again.")
+                return render_template("index.html", message="User session expired. Please log in again.")
             
-            # Create a new story document
-            new_story = {
-                "title": title,
-                "story_content": written_raw,
-                "prompt": prompts,
-                "word_count": word_count,
-                "points": story_points,
-                "author_id": user_id,
-                "created_at": datetime.now()
-            }
+            # Process story metrics
+            metrics = process_story_metrics(written_raw, prps)
             
-            # Insert story and verify success
-            story_result = stories_collection.insert_one(new_story)
-            if not story_result.inserted_id:
-                raise Exception("Failed to save story to database")
+            # Create and save story
+            story_doc = create_story_document(title, written_raw, prps, metrics, user_id)
+            success, result = save_story_to_db(story_doc, user_id, metrics)
             
-            # Update user stats and verify success
-            user_result = users_collection.update_one(
-                {"_id": user_id},
-                {
-                    "$inc": {
-                        "total_word_count": word_count,
-                        "points": story_points
-                    }
-                }
-            )
-            if user_result.modified_count == 0:
-                # Rollback story insertion if user update fails
-                stories_collection.delete_one({"_id": story_result.inserted_id})
-                raise Exception("Failed to update user statistics")
+            if not success:
+                return render_template("index.html", message=f"An error occurred: {result}")
             
-            return render_template("congrats.html", title=title, story_len=word_count, points=story_points, words=num_used_prompts)
-
+            return render_template("congrats.html", 
+                                title=title, 
+                                story_len=metrics['word_count'], 
+                                points=metrics['points'], 
+                                words=metrics['num_used_prompts'])
+                                
         except Exception as e:
             print(f"Error saving writing: {e}")
-            # Log the full error for debugging
-            import traceback
-            traceback.print_exc()
-            return render_template("index.html", 
-                message=f"An error occurred while saving your story: {str(e)}")
+            return render_template("index.html", message=f"An error occurred: {str(e)}")
     
     return redirect(url_for("home"))
 

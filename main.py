@@ -21,9 +21,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
 # connect to the database
-db = connect_db()
-users_collection = db['users'] # get users collection connection
-stories_collection = db['stories'] # get stories collection connection
+users_collection, stories_collection = connect_db()
 
 # GLOBAL VARIABLES
 prps = gen_all_prompts() # generate the prompts

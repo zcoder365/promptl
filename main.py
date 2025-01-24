@@ -22,8 +22,6 @@ app.config['SECRET_KEY'] = "key"
 
 # connect to the database
 db = connect_db()
-
-db = client['promptl_db'] # change to db name
 users_collection = db['users'] # get users collection connection
 stories_collection = db['stories'] # get stories collection connection
 

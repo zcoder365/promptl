@@ -4,8 +4,6 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
 from bson import ObjectId
 from datetime import datetime
 from utils.prompts import *
@@ -15,8 +13,8 @@ from utils.model import *
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
-# GLOBAL VARIABLES
-prps = gen_all_prompts() # generate the prompts
+# generate the prompts for the main page
+prompts = gen_all_prompts()
 
 # page when the user comes to promptl
 @app.route('/')
@@ -27,14 +25,14 @@ def index():
 @app.route('/home')
 def home():
     # regenerate the prompts if the page is reloaded
-    prps = gen_all_prompts()
+    prompts = gen_all_prompts()
         
     # allocate each prompt to a variable
-    name = prps['name']
-    job = prps['job']
-    place = prps['location']
-    object = prps['object']
-    bonus = prps['bonus']
+    name = prompts['name']
+    job = prompts['job']
+    place = prompts['location']
+    object = prompts['object']
+    bonus = prompts['bonus']
 
     # return the main page for writing with the prompts
     return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)
@@ -200,10 +198,10 @@ def save_writing():
                 return render_template("index.html", message="User session expired. Please log in again.")
             
             # Process story metrics
-            metrics = process_story_metrics(written_raw, prps)
+            metrics = process_story_metrics(written_raw, prompts)
             
             # Create and save story
-            story_doc = create_story_document(title, written_raw, prps, metrics, user_id)
+            story_doc = create_story_document(title, written_raw, prompts, metrics, user_id)
             success, result = save_story_to_db(story_doc, user_id, metrics)
             
             if not success:

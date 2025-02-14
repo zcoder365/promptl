@@ -16,7 +16,7 @@ app.config['SECRET_KEY'] = "key"
 # generate the prompts for the main page
 prompts = gen_all_prompts()
 
-# page when the user comes to promptl
+# landing route
 @app.route('/')
 def index():
     return render_template('signup.html')
@@ -37,19 +37,19 @@ def home():
     # return the main page for writing with the prompts
     return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)
 
-# generate a new prompt
+# generate a new prompt by reloading home page
 @app.route('/new-prompt')
 def new_prompt():
     # reload the page to get a new 5 prompts
     return redirect(url_for("home"))
 
-# about page
+# about page route
 @app.route('/about')
 def about_page():
     # return the page about the game
     return render_template('about.html')
 
-# let the user signup
+# sign up route
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if request.method == "POST":

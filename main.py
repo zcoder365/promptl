@@ -1,7 +1,6 @@
-# add allowed hosts
+# add allowed hosts for the website
 ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
-# general imports
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,8 +8,6 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson import ObjectId
 from datetime import datetime
-
-# import other files
 from utils.prompts import *
 from utils.model import *
 

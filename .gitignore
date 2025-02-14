@@ -1,9 +1,2 @@
-.env.uri
-.env
-.venv
-env/
-venv/
-ENV/
 __pycache__/
-main2.py
 instance/

@@ -214,11 +214,7 @@ def save_writing():
             if not success:
                 return render_template("index.html", message=f"An error occurred: {result}")
             
-            return render_template("congrats.html", 
-                                title=title, 
-                                story_len=metrics['word_count'], 
-                                points=metrics['points'], 
-                                words=metrics['num_used_prompts'])
+            return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
                                 
         except Exception as e:
             print(f"Error saving writing: {e}")

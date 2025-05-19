@@ -187,8 +187,12 @@ def save_writing():
             title = request.form.get('title')
             
             # Validate input
-            is_valid, error_message = validate_writing_input(written_raw, title)
+            is_valid = validate_writing_input(written_raw, title)
             if not is_valid:
+                if is_valid == True:
+                    error_message = ""
+                elif is_valid == False:
+                    error_message = "Please fill in all fields."
                 return render_template("index.html", message=error_message)
             
             # Get user ID

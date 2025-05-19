@@ -22,20 +22,28 @@ def connect_db():
 # connect to databases
 users_collection, stories_collection = connect_db()
 
-def calculate_points(prompts: dict, story: str) -> dict:
+def calculate_points(prompts, story):
     # set vars to keep track of story, points, and used prompts
-    story = story.lower()
-    points = 0
-    used_prompts_count = 0
+    story = story.lower() # convert story to lowercase
+    points = 0 # initialize points
+    used_prompts_count = 0 # initialize used prompts count
     
-    results = {
-        "story": story,
-        "points": points,
-        "num_used_prompts": used_prompts_count
-    }
-    
-    # only calculate score if len(story) ≥ 70
-    if len(story) >= 70:
+    # check if the story is empty
+    if not story:
+        return {
+            "story": "",
+            "points": 0,
+            "num_used_prompts": 0
+        }
+        
+    elif len(story) < 70: # if the story is less than 70 characters, return 0 points
+        return {
+            "story": story,
+            "points": 0,
+            "num_used_prompts": 0
+        }
+        
+    elif len(story) >= 70: # only calculate score if len(story) ≥ 70
         # check each prompt
         for prompt_type, prompt in prompts.items():
             if prompt.lower() in story: # check if the prompt is in the story
@@ -51,6 +59,13 @@ def calculate_points(prompts: dict, story: str) -> dict:
         # bonus points for longer stories
         if len(story) >= 100:
             points += 25
+    
+    # create a dictionary to store the results
+    results = {
+        "story": story,
+        "points": 0,
+        "num_used_prompts": 0
+    }
     
     results["points"] = points
     results["num_used_prompts"] = used_prompts_count
@@ -68,9 +83,9 @@ def validate_writing_input(written_raw, title) -> bool:
 
 def process_story_metrics(written_raw, prompts):
     """Calculate word count and points for the story"""
-    story_words = written_raw.split()
-    word_count = len(story_words)
-    story_results = calculate_points(prompts, written_raw)
+    
+    word_count = len(written_raw.split()) # count the words in the story
+    story_results = calculate_points(prompts, written_raw) # calculate the points for the used words in the story
     
     return {
         'word_count': word_count,
@@ -92,7 +107,7 @@ def create_story_document(title, written_raw, prompts, metrics, user_id):
 
 def save_story_to_db(story_doc, user_id, metrics):
     """Save story and update user stats in database"""
-    try:
+    try:        
         # Insert story
         story_result = stories_collection.insert_one(story_doc)
         if not story_result.inserted_id:

@@ -31,3 +31,27 @@ def add_user(username: str, password: str):
     except Exception as e:
         print(f"Error adding user: {e}")
         return None
+    
+def get_user(username: str):
+    try:
+        # Execute the query - errors will be raised as exceptions
+        response = supabase.table("users").select("*").eq("username", username).execute()
+        
+        # Debug: Print what we got back
+        print(f"Debug - get_user response data: {response.data}")
+        print(f"Debug - Data length: {len(response.data) if response.data else 0}")
+        
+        # Check if we got any data back
+        if response.data and len(response.data) > 0:
+            user = response.data[0]
+            print(f"Debug - Found user: {user}")
+            return user  # Return single user object
+        else:
+            # No user found with that username
+            print(f"Debug - No user found with username: {username}")
+            return None
+            
+    except Exception as e:
+        # Handle any database errors that occur
+        print(f"Error getting user: {e}")
+        return None

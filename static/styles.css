@@ -154,3 +154,13 @@ textarea {
     font-family: inherit;
     font-size: medium;
 }
+
+.congrats-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    outline: 2px solid navy;
+    width: 200px;
+}

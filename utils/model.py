@@ -40,19 +40,11 @@ def calculate_points(prompts, story):
     # return the points earned from writing the story
     return results
 
-def validate_writing_input(written_raw, title) -> bool:
-    """Validate that all required fields are present"""
-    
-    if not all([written_raw, title]):
-        return False
-    
-    return True
-
 def get_story_metrics(written_raw, prompts):
     """Calculate word count and points for the story"""
     
-    word_count = len(written_raw.split()) # count the words in the story
-    story_results = calculate_points(prompts, written_raw) # calculate the points for the used words in the story
+    word_count = len(written_raw.split())
+    story_results = calculate_points(prompts, written_raw)
     
     return {
         'word_count': word_count,

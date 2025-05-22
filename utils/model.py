@@ -83,31 +83,3 @@ def create_story_document(title, written_raw, prompts, metrics, user_id):
         "author_id": user_id,
         "created_at": datetime.now()
     }
-
-def save_story_to_db(story_doc, user_id, metrics):
-    """Save story and update user stats in database"""
-    try:        
-        # Insert story
-        story_result = stories_collection.insert_one(story_doc)
-        if not story_result.inserted_id:
-            raise Exception("Failed to save story to database")
-        
-        # Update user stats
-        user_result = users_collection.update_one(
-            {"_id": user_id},
-            {
-                "$inc": {
-                    "total_word_count": metrics['word_count'],
-                    "points": metrics['points']
-                }
-            }
-        )
-        
-        if user_result.modified_count == 0:
-            stories_collection.delete_one({"_id": story_result.inserted_id})
-            raise Exception("Failed to update user statistics")
-            
-        return True, story_doc
-        
-    except Exception as e:
-        return False, str(e)

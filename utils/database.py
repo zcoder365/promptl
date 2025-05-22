@@ -1,4 +1,4 @@
-from supabase import create_client, Client
+from supabase import create_client
 import os
 from dotenv import load_dotenv
 import bcrypt
@@ -10,7 +10,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
 
 # initialize the supabase client
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def add_user(username: str, password: str):
     try:

@@ -121,6 +121,7 @@ def prior_pieces():
 def my_account():
     try:
         # get the user's id and find the user
+        user = ""
         
         # if the user doesn't exist/isn't in the session, redirect user to login page
         if not user:
@@ -166,8 +167,8 @@ def save_writing():
             
             # SAVE THE STORY TO THE DATABASE - ADD LOGIC
             
-            if not success:
-                return render_template("index.html", message=f"An error occurred: {result}")
+            # if not success:
+            #     return render_template("index.html", message=f"An error occurred: {result}")
             
             return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
                                 
@@ -182,7 +183,7 @@ def save_writing():
 def read_story(story_title):
     try:
         # find a specific story in the user's database
-        story = stories_collection.find_one({"title": story_title})
+        story = ""
         
         # if the story doesn't exist, return error message and the prior pieces page
         if not story:

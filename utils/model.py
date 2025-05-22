@@ -60,7 +60,7 @@ def validate_writing_input(written_raw, title) -> bool:
     
     return True
 
-def process_story_metrics(written_raw, prompts):
+def get_story_metrics(written_raw, prompts):
     """Calculate word count and points for the story"""
     
     word_count = len(written_raw.split()) # count the words in the story

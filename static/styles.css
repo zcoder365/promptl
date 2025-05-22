@@ -125,3 +125,21 @@ nav {
     border-collapse: collapse;
     text-align: center;
 }
+
+form input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: medium;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: medium;
+}

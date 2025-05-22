@@ -148,3 +148,37 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
     except Exception as e:
         print(f"Error adding story: {e}")
         return False
+
+def get_user_stories(username: str):
+    try:
+        # Get the user's stories
+        response = supabase.table("stories").select("*").eq("author_id", username).execute()
+        
+        if response.status_code == 200 and response.data:
+            stories = response.data
+            print(f"User {username} stories: {stories}")
+            return stories
+        else:
+            print(f"Failed to get stories for user {username}.")
+            return []
+            
+    except Exception as e:
+        print(f"Error getting user stories: {e}")
+        return []
+
+def get_all_stories():
+    try:
+        # Get all stories
+        response = supabase.table("stories").select("*").execute()
+        
+        if response.status_code == 200 and response.data:
+            stories = response.data
+            print(f"All stories: {stories}")
+            return stories
+        else:
+            print("Failed to get all stories.")
+            return []
+            
+    except Exception as e:
+        print(f"Error getting all stories: {e}")
+        return []

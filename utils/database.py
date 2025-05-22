@@ -120,3 +120,31 @@ def update_user_streak(username: str, streak: int):
     except Exception as e:
         print(f"Error updating user streak: {e}")
         return False
+
+def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
+    created_at = datetime.now().isoformat()  # Get the current date and time in ISO format
+    try:
+        # Create a new story entry
+        new_story_entry = {
+            "title": title,
+            "story_content": story_content,
+            "prompt": prompts,
+            "word_count": word_count,
+            "points_earned": points_earned,
+            "author_id": username,  # Assuming username is unique
+            "created_at": created_at
+        }
+        
+        # Add the story to the database
+        response = supabase.table("stories").insert(new_story_entry).execute()
+        
+        if response.status_code == 201:
+            print(f"Story '{title}' added successfully.")
+            return True
+        else:
+            print(f"Failed to add story '{title}'.")
+            return False
+            
+    except Exception as e:
+        print(f"Error adding story: {e}")
+        return False

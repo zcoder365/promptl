@@ -70,33 +70,7 @@ def signup():
         if len(username) < 3:
             return render_template("signup.html", message="Username must be at least 3 characters.")
         
-        # check if user exists using MongoDB
-        existing_user = users_collection.find_one({"username": username})
-        if existing_user:
-            return render_template("signup.html", message="Username already exists.")
-        
-        try:
-            # create new user document
-            new_user = {
-                "username": username,
-                "password": generate_password_hash(password),
-                "points": 0,
-                "total_word_count": 0,
-                "created_at": datetime.now()
-            }
-            
-            # insert into MongoDB
-            result = users_collection.insert_one(new_user)
-            
-            if result:
-                return redirect(url_for("login"))
-            
-            elif not result:
-                return "There was an error in creating your account."
-        
-        except Exception as e:
-            print(f"Error during signup: {e}")
-            return render_template("signup.html", message="An error occurred during signup.")
+        # SIGN UP LOGIC
     
     return render_template("signup.html")
 
@@ -112,25 +86,7 @@ def login():
         if not username or not password:
             return render_template("login.html", message="Please fill in all fields.")
         
-        try:
-            # find user in MongoDB
-            user = users_collection.find_one({"username": username})
-
-            # check if user exists
-            if not user:
-                return render_template("login.html", message="Username not found.")
-            
-            # confirm passwords match
-            if check_password_hash(user['password'], password):
-                session['user_id'] = str(user['_id'])  # convert ObjectId to string
-                return redirect(url_for('home'))
-            
-            else:
-                return render_template("login.html", message="Invalid password.")
-
-        except Exception as e:
-            print(f"Error during login: {e}")
-            return render_template("login.html", message="An error occurred during login.")
+        # LOGIN LOGIC
     
     return render_template("login.html")
 

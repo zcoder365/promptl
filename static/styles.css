@@ -1,10 +1,13 @@
 :root {
     --primary-color: #00008B;
     --accent-color: #FF5349;
+    --text-color: #000000;
+    --background-color: #FFFFFF;
+    --font-family: 'Georgia', 'Times New Roman', Times, serif;
 }
 
 body {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-family: var(--font-family);
     width: 100%;
     margin: 0;
     padding: 0;
@@ -31,16 +34,17 @@ nav {
     font-size: medium;
     height: 50px;
     width: 150px;
-    border: 2px solid #00008B;
+    border: 2px solid var(--primary-color);
     margin-left: 2px;
     margin-right: 2px;
     color: white;
-    background-color: #00008B;
+    background-color: var(--primary-color);
 }
 
 .navigation button:hover {
-    background-color: #FF5349;
-    border: 2px solid #FF5349;
+    background-color: var(--accent-color);
+    color: white;
+    border: 2px solid var(--accent-color);
 }
 
 .logo-btn-nav {

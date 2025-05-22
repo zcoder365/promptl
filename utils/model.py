@@ -6,23 +6,8 @@ def calculate_points(prompts, story):
     story = story.lower() # convert story to lowercase
     points = 0 # initialize points
     used_prompts_count = 0 # initialize used prompts count
-    
-    # check if the story is empty
-    if not story:
-        return {
-            "story": "",
-            "points": 0,
-            "num_used_prompts": 0
-        }
         
-    elif len(story) < 70: # if the story is less than 70 characters, return 0 points
-        return {
-            "story": story,
-            "points": 0,
-            "num_used_prompts": 0
-        }
-        
-    elif len(story) >= 70: # only calculate score if len(story) ≥ 70
+    if len(story) >= 70: # only calculate score if len(story) ≥ 70
         # check each prompt
         for prompt_type, prompt in prompts.items():
             if prompt.lower() in story: # check if the prompt is in the story
@@ -38,16 +23,19 @@ def calculate_points(prompts, story):
         # bonus points for longer stories
         if len(story) >= 100:
             points += 25
-    
-    # create a dictionary to store the results
-    results = {
-        "story": story,
-        "points": 0,
-        "num_used_prompts": 0
-    }
-    
-    results["points"] = points
-    results["num_used_prompts"] = used_prompts_count
+        
+        results = {
+            "story": story,
+            "points": points,
+            "num_used_prompts": used_prompts_count
+        }
+            
+    else:
+        results = {
+            "story": story,
+            "points": 0,
+            "num_used_prompts": 0
+        }
     
     # return the points earned from writing the story
     return results

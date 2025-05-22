@@ -71,3 +71,52 @@ def update_user_points(username: str, points_to_add: int):
     except Exception as e:
         print(f"Error updating user points: {e}")
         return False
+
+def update_user_word_count(username: str, word_count_to_add: int):
+    try:
+        # Update the user's word count
+        response = supabase.table("users").update({"total_word_count": word_count_to_add}).eq("username", username).execute()
+        
+        if response.status_code == 200:
+            print(f"User {username} word count updated successfully.")
+            return True
+        else:
+            print(f"Failed to update word count for user {username}.")
+            return False
+            
+    except Exception as e:
+        print(f"Error updating user word count: {e}")
+        return False
+
+def get_user_streak(username: str):
+    try:
+        # Get the user's streak
+        response = supabase.table("users").select("streak").eq("username", username).execute()
+        
+        if response.status_code == 200 and response.data:
+            streak = response.data[0]['streak']
+            print(f"User {username} streak: {streak}")
+            return streak
+        else:
+            print(f"Failed to get streak for user {username}.")
+            return None
+            
+    except Exception as e:
+        print(f"Error getting user streak: {e}")
+        return None
+
+def update_user_streak(username: str, streak: int):
+    try:
+        # Update the user's streak
+        response = supabase.table("users").update({"streak": streak}).eq("username", username).execute()
+        
+        if response.status_code == 200:
+            print(f"User {username} streak updated successfully.")
+            return True
+        else:
+            print(f"Failed to update streak for user {username}.")
+            return False
+            
+    except Exception as e:
+        print(f"Error updating user streak: {e}")
+        return False

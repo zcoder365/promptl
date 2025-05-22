@@ -105,7 +105,7 @@ def prior_pieces():
         user_id = ObjectId(session['user_id'])
         
         # find stories based on user's id
-        stories = stories_collection.find({"author_id": user_id})
+        stories = ""
         
         # convert cursor to a list
         stories_list = list(stories)
@@ -121,15 +121,13 @@ def prior_pieces():
 def my_account():
     try:
         # get the user's id and find the user
-        user_id = ObjectId(session['user_id'])
-        user = users_collection.find_one({"_id": user_id})
         
         # if the user doesn't exist/isn't in the session, redirect user to login page
         if not user:
             return redirect(url_for('login'))
         
         # get story count for streak
-        story_count = stories_collection.count_documents({"author_id": user_id})
+        story_count = ""
         
         return render_template('my-account.html', username=user['username'], total_words=user['total_word_count'], points=user['points'], streak=story_count)
     
@@ -165,7 +163,8 @@ def save_writing():
             
             # Create and save story
             story_doc = create_story_document(title, written_raw, prompts, metrics, user_id)
-            success, result = save_story_to_db(story_doc, user_id, metrics)
+            
+            # SAVE THE STORY TO THE DATABASE - ADD LOGIC
             
             if not success:
                 return render_template("index.html", message=f"An error occurred: {result}")

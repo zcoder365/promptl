@@ -55,3 +55,19 @@ def get_user(username: str):
         # Handle any database errors that occur
         print(f"Error getting user: {e}")
         return None
+
+def update_user_points(username: str, points_to_add: int):
+    try:
+        # Update the user's points
+        response = supabase.table("users").update({"points": points_to_add}).eq("username", username).execute()
+        
+        if response.status_code == 200:
+            print(f"User {username} points updated successfully.")
+            return True
+        else:
+            print(f"Failed to update points for user {username}.")
+            return False
+            
+    except Exception as e:
+        print(f"Error updating user points: {e}")
+        return False

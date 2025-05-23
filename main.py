@@ -9,15 +9,16 @@ from bson import ObjectId
 from datetime import datetime
 
 # import project files
-from utils.prompts import *
-from utils.model import *
+import utils.prompts as prompts
+import utils.model as model
+import utils.database as db
 
 # create the flask app and add configurations
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
 # generate the prompts for the main page
-prompts = gen_all_prompts()
+prompts = prompts.gen_all_prompts()
 
 # landing route
 @app.route('/')
@@ -28,7 +29,7 @@ def index():
 @app.route('/home')
 def home():
     # regenerate the prompts if the page is reloaded
-    prompts = gen_all_prompts()
+    prompts = prompts.gen_all_prompts()
         
     # allocate each prompt to a variable
     name = prompts['name']
@@ -87,6 +88,22 @@ def login():
             return render_template("login.html", message="Please fill in all fields.")
         
         # LOGIN LOGIC
+        user = db.get_user(username)
+        if user:
+            # check if the password is correct
+            if check_password_hash(user['password'], password):
+                # store user id in session
+                session['user_id'] = str(user['id'])
+                session['username'] = username
+                
+                # redirect to home page
+                return redirect(url_for('home'))
+            
+            else:
+                return render_template("login.html", message="Incorrect password.")
+        
+        else:
+            return render_template("login.html", message="Username or password is incorrect.")
     
     return render_template("login.html")
 
@@ -151,10 +168,10 @@ def save_writing():
                 return render_template("index.html", message="User session expired. Please log in again.")
             
             # Process story metrics
-            metrics = get_story_metrics(written_raw, prompts)
+            metrics = model.get_story_metrics(written_raw, prompts)
             
             # Create and save story
-            story_doc = create_story_document(title, written_raw, prompts, metrics, user_id)
+            story_doc = model.create_story_document(title, written_raw, prompts, metrics, user_id)
             
             # SAVE THE STORY TO THE DATABASE - ADD LOGIC
             

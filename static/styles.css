@@ -142,7 +142,7 @@ form input[type="text"], input[type="email"], input[type="password"] {
     border: 2px solid var(--primary-color);
     border-radius: 5px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
 }
 
@@ -154,7 +154,7 @@ form input[type="submit"] {
     border: 2px solid var(--primary-color);
     border-radius: 5px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px;
     background-color: var(--primary-color);
     color: white;
 }

@@ -72,6 +72,19 @@ def signup():
             return render_template("signup.html", message="Username must be at least 3 characters.")
         
         # SIGN UP LOGIC
+        user = db.get_user(username)
+        if user:
+            return render_template("signup.html", message="Username already exists.")
+        
+        else:
+            # hash the password
+            hashed_password = generate_password_hash(password)
+            
+            # add the user to the database
+            db.create_user(username, hashed_password)
+            
+            # redirect to login page
+            return redirect(url_for('login'))
     
     return render_template("signup.html")
 

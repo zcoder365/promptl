@@ -103,9 +103,12 @@ def login():
         if not username or not password:
             return render_template("login.html", message="Please fill in all fields.")
         
-        # LOGIN LOGIC
+        # find the user in the database (if they exist)
         user = db.get_user(username)
+        
+        # if the user exists, check if the password is correct
         if user != None:
+            # debugging
             print(f"Debug - User found: {username}")
             print(f"Debug - Password field exists: {'password' in user}")
     
@@ -121,11 +124,14 @@ def login():
                 return redirect(url_for('home'))
             
             else:
+                # debugging
                 print("Debug - Password did NOT match")
                 
+                # if the password is incorrect, return error message
                 return render_template("login.html", message="Incorrect password.")
         
         else:
+            # otherwise, if the user doesn't exist, return error message
             return render_template("login.html", message="Username or password is incorrect.")
     
     return render_template("login.html")

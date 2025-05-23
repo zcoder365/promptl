@@ -1,43 +1,48 @@
-{% extends "template.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Promptl</title>
+		<link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+		<link rel="stylesheet" href="static/styles.css">
+		<script type="text/javascript" src="static/script.js"></script>
+	</head>
 
-<div align='center'>
-
-	<img src="/static/assets/logo.png" align='center' style='width:10cm'>
-	
-	<br>
-
-	{% if message %}
-		<div style="color:red">{{ message }}</div>
-	{% endif %}
-
-	<br>
-
-	<h3>Sign Up:</h3>
-
-	<form method="post" action="/signup">
-		<label for="username">Username:</label><br>
-		<input type="text" name="username" value="">
-
-		<br><br>
+	<body>
+		<img src="/static/assets/logo.png" align='center' style='width:10cm'>
 		
-		<label for="password">Password:</label><br>
-		<input type="password" name="password" value="">
+		<br>
 
-		<!-- <br><br>
+		{% if message %}
+			<div style="color:red">{{ message }}</div>
+		{% endif %}
 
-        <label for="parent-email">Parent Email:</label>
-        <input type="text" name="parent_email" id="parent_email"> -->
+		<br>
 
-        <br><br>
-		
-		<input type="submit" value="Sign Up">
-	</form>
+		<h3>Sign Up:</h3>
 
-	<br>
+		<form method="post" action="/signup">
+			<label for="username">Username:</label><br>
+			<input type="text" name="username" value="">
 
-	<a href="/login">Login</a>
+			<br><br>
+			
+			<label for="password">Password:</label><br>
+			<input type="password" name="password" value="">
 
-</div>
-	
-{% endblock %}
+			<!-- <br><br>
+
+			<label for="parent-email">Parent Email:</label>
+			<input type="text" name="parent_email" id="parent_email"> -->
+
+			<br><br>
+			
+			<input type="submit" value="Sign Up">
+		</form>
+
+		<br>
+
+		<a href="/login">Login</a>
+	</body>
+</html>

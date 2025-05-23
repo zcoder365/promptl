@@ -1,7 +1,5 @@
-flask==3.0.0
-gunicorn==20.1.0
-Werkzeug>=3.0.1
-python-dotenv>=1.0.1
-pymongo==3.12.1
-dnspython>=2.5.0    # required for MongoDB connection
-# bson>=0.1.10        # for ObjectID handling
+# requirements.txt
+Flask==2.3.3
+Werkzeug==2.3.7
+supabase==1.2.0 # for Ssupabase integration
+bcrypt==4.0.1 # for password hashing

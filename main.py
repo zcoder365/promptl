@@ -4,7 +4,7 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 # import necessary libraries
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template
-# from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from datetime import datetime
 import bcrypt

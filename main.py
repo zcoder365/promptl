@@ -81,7 +81,7 @@ def signup():
             hashed_password = generate_password_hash(password)
             
             # add the user to the database
-            db.create_user(username, hashed_password)
+            db.add_user(username, hashed_password)
             
             # redirect to login page
             return redirect(url_for('login'))

@@ -1,7 +1,6 @@
 from supabase import create_client
 import os
 from dotenv import load_dotenv
-import bcrypt
 from datetime import datetime
 
 # load the environment variables from the .env file
@@ -14,18 +13,13 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def add_user(username: str, password: str):
     try:
-        # hash the password before storing
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        
-        # create a user entry
+        # Note: password should already be hashed when passed to this function
         new_user_entry = {
             "username": username,
-            "password": hashed_password.decode('utf-8') # Store as string
+            "password": password  # Already hashed by main.py
         }
         
-        # add a user to the database
         response = supabase.table("users").insert(new_user_entry).execute()
-        
         return response.data
         
     except Exception as e:

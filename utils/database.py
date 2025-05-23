@@ -107,6 +107,22 @@ def update_user_streak(username: str, streak: int):
         print(f"Error updating user streak: {e}")
         return False
 
+def update_user_password(username: str, new_password: str):
+    try:
+        # Update the user's password
+        response = supabase.table("users").update({"password": new_password}).eq("username", username).execute()
+        
+        if response.status_code == 200:
+            print(f"User {username} password updated successfully.")
+            return True
+        else:
+            print(f"Failed to update password for user {username}.")
+            return False
+            
+    except Exception as e:
+        print(f"Error updating user password: {e}")
+        return False
+
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
     created_at = datetime.now().isoformat()  # Get the current date and time in ISO format
     try:

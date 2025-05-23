@@ -106,8 +106,13 @@ def login():
         # LOGIN LOGIC
         user = db.get_user(username)
         if user:
+            print(f"Debug - User found: {username}")
+            print(f"Debug - Password field exists: {'password' in user}")
+    
             # check if the password is correct
             if check_password_hash(user['password'], password):
+                print("Debug - Password matched!")
+                
                 # store user id in session
                 session['user_id'] = str(user['id'])
                 session['username'] = username
@@ -116,6 +121,8 @@ def login():
                 return redirect(url_for('home'))
             
             else:
+                print("Debug - Password did NOT match")
+                
                 return render_template("login.html", message="Incorrect password.")
         
         else:

@@ -146,6 +146,19 @@ form input[type="text"], input[type="email"], input[type="password"] {
     text-align: center;
 }
 
+form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-left: 200px;
+    margin-right: 200px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
 textarea {
     width: 100%;
     padding: 10px;

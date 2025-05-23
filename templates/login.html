@@ -1,36 +1,36 @@
-{% extends "template.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Promptl</title>
+		<link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+		<link rel="stylesheet" href="static/styles.css">
+		<script type="text/javascript" src="static/script.js"></script>
+	</head>
+	<body>
+		{% if message %}
+			<p class="message">{{ message }}</p>
+		{% endif %}
 
-<div align='center'>
+		<h3>Login:</h3>
 
-	<img src="/static/assets/logo.png" align='center' style='width:10cm'>
-	
-	<br>
+		<form method="post" action="/login">
+			<label for="username">Username:</label><br>
+			<input type="text" name="username">
 
-	{% if message %}
-		<p class="message">{{ message }}</p>
-	{% endif %}
+			<br><br>
+			
+			<label for="password">Password:</label><br>
+			<input type="password" name="password">
 
-	<h3>Login:</h3>
+			<br><br>
+			
+			<input type="submit" value="Login">
+		</form>
 
-	<form method="post" action="/login">
-		<label for="username">Username:</label><br>
-		<input type="text" name="username">
+		<br>
 
-		<br><br>
-		
-		<label for="password">Password:</label><br>
-		<input type="password" name="password">
-
-		<br><br>
-		
-		<input type="submit" value="Login">
-	</form>
-
-	<br>
-
-	<a href="/signup">Signup</a>
-
-</div>
-	
-{% endblock %}
+		<a href="/signup">Signup</a>
+	</body>
+</html>

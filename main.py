@@ -171,7 +171,7 @@ def reset_password():
         # if the user exists, update the password
         if user:
             # hash the new password
-            hashed_password = generate_password_hash(password)
+            hashed_password = generate_password_hash(new_password)
             
             # update the user's password in the database
             db.update_user_password(user['id'], hashed_password)

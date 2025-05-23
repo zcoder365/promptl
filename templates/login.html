@@ -10,13 +10,14 @@
 	</head>
 
 	<body align='center'>
-		<img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O">
+		<br><br><br>
+		<img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O" height="100">
 
 		{% if message %}
 			<p class="message">{{ message }}</p>
 		{% endif %}
 
-		<h3>Login:</h3>
+		<h2>Login</h2>
 
 		<form method="post" action="/login">
 			<label for="username">Username:</label><br>

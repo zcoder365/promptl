@@ -105,7 +105,7 @@ def login():
         
         # LOGIN LOGIC
         user = db.get_user(username)
-        if user:
+        if user != None:
             print(f"Debug - User found: {username}")
             print(f"Debug - Password field exists: {'password' in user}")
     

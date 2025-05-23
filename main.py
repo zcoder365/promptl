@@ -111,9 +111,26 @@ def login():
             # debugging
             print(f"Debug - User found: {username}")
             print(f"Debug - Password field exists: {'password' in user}")
-    
-            # check if the password is correct
-            if check_password_hash(user['password'], password):
+            
+            # Check if it's a bcrypt hash (starts with $2b$) or werkzeug hash
+            stored_password = user['password']
+            password_correct = False
+            
+            if stored_password.startswith('$2b$') or stored_password.startswith('$2a$'):
+                # This is a bcrypt hash - need to check it with bcrypt
+                import bcrypt
+                password_correct = bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8'))
+                print("Debug - Checking bcrypt password")
+            else:
+                # This is a werkzeug hash - use check_password_hash
+                try:
+                    password_correct = check_password_hash(stored_password, password)
+                    print("Debug - Checking werkzeug password")
+                except:
+                    print("Debug - Password hash format not recognized")
+                    password_correct = False
+            
+            if password_correct:
                 print("Debug - Password matched!")
                 
                 # store user id in session
@@ -122,7 +139,6 @@ def login():
                 
                 # redirect to home page
                 return redirect(url_for('home'))
-            
             else:
                 # debugging
                 print("Debug - Password did NOT match")

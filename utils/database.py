@@ -6,7 +6,7 @@ from datetime import datetime
 
 # load the environment variables from the .env file
 load_dotenv() # load the file
-SUPABASE_URL = os.getenv("SUPABASE_URI") # get the database uri
+SUPABASE_URL = os.getenv("SUPABASE_URL") # get the database uri
 SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY") # get the database key
 
 # initialize the supabase client

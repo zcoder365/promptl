@@ -71,11 +71,14 @@ def signup():
         if len(username) < 3:
             return render_template("signup.html", message="Username must be at least 3 characters.")
         
-        # SIGN UP LOGIC
+        # see if the user already exists
         user = db.get_user(username)
+        
+        # if the user already exists, return error message
         if user:
             return render_template("signup.html", message="Username already exists.")
         
+        # if the user doesn't exist, create a new user
         else:
             # hash the password
             hashed_password = generate_password_hash(password)

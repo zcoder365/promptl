@@ -153,6 +153,39 @@ def login():
     
     return render_template("login.html")
 
+# reset password route
+@app.route("/reset-password", methods=['GET', 'POST'])
+def reset_password():
+    if request.method == "POST":
+        # get info from form
+        username = request.form["username"]
+        new_password = request.form["new-password"]
+        
+        # validate input
+        if not username or not new_password:
+            return render_template("reset-password.html", message="Please fill in all fields.")
+        
+        # find the user in the database (if they exist)
+        user = db.get_user(username)
+        
+        # if the user exists, update the password
+        if user:
+            # hash the new password
+            hashed_password = generate_password_hash(password)
+            
+            # update the user's password in the database
+            db.update_user_password(user['id'], hashed_password)
+            
+            # redirect to login page
+            return redirect(url_for('login'))
+        
+        else:
+            # if the user doesn't exist, return error message
+            return render_template("reset-password.html", message="Username does not exist.")
+    
+    # if the request method is GET, render the reset password page
+    return render_template("reset-password.html")
+
 # logout route
 @app.route('/logout')
 def logout():

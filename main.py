@@ -244,36 +244,66 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
+@login_required  # Add this decorator to ensure user is logged in
 def save_writing():
     if request.method == "POST":
         try:
             written_raw = request.form.get('story')
             title = request.form.get('title')
             
-            # Get user ID
-            try:
-                user_id = ObjectId(session.get('user_id'))
-            except:
+            # Validate input data
+            if not written_raw or not title:
+                return render_template("index.html", message="Please provide both title and story content.")
+            
+            # Get username from session (more reliable than ObjectId conversion)
+            username = session.get('username')
+            if not username:
                 return render_template("index.html", message="User session expired. Please log in again.")
             
-            # Process story metrics
-            metrics = model.get_story_metrics(written_raw, story_prompts)
+            # Regenerate prompts to ensure consistency (since story_prompts is global and may be stale)
+            current_prompts = prompts.gen_all_prompts()
             
-            # Create and save story
-            story_doc = model.create_story_document(title, written_raw, story_prompts, metrics, user_id)
+            # Process story metrics using current prompts
+            metrics = model.get_story_metrics(written_raw, current_prompts)
             
-            # SAVE THE STORY TO THE DATABASE - ADD LOGIC
-            is_added = db.add_story(story_doc['title'], story_doc['story_content'], story_doc['prompt'], story_doc['word_count'], story_doc['points'], session['username'])
+            # Save the story to the database using username instead of ObjectId
+            story_id = db.add_story(
+                title=title, 
+                story_content=written_raw, 
+                prompts=current_prompts,  # Pass the prompts dict
+                word_count=metrics['word_count'], 
+                points_earned=metrics['points'], 
+                username=username
+            )
             
-            if is_added is None:
-                print("[ Error ] Failed to save story.")
-                return render_template("index.html", message=f"An error occurred: {is_added}")
+            # Check if story was saved successfully
+            if story_id is None:
+                return render_template("index.html", message="Failed to save story. Please try again.")
             
-            return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
+            # Update user's total points and word count
+            user = db.get_user(username)
+            if user:
+                # Get current totals (handle None values)
+                current_points = user.get('points', 0) or 0
+                current_word_count = user.get('total_word_count', 0) or 0
+                
+                # Calculate new totals
+                new_total_points = current_points + metrics['points']
+                new_total_word_count = current_word_count + metrics['word_count']
+                
+                # Update user statistics
+                db.update_user_points(username, new_total_points)
+                db.update_user_word_count(username, new_total_word_count)
+            
+            return render_template("congrats.html", 
+                                 title=title, 
+                                 story_len=metrics['word_count'], 
+                                 points=metrics['points'], 
+                                 words=metrics['num_used_prompts'])
                                 
         except Exception as e:
             print(f"Error saving writing: {e}")
-            return render_template("index.html", message=f"An error occurred: {str(e)}")
+            return render_template("index.html", message=f"An error occurred while saving: {str(e)}")
     
     return redirect(url_for("home"))
 

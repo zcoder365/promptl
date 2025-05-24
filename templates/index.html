@@ -96,15 +96,16 @@
 <br>
 	
 <form action='/save-writing' method='post'>
-	<label for='title' style='padding-right:10px'>Title:</label>
-	<input type="text" name='title' id="title" placeholder='Your Title Here...' value=''>
+	<label for='title' style='padding-right:10px' id="title-label">Title:</label>
+	<input type="text" name='title' id="title" placeholder='Your Title Here...'>
 
-	<br><br>
+	<br>
 
 	<textarea name="story" id="story" rows="10" cols="90" placeholder='Start Typing Here...'></textarea>
 
 	<br>
 
-	<input type="submit" class="save-writing">
+	<button type="submit" class="save-writing"><img src="/static/assets/save.png" alt="save writting button with an open book" class="save-writing-img"></button>
 </form>
+
 {% endblock %}

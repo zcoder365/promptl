@@ -53,20 +53,23 @@ nav {
 }
 
 .save-writing {
-    /* set dimensions */
-    width: 4cm;
-    height: 4cm;
-    
-    /* add the background image */
-    background-image: url("/static/assets/library.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-
-    /* update border */
-    border: 0px solid transparent;
-
-    /* optional: remove default button text */
+    width: 175px;
+    height: 175px;
+    border: none;
     color: transparent;
+    margin-bottom: 50px;
+    border-radius: 100%;
+    padding: 0;
+}
+
+.save-writing-img {
+    width: 175px;
+    height: 175px;
+    border: none;
+    color: transparent;
+    border-radius: 100%;
+    background-color: transparent;
+    object-fit: cover;
 }
 
 #story {
@@ -74,7 +77,7 @@ nav {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid black;
+    border: 2px solid var(--primary-color);
     border-radius: 5px;
     font-family: inherit;
     font-size: medium;
@@ -85,10 +88,19 @@ nav {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid black;
+    border: 2px solid var(--primary-color);
     border-radius: 5px;
     font-family: inherit;
     font-size: medium;
+    color: var(--text-color);
+}
+
+#title-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 20px;
+    color: var(--text-color);
 }
 
 .help {
@@ -123,5 +135,59 @@ nav {
 
 .table-data {
     border-collapse: collapse;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+form input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 16px;
+    text-align: center;
+}
+
+form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 16px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: medium;
+}
+
+.congrats-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    outline: 2px solid navy;
+    width: 200px;
+}
+
+.message {
+    font-size: 20px;
+    color: var(--accent-color);
     text-align: center;
 }

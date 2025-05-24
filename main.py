@@ -272,9 +272,9 @@ def save_writing():
         
         print(f"DEBUG MAIN - Username: {username}")
         
-        # Get current prompts
-        if not story_prompts:
-            story_prompts = prompts.gen_all_prompts()
+        # # Get current prompts
+        # if not story_prompts:
+        #     story_prompts = prompts.gen_all_prompts()
         
         print(f"DEBUG MAIN - Prompts: {story_prompts}")
         
@@ -283,7 +283,7 @@ def save_writing():
         print(f"DEBUG MAIN - Metrics: {metrics}")
         
         # Try to save the story with the minimal function first
-        story_id = db.add_story(title, written_raw, story_prompts, username)
+        story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], username)
         
         if story_id is None:
             print("DEBUG MAIN - Minimal save failed, trying full save")

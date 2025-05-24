@@ -98,17 +98,17 @@ def get_user_streak(username: str):
         # Get the user's streak
         response = supabase.table("users").select("streak").eq("username", username).execute()
         
-        if response.status_code == 200 and response.data:
-            streak = response.data[0]['streak']
+        if response.data and len(response.data) > 0:
+            streak = response.data[0].get('streak', 0) or 0
             print(f"User {username} streak: {streak}")
             return streak
         else:
             print(f"Failed to get streak for user {username}.")
-            return None
+            return 0
             
     except Exception as e:
         print(f"Error getting user streak: {e}")
-        return None
+        return 0
 
 def update_user_streak(username: str, streak: int):
     try:

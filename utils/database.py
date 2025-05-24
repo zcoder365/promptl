@@ -140,8 +140,11 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         
         print(f"Story saved successfully with ID: {result.data[0]['id']}")
         
+        return result.data[0]['id']  # Return the ID of the inserted story
+        
     except Exception as db_error:
         print(f"Database error: {db_error}")
+        return None
 
 def get_user_stories(username: str):
     try:

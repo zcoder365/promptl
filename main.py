@@ -21,6 +21,15 @@ app.config['SECRET_KEY'] = "key"
 # generate the prompts for the main page
 prompts = prompts.gen_all_prompts()
 
+# create a login decorator to check if the user is logged in
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # landing route
 @app.route('/')
 def index():
@@ -28,6 +37,7 @@ def index():
 
 # home page route
 @app.route('/home')
+@login_required
 def home():
     # regenerate the prompts if the page is reloaded
     prompts = prompts.gen_all_prompts()

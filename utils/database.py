@@ -68,12 +68,22 @@ def update_user_points(username: str, points_to_add: int):
         return False
 
 def update_user_word_count(username: str, word_count_to_add: int):
+    """Update user's total word count by adding new words"""
     try:
-        # Update the user's word count
-        response = supabase.table("users").update({"total_word_count": word_count_to_add}).eq("username", username).execute()
+        # First get current word count
+        current_user = get_user(username)
+        if not current_user:
+            print(f"User {username} not found")
+            return False
+            
+        current_word_count = current_user.get('total_word_count', 0) or 0
+        new_total_words = current_word_count + word_count_to_add
         
-        if response.status_code == 200:
-            print(f"User {username} word count updated successfully.")
+        # Update the user's word count
+        response = supabase.table("users").update({"total_word_count": new_total_words}).eq("username", username).execute()
+        
+        if response.data:
+            print(f"User {username} word count updated successfully. New total: {new_total_words}")
             return True
         else:
             print(f"Failed to update word count for user {username}.")

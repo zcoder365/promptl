@@ -265,7 +265,8 @@ def save_writing():
             # SAVE THE STORY TO THE DATABASE - ADD LOGIC
             is_added = db.add_story(story_doc['title'], story_doc['story_content'], story_doc['prompt'], story_doc['word_count'], story_doc['points'], session['username'])
             
-            if is_added is not None:
+            if is_added is None:
+                print("[ Error ] Failed to save story.")
                 return render_template("index.html", message=f"An error occurred: {is_added}")
             
             return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])

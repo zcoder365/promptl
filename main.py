@@ -79,8 +79,16 @@ def signup():
         if len(password) < 6:
             return render_template("signup.html", message="Password must be at least 6 characters.")
         
+        # prevent extremely long passwords
+        if len(password) > 128:
+            return render_template("signup.html", message="Password must be less than 128 characters.")
+        
         if len(username) < 3:
             return render_template("signup.html", message="Username must be at least 3 characters.")
+        
+        # add maximum length check for username
+        if len(username) > 50:
+            return render_template("signup.html", message="Username must be less than 50 characters.")
         
         # see if the user already exists
         user = db.get_user(username)

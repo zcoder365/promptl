@@ -321,14 +321,26 @@ def save_writing():
 
 # read a story page
 @app.route("/read-story/<story_title>")
+@login_required
 def read_story(story_title):
     try:
-        # find a specific story in the user's database
-        story = ""
+        # Get username from session
+        username = session.get('username')
+        if not username:
+            return redirect(url_for('login'))
         
-        # if the story doesn't exist, return error message and the prior pieces page
+        # Get user's stories and find the specific one
+        stories = db.get_user_stories(username)
+        story = None
+        
+        for s in stories:
+            if s['title'] == story_title:
+                story = s
+                break
+        
+        # If story not found, redirect to prior pieces
         if not story:
-            print("[ Error ] Story not found.")
+            print(f"[ Error ] Story '{story_title}' not found.")
             return redirect(url_for("prior_pieces"))
 
         return render_template("read-story.html", story=story)

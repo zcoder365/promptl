@@ -3,7 +3,7 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
 # import necessary libraries
 from functools import wraps
-from flask import Flask, request, session, redirect, url_for, render_template
+from flask import Flask, request, session, redirect, url_for, render_template, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 # from bson import ObjectId
 import bcrypt
@@ -93,20 +93,40 @@ def signup():
         # see if the user already exists
         user = db.get_user(username)
         
-        # if the user already exists, return error message
-        if user:
-            return render_template("signup.html", message="Username already exists.")
+        # Check if username already exists
+        try:
+            existing_user = db.get_user(username)
+            if existing_user:
+                return render_template("signup.html", message="Username already exists. Please choose another.")
+        except Exception as e:
+            # Log the error for debugging but don't expose it to user
+            print(f"Database error checking user: {e}")
+            return render_template("signup.html", message="An error occurred. Please try again.")
         
-        # if the user doesn't exist, create a new user
-        else:
-            # hash the password
+        # Hash the password before storing
+        try:
             hashed_password = generate_password_hash(password)
+        except Exception as e:
+            print(f"Password hashing error: {e}")
+            return render_template("signup.html", message="An error occurred. Please try again.")
+        
+        # Attempt to create the new user
+        try:
+            result = db.add_user(username, hashed_password)
             
-            # add the user to the database
-            db.add_user(username, hashed_password)
-            
-            # redirect to login page
-            return redirect(url_for('login'))
+            # Check if user creation was successful
+            if result is not None:
+                # Success - redirect to login with success message
+                flash("Account created successfully! Please log in.", "success")
+                return redirect(url_for('login'))
+            else:
+                # Database operation failed
+                return render_template("signup.html", message="Failed to create account. Please try again.")
+                
+        except Exception as e:
+            # Handle any unexpected errors during user creation
+            print(f"Error creating user account: {e}")
+            return render_template("signup.html", message="An error occurred while creating your account. Please try again.")
     
     return render_template("signup.html")
 

@@ -192,47 +192,40 @@ textarea {
     text-align: center;
 }
 
-.prompts-table {
-    width: 100%;
-    border-collapse: collapse;
+/* New CSS Grid layout for prompts */
+.prompts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Auto-wrapping based on available space */
+    gap: 15px;
     margin-top: 20px;
+    max-width: 100%;
+    justify-items: center; /* Center the grid items */
 }
 
-.prompts-table td {
+.prompt-item {
     text-align: center;
-    padding: 10px 15px; /* This replaces your inline padding styles */
+    padding: 15px;
+    background: #f8f9fa; /* Light background for each item */
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    cursor: pointer; /* Since some items are clickable */
+    transition: background-color 0.2s ease; /* Smooth hover effect */
 }
 
-.prompts-table img {
-    width: 3cm; /* Keep your current size */
+.prompt-item:hover {
+    background: #e9ecef; /* Slightly darker on hover */
+}
+
+.prompt-item img {
+    width: 3cm; /* Keep your current image size */
     height: auto;
-    max-width: 100%; /* Prevents overflow on small screens */
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-@media screen and (max-width: 768px) {
-    .prompts-table {
-        font-size: 14px;
-    }
-    
-    .prompts-table td {
-        padding: 8px 5px;
-    }
-    
-    .prompts-table img {
-        width: 2cm; /* Smaller on tablets */
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .prompts-table td {
-        padding: 5px 2px;
-    }
-    
-    .prompts-table img {
-        width: 1.5cm; /* Even smaller on phones */
-    }
-    
-    .prompts-table {
-        font-size: 12px;
-    }
+.prompt-item b {
+    display: block; /* Make the text appear below the image */
+    font-size: 16px;
 }

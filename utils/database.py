@@ -17,27 +17,45 @@ def add_user(username: str, password: str):
         if not username or not password:
             print("Error: Username or password is empty")
             return None
-            
+        
+        print(f"Debug - Attempting to add user: {username}")
+        print(f"Debug - Password hash length: {len(password)}")
+        
         # create user entry with hashed password
         new_user_entry = {
             "username": username,
-            "password": password  # this should already be hashed
+            "password": password  # This should already be hashed
         }
         
         # insert into database
+        print(f"Debug - Inserting user entry: {new_user_entry}")
         response = supabase.table("users").insert(new_user_entry).execute()
         
-        # check if the insertion was successful
+        # debug: Print the full response to see what Supabase returns
+        print(f"Debug - Supabase response: {response}")
+        print(f"Debug - Response data: {response.data}")
+        print(f"Debug - Response data type: {type(response.data)}")
+        
+        # Check if the insertion was successful
         if response.data and len(response.data) > 0:
             print(f"Successfully created user: {username}")
-            return response.data[0]  # return the created user data
+            
+            return response.data[0]  # Return the created user data
+        
         else:
             print(f"Failed to create user: {username}")
+            print(f"Debug - Response.data is: {response.data}")
+            
+            # check if there are any errors in the response
+            if hasattr(response, 'error') and response.error:
+                print(f"Debug - Supabase error: {response.error}")
+            
             return None
             
     except Exception as e:
         # log the specific error for debugging
         print(f"Database error adding user '{username}': {e}")
+        print(f"Debug - Exception type: {type(e)}")
         return None
     
 def get_user(username: str):

@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "key"
 
 # generate the prompts for the main page
-prompts = prompts.gen_all_prompts()
+story_prompts = prompts.gen_all_prompts()
 
 # create a login decorator to check if the user is logged in
 def login_required(f):

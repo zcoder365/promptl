@@ -53,9 +53,8 @@ nav {
 }
 
 .save-writing {
-    /* set dimensions */
-    width: 4cm;
-    height: 4cm;
+    width: 175px;
+    height: 175px;
     border: none;
     color: transparent;
     margin-bottom: 50px;
@@ -64,8 +63,8 @@ nav {
 }
 
 .save-writing-img {
-    width: 4cm;
-    height: 4cm;
+    width: 175px;
+    height: 175px;
     border: none;
     color: transparent;
     border-radius: 100%;

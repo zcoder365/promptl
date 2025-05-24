@@ -207,16 +207,16 @@ textarea {
     max-width: 200px; /* Maximum width to prevent items from getting too large */
     text-align: center;
     padding: 15px;
-    background: #f8f9fa; /* Light background for each item */
+    /* background: #f8f9fa;
     border-radius: 8px;
-    border: 1px solid #dee2e6;
+    border: 1px solid #dee2e6; */
     cursor: pointer; /* Since some items are clickable */
     transition: background-color 0.2s ease; /* Smooth hover effect */
 }
 
-.flex-item:hover {
-    background: #e9ecef; /* Slightly darker on hover */
-}
+/* .flex-item:hover {
+    background: #e9ecef;
+} */
 
 .flex-item img {
     width: 3cm; /* Keep your current image size */

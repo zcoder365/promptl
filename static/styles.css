@@ -60,6 +60,7 @@ nav {
     color: transparent;
     margin-bottom: 50px;
     border-radius: 100%;
+    padding: 0;
 }
 
 .save-writing-img {
@@ -67,8 +68,9 @@ nav {
     height: 4cm;
     border: none;
     color: transparent;
-    border-radius: 50%;
+    border-radius: 100%;
     background-color: transparent;
+    object-fit: cover;
 }
 
 #story {

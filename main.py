@@ -223,19 +223,32 @@ def prior_pieces():
 
 # user's account page
 @app.route('/my-account')
+@login_required
 def my_account():
     try:
-        # get the user's id and find the user
-        user = ""
+        # Get username from session
+        username = session.get('username')
+        if not username:
+            return redirect(url_for('login'))
         
-        # if the user doesn't exist/isn't in the session, redirect user to login page
+        # Get user data from database
+        user = db.get_user(username)
         if not user:
             return redirect(url_for('login'))
         
-        # get story count for streak
-        story_count = ""
+        # Get user's stories to calculate streak
+        stories = db.get_user_stories(username)
+        story_count = len(stories)
         
-        return render_template('my-account.html', username=user['username'], total_words=user['total_word_count'], points=user['points'], streak=story_count)
+        # Handle None values for user stats
+        total_words = user.get('total_word_count', 0) or 0
+        points = user.get('points', 0) or 0
+        
+        return render_template('my-account.html', 
+                             username=user['username'], 
+                             total_words=total_words, 
+                             points=points, 
+                             streak=story_count)
     
     except Exception as e:
         print(f"Error accessing account: {e}")

@@ -36,6 +36,8 @@ def calculate_points(prompts, story):
             "points": 0,
             "num_used_prompts": 0
         }
+        
+    print(f"Debugging - Points earned: {results['points']}")
     
     # return the points earned from writing the story
     return results

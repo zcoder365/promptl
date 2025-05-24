@@ -109,7 +109,7 @@ def update_user_streak(username: str, streak: int):
 def update_user_password(user_id, new_password):
     try:
         # Update the user's password
-        response = supabase.table("users").update({"password": new_password}).eq("user_id", user_id).execute()
+        response = supabase.table("users").update({"password": new_password}).eq("id", user_id).execute()
         
         if response.status_code == 200:
             print(f"User {user_id} password updated successfully.")

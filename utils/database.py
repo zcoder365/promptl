@@ -32,11 +32,10 @@ def get_user(username: str):
         
         if response.data and len(response.data) > 0:
             user = response.data[0]
-            print(f"Debug - User structure: {user.keys()}") # This will show you the field names
+            print(f"Debug - User structure: {user.keys()}")
             return user
-        
-        # else:
-        #     return None
+        else:
+            return None  # Explicitly return None when user not found
             
     except Exception as e:
         print(f"Error getting user: {e}")

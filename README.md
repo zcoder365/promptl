@@ -13,5 +13,5 @@ Click the "publish" button at the bottom of the page to save your work (don't wo
 Promptl is currently available at [promptl.com](https://promptl.com)!
 
 # Todo
-- [x] Look into the point system (in `save_writing()`)
-- [ ] Now stories aren't saving...
+- [x] ~~Look into the point system (in `save_writing()`)~~
+- [x] ~~Now stories aren't saving...~~

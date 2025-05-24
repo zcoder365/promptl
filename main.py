@@ -196,12 +196,6 @@ def reset_password():
     # if the request method is GET, render the reset password page
     return render_template("reset-password.html")
 
-# logout route
-@app.route('/logout')
-def logout():
-    session.clear() # clear the session
-    return redirect('/login') # redirect to the login page
-
 # prior pieces route
 @app.route('/prior-pieces')
 @login_required
@@ -346,6 +340,12 @@ def read_story(story_title):
     except Exception as e:
         print(f"Error reading story: {e}")
         return redirect(url_for("prior_pieces"))
+
+# logout route
+@app.route('/logout')
+def logout():
+    session.clear() # clear the session
+    return redirect('/login') # redirect to the login page
 
 # mainloop
 if __name__ == "__main__":

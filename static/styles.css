@@ -58,6 +58,8 @@ nav {
     height: 4cm;
     border: none;
     color: transparent;
+    margin-bottom: 50px;
+    border-radius: 100%;
 }
 
 .save-writing-img {
@@ -65,6 +67,8 @@ nav {
     height: 4cm;
     border: none;
     color: transparent;
+    border-radius: 50%;
+    background-color: transparent;
 }
 
 #story {

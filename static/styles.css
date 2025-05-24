@@ -56,7 +56,14 @@ nav {
     /* set dimensions */
     width: 4cm;
     height: 4cm;
-    border: 0px solid black;
+    border: none;
+    color: transparent;
+}
+
+.save-writing-img {
+    width: 4cm;
+    height: 4cm;
+    border: none;
     color: transparent;
 }
 

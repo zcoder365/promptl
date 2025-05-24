@@ -124,26 +124,35 @@ def update_user_password(user_id, new_password):
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
     try:
-        # Convert ObjectId to string for Supabase (PostgreSQL doesn't support ObjectId)
+        # Validate input parameters
+        if not title or not story_content or not username:
+            print("Error: Missing required fields for story")
+            return None
+            
         story_data = {
             "title": title,
             "story_content": story_content,
-            "prompt": prompts,  # This will be stored as JSON
+            "prompt": prompts,  # This will be stored as JSON in PostgreSQL
             "word_count": word_count,
             "points": points_earned,
-            "author_username": username,  # Convert ObjectId to string
-            "created_at": datetime.today().isoformat()  # Convert datetime to ISO string
+            "author_username": username,
+            "created_at": datetime.today().isoformat()
         }
         
         # Insert the story into Supabase
         result = supabase.table('stories').insert(story_data).execute()
         
-        print(f"Story saved successfully with ID: {result.data[0]['id']}")
-        
-        return result.data[0]['id']  # Return the ID of the inserted story
+        # Check if the insert was successful
+        if result.data and len(result.data) > 0:
+            story_id = result.data[0]['id']
+            print(f"Story '{title}' saved successfully with ID: {story_id}")
+            return story_id
+        else:
+            print(f"Failed to save story: {result}")
+            return None
         
     except Exception as db_error:
-        print(f"Database error: {db_error}")
+        print(f"Database error while saving story: {db_error}")
         return None
 
 def get_user_stories(username: str):

@@ -128,8 +128,8 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 400px;
-    margin-right: 400px;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 form input[type="text"], input[type="email"], input[type="password"] {

@@ -131,7 +131,7 @@ def update_user_password(user_id, new_password):
         # Update the user's password
         response = supabase.table("users").update({"password": new_password}).eq("id", user_id).execute()
         
-        if response.status_code == 200:
+        if response.data:
             print(f"User {user_id} password updated successfully.")
             return True
         else:
@@ -143,11 +143,17 @@ def update_user_password(user_id, new_password):
         return False
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
+    """Add a new story to the database and update user stats"""
     try:
         # Validate input parameters
         if not title or not story_content or not username:
             print("Error: Missing required fields for story")
             return None
+        
+        print(f"DEBUG DB - Adding story for user: {username}")
+        print(f"DEBUG DB - Story title: {title}")
+        print(f"DEBUG DB - Word count: {word_count}")
+        print(f"DEBUG DB - Points: {points_earned}")
             
         story_data = {
             "title": title,
@@ -155,8 +161,8 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "prompt": prompts,  # This will be stored as JSON in PostgreSQL
             "word_count": word_count,
             "points": points_earned,
-            "author_username": username,
-            "created_at": datetime.today().isoformat()
+            "author_username": username,  # Using username instead of author_id
+            "created_at": datetime.now().isoformat()
         }
         
         # Insert the story into Supabase
@@ -166,6 +172,11 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         if result.data and len(result.data) > 0:
             story_id = result.data[0]['id']
             print(f"Story '{title}' saved successfully with ID: {story_id}")
+            
+            # Update user's total points and word count
+            update_user_points(username, points_earned)
+            update_user_word_count(username, word_count)
+            
             return story_id
         else:
             print(f"Failed to save story: {result}")
@@ -176,9 +187,10 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         return None
 
 def get_user_stories(username: str):
+    """Get all stories written by a specific user"""
     try:
         # Get stories by author_username (not author_id)
-        response = supabase.table("stories").select("*").eq("author_username", username).execute()
+        response = supabase.table("stories").select("*").eq("author_username", username).order("created_at", desc=True).execute()
         
         if response.data:
             stories = response.data
@@ -193,16 +205,17 @@ def get_user_stories(username: str):
         return []
 
 def get_all_stories():
+    """Get all stories from the database"""
     try:
-        # Get all stories
-        response = supabase.table("stories").select("*").execute()
+        # Get all stories ordered by creation date
+        response = supabase.table("stories").select("*").order("created_at", desc=True).execute()
         
-        if response.status_code == 200 and response.data:
+        if response.data:
             stories = response.data
-            print(f"All stories: {stories}")
+            print(f"Retrieved {len(stories)} total stories")
             return stories
         else:
-            print("Failed to get all stories.")
+            print("No stories found in database.")
             return []
             
     except Exception as e:

@@ -148,15 +148,15 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
 
 def get_user_stories(username: str):
     try:
-        # Get the user's stories
-        response = supabase.table("stories").select("*").eq("author_id", username).execute()
+        # Get stories by author_username (not author_id)
+        response = supabase.table("stories").select("*").eq("author_username", username).execute()
         
-        if response.status_code == 200 and response.data:
+        if response.data:
             stories = response.data
-            print(f"User {username} stories: {stories}")
+            print(f"Found {len(stories)} stories for user {username}")
             return stories
         else:
-            print(f"Failed to get stories for user {username}.")
+            print(f"No stories found for user {username}.")
             return []
             
     except Exception as e:

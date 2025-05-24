@@ -115,7 +115,7 @@ def update_user_streak(username: str, streak: int):
         # Update the user's streak
         response = supabase.table("users").update({"streak": streak}).eq("username", username).execute()
         
-        if response.status_code == 200:
+        if response.data:
             print(f"User {username} streak updated successfully.")
             return True
         else:

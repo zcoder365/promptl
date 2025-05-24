@@ -184,7 +184,7 @@ def reset_password():
             hashed_password = generate_password_hash(new_password)
             
             # update the user's password in the database
-            db.update_user_password(session['username'], hashed_password)
+            db.update_user_password(user['id'], hashed_password)
             
             # redirect to login page
             return redirect(url_for('login'))

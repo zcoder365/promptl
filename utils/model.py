@@ -3,14 +3,14 @@ from datetime import datetime
 
 def calculate_points(prompts, story):
     # set vars to keep track of story, points, and used prompts
-    story = story.lower() # convert story to lowercase
+    story_lower = story.lower() # convert story to lowercase
     points = 0 # initialize points
     used_prompts_count = 0 # initialize used prompts count
         
     if len(story) >= 70: # only calculate score if len(story) ≥ 70
         # check each prompt
         for prompt_type, prompt in prompts.items():
-            if prompt.lower() in story: # check if the prompt is in the story
+            if prompt.lower() in story_lower: # check if the prompt is in the story
                 if prompt_type == "bonus":
                     points += 20
                 

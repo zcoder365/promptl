@@ -263,6 +263,7 @@ def save_writing():
             story_doc = model.create_story_document(title, written_raw, story_prompts, metrics, user_id)
             
             # SAVE THE STORY TO THE DATABASE - ADD LOGIC
+            db.add_story(story_doc['title'], story_doc['story_content'], story_doc['prompt'], story_doc['word_count'], story_doc['points'], session['username'])
             
             # if not success:
             #     return render_template("index.html", message=f"An error occurred: {result}")

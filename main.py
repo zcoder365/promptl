@@ -256,66 +256,63 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required  # Add this decorator to ensure user is logged in
+@login_required
 def save_writing():
     if request.method == "POST":
         try:
             written_raw = request.form.get('story')
             title = request.form.get('title')
             
+            print(f"DEBUG MAIN - Received title: '{title}'")
+            print(f"DEBUG MAIN - Story length: {len(written_raw) if written_raw else 0}")
+            
             # Validate input data
             if not written_raw or not title:
                 return render_template("index.html", message="Please provide both title and story content.")
             
-            # Get username from session (more reliable than ObjectId conversion)
+            # Get username from session
             username = session.get('username')
             if not username:
                 return render_template("index.html", message="User session expired. Please log in again.")
             
-            # Regenerate prompts to ensure consistency (since story_prompts is global and may be stale)
-            current_prompts = prompts.gen_all_prompts()
+            print(f"DEBUG MAIN - Username: {username}")
             
-            # Process story metrics using current prompts
-            metrics = model.get_story_metrics(written_raw, current_prompts)
+            # Get current prompts
+            global story_prompts
+            if not story_prompts:
+                story_prompts = prompts.gen_all_prompts()
             
-            # Save the story to the database using username instead of ObjectId
-            story_id = db.add_story(
-                title=title, 
-                story_content=written_raw, 
-                prompts=current_prompts,  # Pass the prompts dict
-                word_count=metrics['word_count'], 
-                points_earned=metrics['points'], 
-                username=username
-            )
+            print(f"DEBUG MAIN - Prompts: {story_prompts}")
             
-            # Check if story was saved successfully
+            # Calculate metrics
+            metrics = model.get_story_metrics(written_raw, story_prompts)
+            print(f"DEBUG MAIN - Metrics: {metrics}")
+            
+            # Try to save the story with the minimal function first
+            story_id = db.add_story_minimal(title, written_raw, story_prompts, username)
+            
             if story_id is None:
-                return render_template("index.html", message="Failed to save story. Please try again.")
+                print("DEBUG MAIN - Minimal save failed, trying full save")
+                # If minimal fails, try the full version
+                story_id = db.add_story(title, written_raw, story_prompts, 
+                                      metrics['word_count'], metrics['points'], username)
             
-            # Update user's total points and word count
-            user = db.get_user(username)
-            if user:
-                # Get current totals (handle None values)
-                current_points = user.get('points', 0) or 0
-                current_word_count = user.get('total_word_count', 0) or 0
-                
-                # Calculate new totals
-                new_total_points = current_points + metrics['points']
-                new_total_word_count = current_word_count + metrics['word_count']
-                
-                # Update user statistics
-                db.update_user_points(username, new_total_points)
-                db.update_user_word_count(username, new_total_word_count)
-            
-            return render_template("congrats.html", 
-                                 title=title, 
-                                 story_len=metrics['word_count'], 
-                                 points=metrics['points'], 
-                                 words=metrics['num_used_prompts'])
+            if story_id:
+                print(f"DEBUG MAIN - Story saved successfully with ID: {story_id}")
+                return render_template("congrats.html", 
+                                     title=title, 
+                                     story_len=metrics['word_count'], 
+                                     points=metrics['points'], 
+                                     words=metrics['num_used_prompts'])
+            else:
+                print("DEBUG MAIN - Both save methods failed")
+                return render_template("index.html", message="Failed to save story. Check console for details.")
                                 
         except Exception as e:
-            print(f"Error saving writing: {e}")
-            return render_template("index.html", message=f"An error occurred while saving: {str(e)}")
+            print(f"DEBUG MAIN - Exception: {e}")
+            import traceback
+            traceback.print_exc()
+            return render_template("index.html", message=f"An error occurred: {str(e)}")
     
     return redirect(url_for("home"))
 

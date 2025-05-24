@@ -164,7 +164,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "story_content": story_content,
             "prompt": prompts,  # This will be stored as JSON in PostgreSQL
             "word_count": word_count,
-            "points": points_earned,
+            "points_earned": points_earned,
             "author_username": username,  # Using username instead of author_id
             "created_at": datetime.now().isoformat()
         }

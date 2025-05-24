@@ -207,18 +207,19 @@ def logout():
 @login_required
 def prior_pieces():
     try:
-        # Get username from session
         username = session.get('username')
         if not username:
             return redirect(url_for('login'))
         
-        # Get user's stories from database
+        # Get all stories for now (we'll filter by username later when that column is added)
         stories = db.get_user_stories(username)
+        
+        print(f"DEBUG MAIN - Retrieved {len(stories)} stories")
         
         return render_template('prior-pieces.html', stories=stories)
     
     except Exception as e:
-        print(f"Error retrieving stories: {e}")
+        print(f"DEBUG MAIN - Error retrieving stories: {e}")
         return render_template('prior-pieces.html', stories=[])
 
 # user's account page

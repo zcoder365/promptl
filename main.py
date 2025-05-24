@@ -293,7 +293,9 @@ def save_writing():
         
         if story_id:
             print(f"DEBUG MAIN - Story saved successfully with ID: {story_id}")
+        
             return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
+        
         else:
             print("DEBUG MAIN - Both save methods failed")
             return render_template("index.html", message="Failed to save story. Check console for details.")

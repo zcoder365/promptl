@@ -257,10 +257,10 @@ def save_writing():
                 return render_template("index.html", message="User session expired. Please log in again.")
             
             # Process story metrics
-            metrics = model.get_story_metrics(written_raw, prompts)
+            metrics = model.get_story_metrics(written_raw, story_prompts)
             
             # Create and save story
-            story_doc = model.create_story_document(title, written_raw, prompts, metrics, user_id)
+            story_doc = model.create_story_document(title, written_raw, story_prompts, metrics, user_id)
             
             # SAVE THE STORY TO THE DATABASE - ADD LOGIC
             

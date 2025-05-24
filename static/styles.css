@@ -191,3 +191,9 @@ textarea {
     color: var(--accent-color);
     text-align: center;
 }
+
+.prompts-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}

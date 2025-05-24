@@ -15,22 +15,12 @@ body {
 
 nav {
     display: flex;
-    width: 100%; /* Full width container */
-    margin: 0 10px; /* Simplified margin - left and right */
-    padding: 10px 0 20px 0; /* Reduced bottom padding for better proportion */
-    align-items: center; /* Centers items vertically */
-    justify-content: space-between; /* Distributes nav items evenly across width */
-    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
-    gap: 1rem; /* Consistent spacing between nav items */
-}
-
-/* Optional: Add responsive behavior for mobile */
-@media (max-width: 768px) {
-    nav {
-        justify-content: center; /* Center items on mobile */
-        padding-bottom: 15px; /* Reduce padding on smaller screens */
-        gap: 0.8rem; /* Slightly smaller gap on mobile */
-    }
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 50px;
+    align-items: center; /* centers vertically */
 }
 
 .navigation {

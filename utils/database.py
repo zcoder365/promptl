@@ -42,12 +42,22 @@ def get_user(username: str):
         return None
 
 def update_user_points(username: str, points_to_add: int):
+    """Update user's total points by adding new points"""
     try:
-        # Update the user's points
-        response = supabase.table("users").update({"points": points_to_add}).eq("username", username).execute()
+        # First get current points
+        current_user = get_user(username)
+        if not current_user:
+            print(f"User {username} not found")
+            return False
+            
+        current_points = current_user.get('points', 0) or 0
+        new_total_points = current_points + points_to_add
         
-        if response.status_code == 200:
-            print(f"User {username} points updated successfully.")
+        # Update the user's points
+        response = supabase.table("users").update({"points": new_total_points}).eq("username", username).execute()
+        
+        if response.data:
+            print(f"User {username} points updated successfully. New total: {new_total_points}")
             return True
         else:
             print(f"Failed to update points for user {username}.")

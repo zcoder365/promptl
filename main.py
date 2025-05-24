@@ -40,14 +40,14 @@ def index():
 @login_required
 def home():
     # regenerate the prompts if the page is reloaded
-    prompts = prompts.gen_all_prompts()
+    story_prompts = prompts.gen_all_prompts()
         
     # allocate each prompt to a variable
-    name = prompts['name']
-    job = prompts['job']
-    place = prompts['location']
-    object = prompts['object']
-    bonus = prompts['bonus']
+    name = story_prompts['name']
+    job = story_prompts['job']
+    place = story_prompts['location']
+    object = story_prompts['object']
+    bonus = story_prompts['bonus']
 
     # return the main page for writing with the prompts
     return render_template('index.html', name=name, job=job, object=object, place=place, bonus=bonus)

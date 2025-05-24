@@ -204,19 +204,18 @@ def logout():
 
 # prior pieces route
 @app.route('/prior-pieces')
+@login_required
 def prior_pieces():
-    # get user's stories from MongoDB
     try:
-        # get user id
-        user_id = ObjectId(session['user_id'])
+        # Get username from session
+        username = session.get('username')
+        if not username:
+            return redirect(url_for('login'))
         
-        # find stories based on user's id
-        stories = ""
+        # Get user's stories from database
+        stories = db.get_user_stories(username)
         
-        # convert cursor to a list
-        stories_list = list(stories)
-        
-        return render_template('prior-pieces.html', stories=stories_list)
+        return render_template('prior-pieces.html', stories=stories)
     
     except Exception as e:
         print(f"Error retrieving stories: {e}")

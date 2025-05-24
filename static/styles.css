@@ -90,6 +90,14 @@ nav {
     color: var(--text-color);
 }
 
+#title-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 20px;
+    color: var(--text-color);
+}
+
 .help {
     border-width: 0px;
     border-radius: 100%;

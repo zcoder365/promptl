@@ -9,7 +9,7 @@
 				<th scope="col">Story Name</th>
 				<th scope="col">Word Count</th>
 				<th scope="col">Points Earned</th>
-				<th scope="col">Actions</th>
+				<!-- <th scope="col">Actions</th> -->
 			</tr>
 	{% for story in stories %}
 			<tr>
@@ -22,9 +22,9 @@
 				<td class="table-data">
 					{{ story.points_earned }}
 				</td>
-				<td class="table-data">
+				<!-- <td class="table-data">
 					<a href="/read-story/{{story.id}}" style="text-decoration:none; color:blue">Read</a>
-				</td>
+				</td> -->
 			</tr>
 	{% endfor %}		
 	</table>

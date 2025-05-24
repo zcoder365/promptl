@@ -143,7 +143,6 @@ def update_user_password(user_id, new_password):
         return False
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
-    """Add a new story to the database and update user stats"""
     try:
         # Validate input parameters
         if not title or not story_content or not username:
@@ -154,6 +153,11 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         print(f"DEBUG DB - Story title: {title}")
         print(f"DEBUG DB - Word count: {word_count}")
         print(f"DEBUG DB - Points: {points_earned}")
+        
+        # Check if supabase client is properly initialized
+        if not supabase:
+            print("Error: Supabase client not initialized")
+            return None
             
         story_data = {
             "title": title,
@@ -165,8 +169,21 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "created_at": datetime.now().isoformat()
         }
         
-        # Insert the story into Supabase
+        # Debug: Print the data being sent
+        print(f"DEBUG DB - Story data: {story_data}")
+        
+        # Insert the story into Supabase with better error handling
         result = supabase.table('stories').insert(story_data).execute()
+        
+        # Debug: Print the full result object
+        print(f"DEBUG DB - Insert result: {result}")
+        print(f"DEBUG DB - Result data: {result.data}")
+        print(f"DEBUG DB - Result count: {result.count if hasattr(result, 'count') else 'No count'}")
+        
+        # Check for errors in the result
+        if hasattr(result, 'error') and result.error:
+            print(f"Supabase error: {result.error}")
+            return None
         
         # Check if the insert was successful
         if result.data and len(result.data) > 0:
@@ -178,12 +195,17 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             update_user_word_count(username, word_count)
             
             return story_id
+        
         else:
-            print(f"Failed to save story: {result}")
+            print(f"No data returned from insert operation")
+            print(f"Full result object: {vars(result)}")  # Print all attributes of result
             return None
         
     except Exception as db_error:
         print(f"Database error while saving story: {db_error}")
+        print(f"Error type: {type(db_error)}")
+        import traceback
+        print(f"Full traceback: {traceback.format_exc()}")
         return None
 
 def get_user_stories(username: str):

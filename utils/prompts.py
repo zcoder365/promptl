@@ -22,17 +22,17 @@ def gen_prompt(file_name):
 # generate all the prompts using all the files
 def gen_all_prompts():
     # keep track of prompts
-    prompts = {}
+    story_prompts = {}
     
     # generate prompts for the dict
-    prompts['name'] = gen_prompt(NAMES_FILE)
-    prompts['job'] = gen_prompt(JOBS_FILE)
-    prompts['object'] = gen_prompt(OBJECTS_FILE)
-    prompts['location'] = gen_prompt(PLACES_FILE)
-    prompts['bonus'] = gen_prompt(BONUS_FILE)
+    story_prompts['name'] = gen_prompt(NAMES_FILE)
+    story_prompts['job'] = gen_prompt(JOBS_FILE)
+    story_prompts['object'] = gen_prompt(OBJECTS_FILE)
+    story_prompts['location'] = gen_prompt(PLACES_FILE)
+    story_prompts['bonus'] = gen_prompt(BONUS_FILE)
     
     # return the prompts
-    return prompts
+    return story_prompts
 
 # generate a compliment for the results page
 def gen_compliment():

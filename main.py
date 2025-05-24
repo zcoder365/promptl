@@ -90,42 +90,43 @@ def signup():
         if len(username) > 50:
             return render_template("signup.html", message="Username must be less than 50 characters.")
         
-        # see if the user already exists
-        user = db.get_user(username)
-        
-        # Check if username already exists
+        # check if username already exists (removed the duplicate call)
         try:
             existing_user = db.get_user(username)
             if existing_user:
                 return render_template("signup.html", message="Username already exists. Please choose another.")
         except Exception as e:
-            # Log the error for debugging but don't expose it to user
+            # log the error for debugging but don't expose it to user
             print(f"Database error checking user: {e}")
             return render_template("signup.html", message="An error occurred. Please try again.")
         
-        # Hash the password before storing
+        # hash the password before storing
         try:
             hashed_password = generate_password_hash(password)
+            print(f"Debug - Password hashed successfully for user: {username}")  # Debug line
+        
         except Exception as e:
             print(f"Password hashing error: {e}")
             return render_template("signup.html", message="An error occurred. Please try again.")
         
-        # Attempt to create the new user
+        # attempt to create the new user
         try:
             result = db.add_user(username, hashed_password)
             
             # Check if user creation was successful
             if result is not None:
-                # Success - redirect to login with success message
+                # success - redirect to login with success message
                 flash("Account created successfully! Please log in.", "success")
                 return redirect(url_for('login'))
+            
             else:
-                # Database operation failed
+                # database operation failed - this is where your error is occurring
                 return render_template("signup.html", message="Failed to create account. Please try again.")
                 
         except Exception as e:
-            # Handle any unexpected errors during user creation
+            # handle any unexpected errors during user creation
             print(f"Error creating user account: {e}")
+            
             return render_template("signup.html", message="An error occurred while creating your account. Please try again.")
     
     return render_template("signup.html")

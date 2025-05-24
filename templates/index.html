@@ -39,51 +39,32 @@
 
 	<br><br>
 	
-	<table align='center' style='width:200px'>
-		<tr align='center' style='width:40px'>
-			<td align='center' style='padding-left:20px; padding-right:20px'>
-				<img src='static/assets/name.png' style="width:3cm">
-			</td>
+	<div class="prompts-flex">
+        <div class="flex-item">
+            <img src='static/assets/name.png'>
+            <b>{{ name }}</b>
+        </div>
 
-			<td align='center' style='padding-left:20px; padding-right:20px'>
-				<img src='static/assets/job.png' style="width:3cm">
-			</td>
+        <div class="flex-item" onclick='showRandomFrom("jobs.txt")'>
+            <img src='static/assets/job.png'>
+            <b>{{ job }}</b>
+        </div>
 
-			<td align='center' style='padding-left:20px; padding-right:20px'>
-				<img src='static/assets/thing.png' style="width:3cm">
-			</td>
+        <div class="flex-item" onclick='showRandomFrom("objects.txt")'>
+            <img src='static/assets/thing.png'>
+            <b>{{ object }}</b>
+        </div>
 
-			<td align='center' style='padding-left:20px; padding-right:20px'>
-				<img src='static/assets/place.png' style="width:3cm">
-			</td>
+        <div class="flex-item" onclick='showRandomFrom("places.txt")'>
+            <img src='static/assets/place.png'>
+            <b>{{ place }}</b>
+        </div>
 
-			<td align='center' style='padding-left:20px; padding-right:20px'>
-				<img src='static/assets/bonus.png' style="width:3cm">
-			</td>
-		</tr>
-		
-		<tr align='center' style='width:40px'>
-			<td align='center' id='name'  style='padding-left:20px; padding-right:20px'>
-				<b>{{ name }}</b>
-			</td>
-			
-			<td align='center' id='job' onclick='showRandomFrom("jobs.txt")' style='padding-left:20px; padding-right:20px'>
-				<b>{{ job }}</b>
-			</td>
-			
-			<td align='center' id='object' onclick='showRandomFrom("objects.txt")' style='padding-left:20px; padding-right:20px'>
-				<b>{{ object }}</b>
-			</td>
-			
-			<td align='center' id='place' onclick='showRandomFrom("places.txt")' style='padding-left:20px; padding-right:20px'>
-				<b>{{ place }}</b>
-			</td>
-			
-			<td align='center' id='bonus' onclick='showRandomFrom("bonus.txt")' style='padding-left:20px; padding-right:20px'>
-				<b>{{ bonus }}</b>
-			</td>
-		</tr>
-	</table>
+        <div class="flex-item" onclick='showRandomFrom("bonus.txt")'>
+            <img src='static/assets/bonus.png'>
+            <b>{{ bonus }}</b>
+        </div>
+    </div>
 
 	<br>
 	

@@ -191,3 +191,43 @@ textarea {
     color: var(--accent-color);
     text-align: center;
 }
+
+/* Flexbox layout for prompts */
+.prompts-flex {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap to new lines */
+    justify-content: center; /* Center the items */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.flex-item {
+    flex: 1 1 150px; /* grow, shrink, basis - allows flexible sizing */
+    min-width: 120px; /* Minimum width before wrapping */
+    max-width: 200px; /* Maximum width to prevent items from getting too large */
+    text-align: center;
+    padding: 15px;
+    /* background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6; */
+    cursor: pointer; /* Since some items are clickable */
+    transition: background-color 0.2s ease; /* Smooth hover effect */
+}
+
+/* .flex-item:hover {
+    background: #e9ecef;
+} */
+
+.flex-item img {
+    width: 3cm; /* Keep your current image size */
+    height: auto;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flex-item b {
+    display: block; /* Make the text appear below the image */
+    font-size: 16px;
+}

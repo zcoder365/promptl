@@ -1,5 +1,5 @@
-# requirements.txt
-Flask==2.3.3
-Werkzeug==2.3.7
-supabase==2.11.0 # for Ssupabase integration
-bcrypt==4.0.1 # for password hashing
+Flask==2.3.3              # Web framework for creating the application
+Werkzeug==2.3.7           # WSGI utilities library (included with Flask, but specified for security functions)
+supabase==2.11.0          # Supabase client for database integration
+bcrypt==4.0.1             # Password hashing library for secure authentication
+python-dotenv==1.0.0      # Load environment variables from .env files

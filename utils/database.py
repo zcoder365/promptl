@@ -4,15 +4,13 @@ from dotenv import load_dotenv
 from datetime import datetime
 import utils.database_setup as db_setup
 
-db_setup.setup_database() # ensure the database is set up
+supabase = db_setup.setup_database() # ensure the database is set up
 
 # load the environment variables from the .env file
 load_dotenv() # load the file
-SUPABASE_URL = os.getenv("SUPABASE_URL") # get the database uri
-SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY") # get the database key
 
 # initialize the supabase client
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def add_user(username: str, password: str):
     try:

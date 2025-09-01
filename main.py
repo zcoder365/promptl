@@ -5,6 +5,7 @@ ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import timedelta
 # from bson import ObjectId
 import bcrypt
 # from datetime import datetime
@@ -16,10 +17,13 @@ import utils.database as db
 
 # create the flask app and add configurations
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "key"
+app.config['SECRET_KEY'] = "your-more-secure-secret-key-here"  # Use a more secure key in production
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)  # Session expires after 24 hours
 
-# generate the prompts for the main page
-story_prompts = prompts.gen_all_prompts()
+# Make sessions permanent so they persist across requests
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
 
 # create a login decorator to check if the user is logged in
 def login_required(f):
@@ -39,8 +43,9 @@ def index():
 @app.route('/home')
 @login_required
 def home():
-    # regenerate the prompts if the page is reloaded
+    # Generate new prompts and store them in session for later use in save_writing
     story_prompts = prompts.gen_all_prompts()
+    session['current_prompts'] = story_prompts  # Store prompts in session to persist across requests
         
     # allocate each prompt to a variable
     name = story_prompts['name']
@@ -100,7 +105,7 @@ def signup():
             print(f"Database error checking user: {e}")
             return render_template("signup.html", message="An error occurred. Please try again.")
         
-        # FIXED: Use plain password instead of hashing it here since db.add_user() handles hashing
+        # Use plain password since db.add_user() handles hashing internally
         try:
             print(f"Debug - Creating user: {username}")  # Debug line
         
@@ -119,7 +124,7 @@ def signup():
                 return redirect(url_for('login'))
             
             else:
-                # database operation failed - this is where your error is occurring
+                # database operation failed
                 return render_template("signup.html", message="Failed to create account. Please try again.")
                 
         except Exception as e:
@@ -142,7 +147,7 @@ def login():
         if not username or not password:
             return render_template("login.html", message="Please fill in all fields.")
         
-        # FIXED: Use authenticate_user function instead of manual password checking
+        # Use authenticate_user function which handles password hashing verification
         user = db.authenticate_user(username, password)
         
         if user:
@@ -177,7 +182,7 @@ def reset_password():
         
         # if the user exists, update the password
         if user:
-            # FIXED: Use reset_user_password function which only takes username and new_password
+            # Use reset_user_password function which handles hashing internally
             success = db.reset_user_password(username, new_password)
             
             if success:
@@ -202,7 +207,7 @@ def prior_pieces():
         if not username:
             return redirect(url_for('login'))
         
-        # Get all stories for now (we'll filter by username later when that column is added)
+        # Get user-specific stories from database
         stories = db.get_user_stories(username)
         
         print(f"DEBUG MAIN - Retrieved {len(stories)} stories")
@@ -232,7 +237,7 @@ def my_account():
         stories = db.get_user_stories(username)
         story_count = len(stories)
         
-        # Handle None values for user stats
+        # Handle None values for user stats with proper fallback logic
         total_words = user.get('total_word_count', 0) or 0
         points = user.get('points', 0) or 0
         
@@ -251,7 +256,7 @@ def my_account():
 @login_required
 def save_writing():
     if request.method == "POST":
-        # get info fromt the form
+        # get info from the form
         written_raw = request.form.get('story')
         title = request.form.get('title')
         
@@ -269,31 +274,31 @@ def save_writing():
         
         print(f"DEBUG MAIN - Username: {username}")
         
-        # # Get current prompts
-        # if not story_prompts:
-        #     story_prompts = prompts.gen_all_prompts()
+        # Get prompts from session instead of relying on global variable
+        story_prompts = session.get('current_prompts')
+        if not story_prompts:
+            print("DEBUG MAIN - No prompts in session, generating new ones")
+            story_prompts = prompts.gen_all_prompts()  # Fallback if no prompts in session
         
         print(f"DEBUG MAIN - Prompts: {story_prompts}")
         
-        # Calculate metrics
+        # Calculate metrics using the retrieved prompts
         metrics = model.get_story_metrics(written_raw, story_prompts)
         print(f"DEBUG MAIN - Metrics: {metrics}")
         
-        # Try to save the story with the minimal function first
+        # Save the story to database
         story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], username)
-        
-        if story_id is None:
-            print("DEBUG MAIN - Minimal save failed, trying full save")
-            # If minimal fails, try the full version
-            story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], username)
         
         if story_id:
             print(f"DEBUG MAIN - Story saved successfully with ID: {story_id}")
-        
+            
+            # Clear the used prompts from session after successful save
+            session.pop('current_prompts', None)
+            
             return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
         
         else:
-            print("DEBUG MAIN - Both save methods failed")
+            print("DEBUG MAIN - Story save failed")
             return render_template("index.html", message="Failed to save story. Check console for details.")
     
     return redirect(url_for("home"))
@@ -308,7 +313,7 @@ def read_story(story_title):
         if not username:
             return redirect(url_for('login'))
         
-        # Get user's stories and find the specific one
+        # Get user's stories and find the specific one by title
         stories = db.get_user_stories(username)
         story = None
         
@@ -317,7 +322,7 @@ def read_story(story_title):
                 story = s
                 break
         
-        # If story not found, redirect to prior pieces
+        # If story not found, redirect to prior pieces with error message
         if not story:
             print(f"[ Error ] Story '{story_title}' not found.")
             return redirect(url_for("prior_pieces"))
@@ -328,10 +333,53 @@ def read_story(story_title):
         print(f"Error reading story: {e}")
         return redirect(url_for("prior_pieces"))
 
+# Test route for debugging database connection and operations
+@app.route('/test-db')
+@login_required
+def test_db():
+    """Test database connection and basic operations for debugging purposes"""
+    try:
+        # Test connection
+        connection_test = db.test_connection()
+        
+        # Get current user
+        username = session.get('username')
+        user = db.get_user(username)
+        
+        # Test story insertion with minimal data
+        test_prompts = {
+            "name": "Test Name",
+            "job": "Test Job", 
+            "location": "Test Place",
+            "object": "Test Object",
+            "bonus": "Test Bonus"
+        }
+        
+        story_id = db.add_story(
+            title="Test Story",
+            story_content="This is a test story to verify database functionality.",
+            prompts=test_prompts,
+            word_count=10,
+            points_earned=5,
+            username=username
+        )
+        
+        return f"""
+        <h2>Database Test Results</h2>
+        <p>Connection Test: {'PASS' if connection_test else 'FAIL'}</p>
+        <p>User Found: {'PASS' if user else 'FAIL'}</p>
+        <p>Story Insert: {'PASS' if story_id else 'FAIL'}</p>
+        <p>Story ID: {story_id}</p>
+        <p>User Data: {user}</p>
+        """
+        
+    except Exception as e:
+        return f"<h2>Database Test Error</h2><p>{str(e)}</p>"
+
 # logout route
 @app.route('/logout')
 def logout():
-    session.clear() # clear the session
+    session.clear() # clear the session data
     return redirect('/login') # redirect to the login page
 
 # mainloop

@@ -2,171 +2,300 @@ from supabase import create_client
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-import utils.database_setup as db_setup
+import bcrypt
+import logging
+from postgrest.exceptions import APIError
 
-supabase = db_setup.setup_database() # ensure the database is set up
+# Set up logging for better debugging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-# load the environment variables from the .env file
-load_dotenv() # load the file
+# Load the environment variables from the .env file
+load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
 
-# initialize the supabase client
-# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Initialize the supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def add_user(username: str, password: str):
+    """
+    Add a new user to the database with hashed password
+    Args:
+        username (str): User's chosen username
+        password (str): User's plain text password (will be hashed)
+    Returns:
+        dict: User data if successful, None if failed
+    """
     try:
-        # validate inputs before database operation
+        # Validate inputs before database operation
         if not username or not password:
-            print("Error: Username or password is empty")
+            logger.error("Username or password is empty")
+            return None
+            
+        # Validate username format
+        if len(username) < 3 or len(username) > 20:
+            logger.error("Username must be between 3-20 characters")
+            return None
+            
+        # Validate password strength
+        if len(password) < 6:
+            logger.error("Password must be at least 6 characters")
             return None
         
-        print(f"Debug - Attempting to add user: {username}")
-        print(f"Debug - Password hash length: {len(password)}")
+        logger.debug(f"Attempting to add user: {username}")
         
-        # create user entry with hashed password
+        # Hash the password before storing (SECURITY FIX)
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        
+        # Create user entry with hashed password
         new_user_entry = {
             "username": username,
-            "password": password,
+            "password": hashed_password.decode('utf-8'),  # Store hash, not plain text
             "parent_email": "",
             "points": 0,
-            "total_points":0
+            "total_points": 0,
+            "streak": 0  # Initialize streak field
         }
         
-        # insert into database
-        print(f"Debug - Inserting user entry: {new_user_entry}")
+        # Insert into database with proper error handling
+        logger.debug(f"Inserting user entry for: {username}")
         response = supabase.table("users").insert(new_user_entry).execute()
-        
-        # debug: Print the full response to see what Supabase returns
-        print(f"Debug - Supabase response: {response}")
-        print(f"Debug - Response data: {response.data}")
-        print(f"Debug - Response data type: {type(response.data)}")
         
         # Check if the insertion was successful
         if response.data and len(response.data) > 0:
-            print(f"Successfully created user: {username}")
-            
+            logger.info(f"Successfully created user: {username}")
             return response.data[0]  # Return the created user data
-        
         else:
-            print(f"Failed to create user: {username}")
-            print(f"Debug - Response.data is: {response.data}")
+            logger.error(f"Failed to create user: {username} - No data returned")
+            return None
             
-            # check if there are any errors in the response
-            if hasattr(response, 'error') and response.error:
-                print(f"Debug - Supabase error: {response.error}")
+    except APIError as e:
+        logger.error(f"Supabase API error adding user '{username}': {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Unexpected error adding user '{username}': {e}")
+        return None
+
+def authenticate_user(username: str, password: str):
+    """
+    Verify user credentials against stored hash
+    Args:
+        username (str): Username to authenticate
+        password (str): Plain text password to verify
+    Returns:
+        dict: User data if authentication successful, None if failed
+    """
+    try:
+        user = get_user(username)
+        if not user:
+            logger.warning(f"Authentication failed: User {username} not found")
+            return None
             
+        # Check password against stored hash
+        stored_hash = user['password'].encode('utf-8')
+        if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+            logger.info(f"Authentication successful for user: {username}")
+            return user
+        else:
+            logger.warning(f"Authentication failed: Invalid password for user {username}")
             return None
             
     except Exception as e:
-        # log the specific error for debugging
-        print(f"Database error adding user '{username}': {e}")
-        print(f"Debug - Exception type: {type(e)}")
+        logger.error(f"Authentication error for user {username}: {e}")
         return None
     
 def get_user(username: str):
+    """
+    Retrieve user data by username
+    Args:
+        username (str): Username to search for
+    Returns:
+        dict: User data if found, None if not found
+    """
     try:
         response = supabase.table("users").select("*").eq("username", username).execute()
         
         if response.data and len(response.data) > 0:
             user = response.data[0]
-            print(f"Debug - User structure: {user.keys()}")
+            logger.debug(f"Found user: {username}")
             return user
         else:
+            logger.debug(f"User not found: {username}")
             return None  # Explicitly return None when user not found
             
+    except APIError as e:
+        logger.error(f"Supabase API error getting user {username}: {e}")
+        return None
     except Exception as e:
-        print(f"Error getting user: {e}")
+        logger.error(f"Unexpected error getting user {username}: {e}")
         return None
 
 def update_user_points(username: str, points_to_add: int):
-    """Update user's total points by adding new points"""
+    """
+    Update user's points by adding new points to current total
+    Args:
+        username (str): Username to update
+        points_to_add (int): Points to add to current total
+    Returns:
+        bool: True if successful, False if failed
+    """
     try:
         # First get current points
         current_user = get_user(username)
         if not current_user:
-            print(f"User {username} not found")
+            logger.error(f"Cannot update points: User {username} not found")
             return False
             
         current_points = current_user.get('points', 0) or 0
-        new_total_points = current_points + points_to_add
+        current_total_points = current_user.get('total_points', 0) or 0
         
-        # Update the user's points
-        response = supabase.table("users").update({"points": new_total_points}).eq("username", username).execute()
+        new_points = current_points + points_to_add
+        new_total_points = current_total_points + points_to_add
+        
+        # Update both current points and total points
+        response = supabase.table("users").update({
+            "points": new_points,
+            "total_points": new_total_points
+        }).eq("username", username).execute()
         
         if response.data:
-            print(f"User {username} points updated successfully. New total: {new_total_points}")
+            logger.info(f"User {username} points updated. Current: {new_points}, Total: {new_total_points}")
             return True
         else:
-            print(f"Failed to update points for user {username}.")
+            logger.error(f"Failed to update points for user {username}")
             return False
             
+    except APIError as e:
+        logger.error(f"Supabase API error updating points for {username}: {e}")
+        return False
     except Exception as e:
-        print(f"Error updating user points: {e}")
+        logger.error(f"Unexpected error updating points for {username}: {e}")
         return False
 
 def get_user_streak(username: str):
+    """
+    Get user's current streak count
+    Args:
+        username (str): Username to get streak for
+    Returns:
+        int: Current streak count, 0 if user not found or error
+    """
     try:
-        # Get the user's streak
         response = supabase.table("users").select("streak").eq("username", username).execute()
         
         if response.data and len(response.data) > 0:
             streak = response.data[0].get('streak', 0) or 0
-            print(f"User {username} streak: {streak}")
+            logger.debug(f"User {username} streak: {streak}")
             return streak
         else:
-            print(f"Failed to get streak for user {username}.")
+            logger.warning(f"Failed to get streak for user {username}")
             return 0
             
+    except APIError as e:
+        logger.error(f"Supabase API error getting streak for {username}: {e}")
+        return 0
     except Exception as e:
-        print(f"Error getting user streak: {e}")
+        logger.error(f"Unexpected error getting streak for {username}: {e}")
         return 0
 
 def update_user_streak(username: str, streak: int):
+    """
+    Update user's streak count
+    Args:
+        username (str): Username to update
+        streak (int): New streak value
+    Returns:
+        bool: True if successful, False if failed
+    """
     try:
-        # Update the user's streak
         response = supabase.table("users").update({"streak": streak}).eq("username", username).execute()
         
         if response.data:
-            print(f"User {username} streak updated successfully.")
+            logger.info(f"User {username} streak updated to {streak}")
             return True
         else:
-            print(f"Failed to update streak for user {username}.")
+            logger.error(f"Failed to update streak for user {username}")
             return False
             
+    except APIError as e:
+        logger.error(f"Supabase API error updating streak for {username}: {e}")
+        return False
     except Exception as e:
-        print(f"Error updating user streak: {e}")
+        logger.error(f"Unexpected error updating streak for {username}: {e}")
         return False
 
-def update_user_password(user_id, new_password):
+def update_user_password(username: str, old_password: str, new_password: str):
+    """
+    Update user's password after verifying old password
+    Args:
+        username (str): Username to update
+        old_password (str): Current password for verification
+        new_password (str): New password to set
+    Returns:
+        bool: True if successful, False if failed
+    """
     try:
-        # Update the user's password
-        response = supabase.table("users").update({"password": new_password}).eq("id", user_id).execute()
+        # First authenticate with old password
+        user = authenticate_user(username, old_password)
+        if not user:
+            logger.warning(f"Password update failed: Invalid current password for {username}")
+            return False
+        
+        # Validate new password
+        if len(new_password) < 6:
+            logger.error("New password must be at least 6 characters")
+            return False
+        
+        # Hash new password
+        salt = bcrypt.gensalt()
+        hashed_new_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
+        
+        # Update password in database
+        response = supabase.table("users").update({
+            "password": hashed_new_password.decode('utf-8')
+        }).eq("username", username).execute()
         
         if response.data:
-            print(f"User {user_id} password updated successfully.")
+            logger.info(f"Password updated successfully for user {username}")
             return True
         else:
-            print(f"Failed to update password for user {user_id}.")
+            logger.error(f"Failed to update password for user {username}")
             return False
             
+    except APIError as e:
+        logger.error(f"Supabase API error updating password for {username}: {e}")
+        return False
     except Exception as e:
-        print(f"Error updating user password: {e}")
+        logger.error(f"Unexpected error updating password for {username}: {e}")
         return False
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
+    """
+    Add a new story to the database
+    Args:
+        title (str): Story title
+        story_content (str): The actual story text
+        prompts (dict): Writing prompts used
+        word_count (int): Number of words in story
+        points_earned (int): Points earned for this story
+        username (str): Author's username
+    Returns:
+        str: Story ID if successful, None if failed
+    """
     try:
         # Validate input parameters
         if not title or not story_content or not username:
-            print("Error: Missing required fields for story")
+            logger.error("Missing required fields for story")
             return None
         
-        print(f"DEBUG DB - Adding story for user: {username}")
-        print(f"DEBUG DB - Story title: {title}")
-        print(f"DEBUG DB - Word count: {word_count}")
-        print(f"DEBUG DB - Points: {points_earned}")
+        logger.debug(f"Adding story '{title}' for user: {username}")
+        logger.debug(f"Word count: {word_count}, Points: {points_earned}")
         
         # Check if supabase client is properly initialized
         if not supabase:
-            print("Error: Supabase client not initialized")
+            logger.error("Supabase client not initialized")
             return None
             
         story_data = {
@@ -175,80 +304,94 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "prompts": prompts,  # This will be stored as JSON in PostgreSQL
             "word_count": word_count,
             "points_earned": points_earned,
-            "author_username": username,  # Using username instead of author_id
+            "author_username": username,
             "created_at": datetime.now().isoformat()
         }
         
-        # Debug: Print the data being sent
-        print(f"DEBUG DB - Story data: {story_data}")
-        
-        # Insert the story into Supabase with better error handling
+        # Insert the story into Supabase
         result = supabase.table('stories').insert(story_data).execute()
-        
-        # Debug: Print the full result object
-        print(f"DEBUG DB - Insert result: {result}")
-        print(f"DEBUG DB - Result data: {result.data}")
-        print(f"DEBUG DB - Result count: {result.count if hasattr(result, 'count') else 'No count'}")
-        
-        # Check for errors in the result
-        if hasattr(result, 'error') and result.error:
-            print(f"Supabase error: {result.error}")
-            return None
         
         # Check if the insert was successful
         if result.data and len(result.data) > 0:
             story_id = result.data[0]['id']
-            print(f"Story '{title}' saved successfully with ID: {story_id}")
+            logger.info(f"Story '{title}' saved successfully with ID: {story_id}")
             
-            # Update user's total points and word count
+            # Update user's points
             update_user_points(username, points_earned)
             
             return story_id
-        
         else:
-            print(f"No data returned from insert operation")
-            print(f"Full result object: {vars(result)}")  # Print all attributes of result
+            logger.error("No data returned from story insert operation")
             return None
         
-    except Exception as db_error:
-        print(f"Database error while saving story: {db_error}")
-        print(f"Error type: {type(db_error)}")
-        import traceback
-        print(f"Full traceback: {traceback.format_exc()}")
+    except APIError as e:
+        logger.error(f"Supabase API error saving story: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"Unexpected error saving story: {e}")
         return None
 
 def get_user_stories(username: str):
-    """Get all stories written by a specific user"""
+    """
+    Get all stories written by a specific user
+    Args:
+        username (str): Username to get stories for
+    Returns:
+        list: List of story dictionaries, empty list if none found
+    """
     try:
-        # Get stories by author_username (not author_id)
         response = supabase.table("stories").select("*").eq("author_username", username).order("created_at", desc=True).execute()
         
         if response.data:
             stories = response.data
-            print(f"Found {len(stories)} stories for user {username}")
+            logger.info(f"Found {len(stories)} stories for user {username}")
             return stories
         else:
-            print(f"No stories found for user {username}.")
+            logger.debug(f"No stories found for user {username}")
             return []
             
+    except APIError as e:
+        logger.error(f"Supabase API error getting stories for {username}: {e}")
+        return []
     except Exception as e:
-        print(f"Error getting user stories: {e}")
+        logger.error(f"Unexpected error getting stories for {username}: {e}")
         return []
 
 def get_all_stories():
-    """Get all stories from the database"""
+    """
+    Get all stories from the database
+    Returns:
+        list: List of all story dictionaries, empty list if none found
+    """
     try:
-        # Get all stories ordered by creation date
         response = supabase.table("stories").select("*").order("created_at", desc=True).execute()
         
         if response.data:
             stories = response.data
-            print(f"Retrieved {len(stories)} total stories")
+            logger.info(f"Retrieved {len(stories)} total stories")
             return stories
         else:
-            print("No stories found in database.")
+            logger.debug("No stories found in database")
             return []
             
-    except Exception as e:
-        print(f"Error getting all stories: {e}")
+    except APIError as e:
+        logger.error(f"Supabase API error getting all stories: {e}")
         return []
+    except Exception as e:
+        logger.error(f"Unexpected error getting all stories: {e}")
+        return []
+
+def test_connection():
+    """
+    Test the Supabase connection
+    Returns:
+        bool: True if connection successful, False otherwise
+    """
+    try:
+        # Simple test query
+        response = supabase.table("users").select("count", count="exact").execute()
+        logger.info("Supabase connection test successful")
+        return True
+    except Exception as e:
+        logger.error(f"Supabase connection test failed: {e}")
+        return False

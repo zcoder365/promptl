@@ -2,6 +2,9 @@ from supabase import create_client
 import os
 from dotenv import load_dotenv
 from datetime import datetime
+import utils.database_setup as db_setup
+
+db_setup.setup_database() # ensure the database is set up
 
 # load the environment variables from the .env file
 load_dotenv() # load the file

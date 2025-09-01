@@ -100,18 +100,17 @@ def signup():
             print(f"Database error checking user: {e}")
             return render_template("signup.html", message="An error occurred. Please try again.")
         
-        # hash the password before storing
+        # FIXED: Use plain password instead of hashing it here since db.add_user() handles hashing
         try:
-            hashed_password = generate_password_hash(password)
-            print(f"Debug - Password hashed successfully for user: {username}")  # Debug line
+            print(f"Debug - Creating user: {username}")  # Debug line
         
         except Exception as e:
-            print(f"Password hashing error: {e}")
+            print(f"Error preparing user data: {e}")
             return render_template("signup.html", message="An error occurred. Please try again.")
         
         # attempt to create the new user
         try:
-            result = db.add_user(username, hashed_password)
+            result = db.add_user(username, password)  # Pass plain password - db.add_user() will hash it
             
             # Check if user creation was successful
             if result is not None:
@@ -143,51 +142,20 @@ def login():
         if not username or not password:
             return render_template("login.html", message="Please fill in all fields.")
         
-        # find the user in the database (if they exist)
-        user = db.get_user(username)
+        # FIXED: Use authenticate_user function instead of manual password checking
+        user = db.authenticate_user(username, password)
         
-        # if the user exists, check if the password is correct
-        if user != None:
-            # debugging
-            print(f"Debug - User found: {username}")
-            print(f"Debug - Password field exists: {'password' in user}")
+        if user:
+            print(f"Debug - Authentication successful for user: {username}")
             
-            # Check if it's a bcrypt hash (starts with $2b$) or werkzeug hash
-            stored_password = user['password']
-            password_correct = False
+            # store user id in session
+            session['user_id'] = str(user['id'])
+            session['username'] = username
             
-            if stored_password.startswith('$2b$') or stored_password.startswith('$2a$'):
-                # This is a bcrypt hash - need to check it with bcrypt
-                import bcrypt
-                password_correct = bcrypt.checkpw(password.encode('utf-8'), stored_password.encode('utf-8'))
-                print("Debug - Checking bcrypt password")
-            else:
-                # This is a werkzeug hash - use check_password_hash
-                try:
-                    password_correct = check_password_hash(stored_password, password)
-                    print("Debug - Checking werkzeug password")
-                except:
-                    print("Debug - Password hash format not recognized")
-                    password_correct = False
-            
-            if password_correct:
-                print("Debug - Password matched!")
-                
-                # store user id in session
-                session['user_id'] = str(user['id'])
-                session['username'] = username
-                
-                # redirect to home page
-                return redirect(url_for('home'))
-            else:
-                # debugging
-                print("Debug - Password did NOT match")
-                
-                # if the password is incorrect, return error message
-                return render_template("login.html", message="Incorrect password.")
-        
+            # redirect to home page
+            return redirect(url_for('home'))
         else:
-            # otherwise, if the user doesn't exist, return error message
+            print(f"Debug - Authentication failed for user: {username}")
             return render_template("login.html", message="Username or password is incorrect.")
     
     return render_template("login.html")
@@ -209,14 +177,14 @@ def reset_password():
         
         # if the user exists, update the password
         if user:
-            # hash the new password
-            hashed_password = generate_password_hash(new_password)
+            # FIXED: Use reset_user_password function which only takes username and new_password
+            success = db.reset_user_password(username, new_password)
             
-            # update the user's password in the database
-            db.update_user_password(user['id'], hashed_password)
-            
-            # redirect to login page
-            return redirect(url_for('login'))
+            if success:
+                flash("Password reset successfully! Please log in with your new password.", "success")
+                return redirect(url_for('login'))
+            else:
+                return render_template("reset-password.html", message="Failed to reset password. Please try again.")
         
         else:
             # if the user doesn't exist, return error message

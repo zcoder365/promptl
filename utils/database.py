@@ -102,32 +102,6 @@ def update_user_points(username: str, points_to_add: int):
         print(f"Error updating user points: {e}")
         return False
 
-def update_user_word_count(username: str, word_count_to_add: int):
-    """Update user's total word count by adding new words"""
-    try:
-        # First get current word count
-        current_user = get_user(username)
-        if not current_user:
-            print(f"User {username} not found")
-            return False
-            
-        current_word_count = current_user.get('total_word_count', 0) or 0
-        new_total_words = current_word_count + word_count_to_add
-        
-        # Update the user's word count
-        response = supabase.table("users").update({"total_word_count": new_total_words}).eq("username", username).execute()
-        
-        if response.data:
-            print(f"User {username} word count updated successfully. New total: {new_total_words}")
-            return True
-        else:
-            print(f"Failed to update word count for user {username}.")
-            return False
-            
-    except Exception as e:
-        print(f"Error updating user word count: {e}")
-        return False
-
 def get_user_streak(username: str):
     try:
         # Get the user's streak

@@ -15,8 +15,35 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
 
+# Debug: Check if environment variables are loaded correctly
+logger.info(f"DEBUG - SUPABASE_URL: {SUPABASE_URL}")
+logger.info(f"DEBUG - SUPABASE_KEY present: {bool(SUPABASE_KEY)}")
+logger.info(f"DEBUG - SUPABASE_KEY length: {len(SUPABASE_KEY) if SUPABASE_KEY else 0}")
+
+# Validate environment variables before creating client
+if not SUPABASE_URL or not SUPABASE_KEY:
+    logger.error("SUPABASE_URL and SUPABASE_ANON_KEY must be set in .env file")
+    logger.error("Please check your .env file exists and contains the correct variables")
+    raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set in .env file")
+
+# Clean up URL if it has extra characters
+SUPABASE_URL = SUPABASE_URL.strip()
+SUPABASE_KEY = SUPABASE_KEY.strip()
+
+if not SUPABASE_URL.startswith('https://'):
+    logger.error(f"Invalid URL format: {SUPABASE_URL}")
+    logger.error("SUPABASE_URL must start with 'https://' and should look like: https://your-project.supabase.co")
+    raise ValueError("SUPABASE_URL must start with 'https://'")
+
 # Initialize the supabase client
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+try:
+    logger.info("Attempting to create Supabase client...")
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    logger.info("Supabase client created successfully")
+except Exception as e:
+    logger.error(f"Failed to create Supabase client: {e}")
+    logger.error("Please verify your SUPABASE_URL and SUPABASE_ANON_KEY are correct")
+    raise
 
 def add_user(username: str, password: str):
     """
@@ -55,7 +82,6 @@ def add_user(username: str, password: str):
             "password": hashed_password.decode('utf-8'),  # Store hash, not plain text
             "parent_email": "",
             "points": 0,
-            "total_points": 0,
             "streak": 0  # Initialize streak field
         }
         
@@ -149,19 +175,16 @@ def update_user_points(username: str, points_to_add: int):
             return False
             
         current_points = current_user.get('points', 0) or 0
-        current_total_points = current_user.get('total_points', 0) or 0
         
         new_points = current_points + points_to_add
-        new_total_points = current_total_points + points_to_add
         
-        # Update both current points and total points
+        # Update points
         response = supabase.table("users").update({
-            "points": new_points,
-            "total_points": new_total_points
+            "points": new_points
         }).eq("username", username).execute()
         
         if response.data:
-            logger.info(f"User {username} points updated. Current: {new_points}, Total: {new_total_points}")
+            logger.info(f"User {username} points updated. New total: {new_points}")
             return True
         else:
             logger.error(f"Failed to update points for user {username}")

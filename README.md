@@ -14,4 +14,4 @@ Promptl is currently available at [promptl.com](https://promptl.com)!
 
 # Todo
 - [x] Update the nav bar display on different devices
-- [ ] Fix sign up logic
+- [ ] ~~Fix sign up logic~~

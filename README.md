@@ -13,5 +13,5 @@ Click the "publish" button at the bottom of the page to save your work (don't wo
 Promptl is currently available at [promptl.com](https://promptl.com)!
 
 # Todo
-- [ ] Update the nav bar display on different devices
+- [x] Update the nav bar display on different devices
 - [ ] Fix sign up logic

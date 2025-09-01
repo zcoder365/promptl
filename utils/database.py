@@ -201,7 +201,6 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             
             # Update user's total points and word count
             update_user_points(username, points_earned)
-            update_user_word_count(username, word_count)
             
             return story_id
         

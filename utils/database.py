@@ -294,6 +294,50 @@ def update_user_password(username: str, old_password: str, new_password: str):
         logger.error(f"Unexpected error updating password for {username}: {e}")
         return False
 
+def reset_user_password(username: str, new_password: str):
+    """
+    Reset user's password without requiring old password (for password resets)
+    Args:
+        username (str): Username to update
+        new_password (str): New password to set
+    Returns:
+        bool: True if successful, False if failed
+    """
+    try:
+        # Check if user exists
+        user = get_user(username)
+        if not user:
+            logger.error(f"Cannot reset password: User {username} not found")
+            return False
+        
+        # Validate new password
+        if len(new_password) < 6:
+            logger.error("New password must be at least 6 characters")
+            return False
+        
+        # Hash new password
+        salt = bcrypt.gensalt()
+        hashed_new_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
+        
+        # Update password in database
+        response = supabase.table("users").update({
+            "password": hashed_new_password.decode('utf-8')
+        }).eq("username", username).execute()
+        
+        if response.data:
+            logger.info(f"Password reset successfully for user {username}")
+            return True
+        else:
+            logger.error(f"Failed to reset password for user {username}")
+            return False
+            
+    except APIError as e:
+        logger.error(f"Supabase API error resetting password for {username}: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error resetting password for {username}: {e}")
+        return False
+
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
     """
     Add a new story to the database

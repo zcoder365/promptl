@@ -24,7 +24,10 @@ def add_user(username: str, password: str):
         # create user entry with hashed password
         new_user_entry = {
             "username": username,
-            "password": password  # This should already be hashed
+            "password": password,
+            "parent_email": "",
+            "points": 0,
+            "total_points":0
         }
         
         # insert into database

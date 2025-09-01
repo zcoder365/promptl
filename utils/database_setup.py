@@ -4,6 +4,8 @@ import os
 
 # Load environment variables from .env
 load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL") # get the database uri
+SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY") # get the database key
 
 def database_setup():
     # Fetch variables

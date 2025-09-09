@@ -13,19 +13,18 @@ logger = logging.getLogger(__name__)
 # Load the environment variables from the .env file
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
-SERVICE_ROLE_KEY = os.getenv("SERVICE_ROLE_KEY")
+SUPABASE_KEY = os.getenv("SERVICE_ROLE_KEY")  # Use service role key for full database access
 
 # Debug: Check if environment variables are loaded correctly
 logger.info(f"DEBUG - SUPABASE_URL: {SUPABASE_URL}")
-logger.info(f"DEBUG - SUPABASE_KEY present: {bool(SUPABASE_KEY)}")
-logger.info(f"DEBUG - SUPABASE_KEY length: {len(SUPABASE_KEY) if SUPABASE_KEY else 0}")
+logger.info(f"DEBUG - SERVICE_ROLE_KEY present: {bool(SUPABASE_KEY)}")
+logger.info(f"DEBUG - SERVICE_ROLE_KEY length: {len(SUPABASE_KEY) if SUPABASE_KEY else 0}")
 
 # Validate environment variables before creating client
 if not SUPABASE_URL or not SUPABASE_KEY:
-    logger.error("SUPABASE_URL and SUPABASE_ANON_KEY must be set in .env file")
+    logger.error("SUPABASE_URL and SERVICE_ROLE_KEY must be set in .env file")
     logger.error("Please check your .env file exists and contains the correct variables")
-    raise ValueError("SUPABASE_URL and SUPABASE_ANON_KEY must be set in .env file")
+    raise ValueError("SUPABASE_URL and SERVICE_ROLE_KEY must be set in .env file")
 
 # Clean up URL if it has extra characters
 SUPABASE_URL = SUPABASE_URL.strip()
@@ -43,7 +42,7 @@ try:
     logger.info("Supabase client created successfully")
 except Exception as e:
     logger.error(f"Failed to create Supabase client: {e}")
-    logger.error("Please verify your SUPABASE_URL and SUPABASE_ANON_KEY are correct")
+    logger.error("Please verify your SUPABASE_URL and SERVICE_ROLE_KEY are correct")
     raise
 
 def add_user(username: str, password: str):

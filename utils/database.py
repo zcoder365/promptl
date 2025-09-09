@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
+SERVICE_ROLL_KEY = os.getenv("SERVICE_ROLL_KEY")
 
 # Debug: Check if environment variables are loaded correctly
 logger.info(f"DEBUG - SUPABASE_URL: {SUPABASE_URL}")

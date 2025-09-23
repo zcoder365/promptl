@@ -231,3 +231,86 @@ textarea {
     display: block; /* Make the text appear below the image */
     font-size: 16px;
 }
+
+/* Responsive styles for mobile devices */
+@media (max-width: 600px) {
+    body {
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .logo-btn-nav {
+        height: 40px;
+        margin-bottom: 10px;
+    }
+
+    .navigation {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .navigation button {
+        width: 90vw;
+        min-width: 120px;
+        max-width: 300px;
+        height: 40px;
+        font-size: 1rem;
+        margin: 4px 0;
+    }
+
+    form {
+        margin-left: 2%;
+        margin-right: 2%;
+        width: 96vw;
+    }
+
+    form input[type="text"], 
+    input[type="email"], 
+    input[type="password"], 
+    form input[type="submit"], 
+    textarea {
+        width: 90vw;
+        font-size: 1rem;
+    }
+
+    #story, #title {
+        width: 90vw;
+        font-size: 1rem;
+    }
+
+    .congrats-info-container {
+        width: 90vw;
+        min-width: 150px;
+        max-width: 300px;
+    }
+
+    .prompts-flex {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .flex-item {
+        min-width: 100px;
+        max-width: 95vw;
+        padding: 10px;
+        font-size: 1rem;
+    }
+
+    .flex-item img {
+        width: 60vw;
+        max-width: 200px;
+    }
+}

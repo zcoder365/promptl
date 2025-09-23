@@ -194,123 +194,30 @@ textarea {
 
 /* Flexbox layout for prompts */
 .prompts-flex {
-    display: flex;
-    flex-wrap: wrap; /* Allow items to wrap to new lines */
-    justify-content: center; /* Center the items */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     margin-top: 20px;
 }
 
 .flex-item {
-    flex: 1 1 150px; /* grow, shrink, basis - allows flexible sizing */
-    min-width: 120px; /* Minimum width before wrapping */
-    max-width: 200px; /* Maximum width to prevent items from getting too large */
+    min-width: 0;
+    max-width: 100%;
     text-align: center;
-    padding: 15px;
-    /* background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #dee2e6; */
-    cursor: pointer; /* Since some items are clickable */
-    transition: background-color 0.2s ease; /* Smooth hover effect */
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-/* .flex-item:hover {
-    background: #e9ecef;
-} */
-
-.flex-item img {
-    width: 3cm; /* Keep your current image size */
-    height: auto;
-    margin-bottom: 10px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.flex-item b {
-    display: block; /* Make the text appear below the image */
-    font-size: 16px;
-}
-
-/* Responsive styles for mobile devices */
+/* Responsive: 3 per row on mobile, fallback to fewer if needed */
 @media (max-width: 600px) {
-    body {
-        font-size: 16px;
-        padding: 0;
-        margin: 0;
-    }
-
-    nav {
-        flex-direction: column;
-        align-items: center;
-        padding-top: 10px;
-        padding-bottom: 20px;
-        margin-left: 0;
-        margin-right: 0;
-    }
-
-    .logo-btn-nav {
-        height: 40px;
-        margin-bottom: 10px;
-    }
-
-    .navigation {
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        gap: 8px;
-    }
-
-    .navigation button {
-        width: 90vw;
-        min-width: 120px;
-        max-width: 300px;
-        height: 40px;
-        font-size: 1rem;
-        margin: 4px 0;
-    }
-
-    form {
-        margin-left: 2%;
-        margin-right: 2%;
-        width: 96vw;
-    }
-
-    form input[type="text"], 
-    input[type="email"], 
-    input[type="password"], 
-    form input[type="submit"], 
-    textarea {
-        width: 90vw;
-        font-size: 1rem;
-    }
-
-    #story, #title {
-        width: 90vw;
-        font-size: 1rem;
-    }
-
-    .congrats-info-container {
-        width: 90vw;
-        min-width: 150px;
-        max-width: 300px;
-    }
-
     .prompts-flex {
-        flex-direction: column;
+        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        margin-top: 10px;
     }
-
-    .flex-item {
-        min-width: 100px;
-        max-width: 95vw;
-        padding: 10px;
-        font-size: 1rem;
-    }
-
     .flex-item img {
-        width: 60vw;
-        max-width: 200px;
+        width: 80%;
+        max-width: 100px;
     }
 }

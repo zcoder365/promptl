@@ -201,6 +201,10 @@ textarea {
 }
 
 .flex-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     min-width: 0;
     max-width: 100%;
     text-align: center;
@@ -208,6 +212,20 @@ textarea {
     box-sizing: border-box;
     cursor: pointer;
     transition: background-color 0.2s ease;
+}
+
+.flex-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-bottom: 8px;
+}
+
+.flex-item .prompt-word {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 /* Responsive styles for mobile devices */
@@ -275,20 +293,23 @@ textarea {
     }
 
     .prompts-flex {
-        flex-direction: column;
+        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
         margin-top: 10px;
     }
 
     .flex-item {
-        min-width: 100px;
-        max-width: 95vw;
-        padding: 10px;
+        padding: 8px;
         font-size: 1rem;
     }
 
     .flex-item img {
-        width: 60vw;
-        max-width: 200px;
+        width: 100px;
+        height: 100px;
+        max-width: 100%;
+    }
+
+    .flex-item .prompt-word {
+        font-size: 1rem;
     }
 }

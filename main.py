@@ -35,6 +35,19 @@ oauth.register(
     server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
 )
 
+# have a function to get current user's info
+def get_current_user():
+    token = session.get("user")
+    if not token:
+        return None
+    id_token = token.get("id_token")  # Auth0 returns id_token + access_token
+    payload = jwt.get_unverified_claims(id_token)
+    return {
+        "auth0_id": payload["sub"],
+        "email": payload.get("email"),
+        "name": payload.get("name")
+    }
+
 # landing route
 @app.route('/')
 def index():
@@ -86,15 +99,14 @@ def about_page():
 @app.route('/prior-pieces')
 def prior_pieces():
     try:
-        payload = verify_jwt(token)  # decoded JWT
-        user_id = payload["sub"]
+        user_info = get_current_user()
+        user_id = user_info['auth0_id']
+        
         if not user_id:
             return redirect(url_for('login'))
         
         # Get user-specific stories from database
         stories = db.get_user_stories(user_id)
-        
-        print(f"DEBUG MAIN - Retrieved {len(stories)} stories")
         
         return render_template('prior-pieces.html', stories=stories)
     
@@ -145,14 +157,11 @@ def save_writing():
             return render_template("index.html", message="Please provide both title and story content.")
         
         # Get username from session
-        user_token = session['user']
-        payload = verify_jwt(user_token)  # decoded JWT
-        user_id = payload["sub"]
+        user_info = get_current_user()
+        user_id = user_info['auth0_id']
         
-        if not username:
+        if not user_id:
             return render_template("index.html", message="User session expired. Please log in again.")
-        
-        print(f"DEBUG MAIN - Username: {username}")
         
         # Get prompts from session instead of relying on global variable
         story_prompts = session.get('current_prompts')
@@ -160,26 +169,18 @@ def save_writing():
             print("DEBUG MAIN - No prompts in session, generating new ones")
             story_prompts = prompts.gen_all_prompts()  # Fallback if no prompts in session
         
-        print(f"DEBUG MAIN - Prompts: {story_prompts}")
-        
         # Calculate metrics using the retrieved prompts
         metrics = model.get_story_metrics(written_raw, story_prompts)
         print(f"DEBUG MAIN - Metrics: {metrics}")
         
         # Save the story to database
-        story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], username)
+        story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], user_id)
         
         if story_id:
-            print(f"DEBUG MAIN - Story saved successfully with ID: {story_id}")
-            
             # Clear the used prompts from session after successful save
             session.pop('current_prompts', None)
             
             return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
-        
-        else:
-            print("DEBUG MAIN - Story save failed")
-            return render_template("index.html", message="Failed to save story. Check console for details.")
     
     return redirect(url_for("home"))
 
@@ -188,12 +189,14 @@ def save_writing():
 def read_story(story_title):
     try:
         # Get username from session
-        username = session.get('username')
-        if not username:
+        user_info = get_current_user()
+        user_id = user_info['auth0_id']
+        
+        if not user_id:
             return redirect(url_for('login'))
         
         # Get user's stories and find the specific one by title
-        stories = db.get_user_stories(username)
+        stories = db.get_user_stories(user_id)
         story = None
         
         for s in stories:
@@ -211,48 +214,6 @@ def read_story(story_title):
     except Exception as e:
         print(f"Error reading story: {e}")
         return redirect(url_for("prior_pieces"))
-
-# Test route for debugging database connection and operations
-@app.route('/test-db')
-def test_db():
-    """Test database connection and basic operations for debugging purposes"""
-    try:
-        # Test connection
-        connection_test = db.test_connection()
-        
-        # Get current user
-        username = session.get('username')
-        user = db.get_user(username)
-        
-        # Test story insertion with minimal data
-        test_prompts = {
-            "name": "Test Name",
-            "job": "Test Job", 
-            "location": "Test Place",
-            "object": "Test Object",
-            "bonus": "Test Bonus"
-        }
-        
-        story_id = db.add_story(
-            title="Test Story",
-            story_content="This is a test story to verify database functionality.",
-            prompts=test_prompts,
-            word_count=10,
-            points_earned=5,
-            username=username
-        )
-        
-        return f"""
-        <h2>Database Test Results</h2>
-        <p>Connection Test: {'PASS' if connection_test else 'FAIL'}</p>
-        <p>User Found: {'PASS' if user else 'FAIL'}</p>
-        <p>Story Insert: {'PASS' if story_id else 'FAIL'}</p>
-        <p>Story ID: {story_id}</p>
-        <p>User Data: {user}</p>
-        """
-        
-    except Exception as e:
-        return f"<h2>Database Test Error</h2><p>{str(e)}</p>"
 
 # logout route
 @app.route("/logout")

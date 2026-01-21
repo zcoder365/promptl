@@ -37,22 +37,10 @@ def get_db():
         print(f"Failed to connect to MongoDB: {e}")
         raise
 
-def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
-    """
-    Add a new story to the database
-    Args:
-        title (str): Story title
-        story_content (str): The actual story text
-        prompts (dict): Writing prompts used
-        word_count (int): Number of words in story
-        points_earned (int): Points earned for this story
-        username (str): Author's username
-    Returns:
-        str: Story ID if successful, None if failed
-    """
+def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, auth0_user_id: str):
     try:
         # Validate input parameters
-        if not title or not story_content or not username:
+        if not title or not story_content or not auth0_user_id:
             return None
         
         # Get database connection
@@ -66,7 +54,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "prompts": prompts,  # MongoDB stores dicts natively as BSON
             "word_count": word_count,
             "points_earned": points_earned,
-            "author_username": username,
+            "auth0_user_id": auth0_user_id,
             "created_at": datetime.now()
         }
         
@@ -83,14 +71,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         print(f"Error saving story: {e}")
         return None
 
-def get_user_stories(username: str):
-    """
-    Get all stories written by a specific user
-    Args:
-        username (str): Username to get stories for
-    Returns:
-        list: List of story dictionaries, empty list if none found
-    """
+def get_user_stories(auth0_user_id: str):
     try:
         # Get database connection
         db = get_db()
@@ -98,7 +79,7 @@ def get_user_stories(username: str):
         
         # Query for user's stories, ordered by creation date (newest first)
         cursor = stories_collection.find(
-            {"author_username": username}
+            {"auth0_user_id": auth0_user_id}
         ).sort("created_at", -1)  # -1 for descending order
         
         # Convert cursor to list of dicts
@@ -111,15 +92,10 @@ def get_user_stories(username: str):
         return stories_list
             
     except Exception as e:
-        print(f"Error getting stories for {username}: {e}")
+        print(f"Error getting stories for {auth0_user_id}: {e}")
         return []
 
 def get_all_stories():
-    """
-    Get all stories from the database
-    Returns:
-        list: List of all story dictionaries, empty list if none found
-    """
     try:
         # Get database connection
         db = get_db()
@@ -142,13 +118,6 @@ def get_all_stories():
         return []
 
 def get_story_by_id(story_id: str):
-    """
-    Get a specific story by its ID
-    Args:
-        story_id (str): Story ID to retrieve
-    Returns:
-        dict: Story document if found, None if not found
-    """
     try:
         # Get database connection
         db = get_db()
@@ -168,15 +137,7 @@ def get_story_by_id(story_id: str):
         print(f"Error getting story by ID {story_id}: {e}")
         return None
 
-def delete_story(story_id: str, username: str):
-    """
-    Delete a story (only if the user is the author)
-    Args:
-        story_id (str): Story ID to delete
-        username (str): Username attempting to delete (for authorization)
-    Returns:
-        bool: True if successful, False if failed
-    """
+def delete_story(story_id: str, auth0_user_id: str):
     try:
         # Get database connection
         db = get_db()
@@ -185,7 +146,7 @@ def delete_story(story_id: str, username: str):
         # Delete only if the user is the author
         result = stories_collection.delete_one({
             "_id": ObjectId(story_id),
-            "author_username": username
+            "auth0_user_id": auth0_user_id
         })
         
         if result.deleted_count > 0:
@@ -198,11 +159,6 @@ def delete_story(story_id: str, username: str):
         return False
 
 def test_connection():
-    """
-    Test the database connection
-    Returns:
-        bool: True if connection successful, False otherwise
-    """
     try:
         # Get database connection
         db = get_db()

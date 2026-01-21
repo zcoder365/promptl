@@ -9,6 +9,8 @@ from os import environ as env
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
+from jose import jwt
+import requests
 import utils.prompts as prompts
 import utils.model as model
 import utils.database as db
@@ -78,52 +80,19 @@ def new_prompt():
 # about page route
 @app.route('/about')
 def about_page():
-    # return the page about the game
     return render_template('about.html')
-
-# reset password route
-@app.route("/reset-password", methods=['GET', 'POST'])
-def reset_password():
-    if request.method == "POST":
-        # get info from form
-        username = request.form["username"]
-        new_password = request.form["new-password"]
-        
-        # validate input
-        if not username or not new_password:
-            return render_template("reset-password.html", message="Please fill in all fields.")
-        
-        # find the user in the database (if they exist)
-        user = db.get_user(username)
-        
-        # if the user exists, update the password
-        if user:
-            # Use reset_user_password function which handles hashing internally
-            success = db.reset_user_password(username, new_password)
-            
-            if success:
-                flash("Password reset successfully! Please log in with your new password.", "success")
-                return redirect(url_for('login'))
-            else:
-                return render_template("reset-password.html", message="Failed to reset password. Please try again.")
-        
-        else:
-            # if the user doesn't exist, return error message
-            return render_template("reset-password.html", message="Username does not exist.")
-    
-    # if the request method is GET, render the reset password page
-    return render_template("reset-password.html")
 
 # prior pieces route
 @app.route('/prior-pieces')
 def prior_pieces():
     try:
-        username = session.get('username')
-        if not username:
+        payload = verify_jwt(token)  # decoded JWT
+        user_id = payload["sub"]
+        if not user_id:
             return redirect(url_for('login'))
         
         # Get user-specific stories from database
-        stories = db.get_user_stories(username)
+        stories = db.get_user_stories(user_id)
         
         print(f"DEBUG MAIN - Retrieved {len(stories)} stories")
         
@@ -133,37 +102,35 @@ def prior_pieces():
         print(f"DEBUG MAIN - Error retrieving stories: {e}")
         return render_template('prior-pieces.html', stories=[])
 
-# user's account page
-@app.route('/my-account')
-def my_account():
-    try:
-        # Get username from session
-        username = session.get('username')
-        if not username:
-            return redirect(url_for('login'))
+# # user's account page
+# @app.route('/my-account')
+# def my_account():
+#     try:
+#         # Get username from session
+#         user_token = session['user']
+#         if not user_token:
+#             return redirect(url_for('login'))
         
-        # Get user data from database
-        user = db.get_user(username)
-        if not user:
-            return redirect(url_for('login'))
+#         if not user:
+#             return redirect(url_for('login'))
         
-        # Get user's stories to calculate streak
-        stories = db.get_user_stories(username)
-        story_count = len(stories)
+#         # Get user's stories to calculate streak
+#         stories = db.get_user_stories(username)
+#         story_count = len(stories)
         
-        # Handle None values for user stats with proper fallback logic
-        total_words = user.get('total_word_count', 0) or 0
-        points = user.get('points', 0) or 0
+#         # Handle None values for user stats with proper fallback logic
+#         total_words = user.get('total_word_count', 0) or 0
+#         points = user.get('points', 0) or 0
         
-        return render_template('my-account.html', 
-                             username=user['username'], 
-                             total_words=total_words, 
-                             points=points, 
-                             streak=story_count)
+#         return render_template('my-account.html', 
+#                              username=user['username'], 
+#                              total_words=total_words, 
+#                              points=points, 
+#                              streak=story_count)
     
-    except Exception as e:
-        print(f"Error accessing account: {e}")
-        return redirect(url_for('login'))
+#     except Exception as e:
+#         print(f"Error accessing account: {e}")
+#         return redirect(url_for('login'))
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
@@ -173,15 +140,15 @@ def save_writing():
         written_raw = request.form.get('story')
         title = request.form.get('title')
         
-        print(f"DEBUG MAIN - Received title: '{title}'")
-        print(f"DEBUG MAIN - Story length: {len(written_raw) if written_raw else 0}")
-        
         # Validate input data
         if not written_raw or not title:
             return render_template("index.html", message="Please provide both title and story content.")
         
         # Get username from session
-        username = session.get('username')
+        user_token = session['user']
+        payload = verify_jwt(user_token)  # decoded JWT
+        user_id = payload["sub"]
+        
         if not username:
             return render_template("index.html", message="User session expired. Please log in again.")
         

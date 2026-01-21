@@ -2,11 +2,13 @@
 ALLOWED_HOSTS = ['promptl.com', 'www.promptl.com']
 
 # import necessary libraries
-from functools import wraps
 from flask import Flask, request, session, redirect, url_for, render_template, flash
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-import bcrypt
+import os
+from os import environ as env
+from dotenv import load_dotenv
+from authlib.integrations.flask_client import OAuth
+from urllib.parse import quote_plus, urlencode
 
 # import project files
 import utils.prompts as prompts
@@ -15,27 +17,39 @@ import utils.database as db
 
 # create the flask app and add configurations
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "your-more-secure-secret-key-here"  # Use a more secure key in production
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)  # Session expires after 24 hours
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 
-# Make sessions permanent so they persist across requests
-@app.before_request
-def make_session_permanent():
-    session.permanent = True
-
-# create a login decorator to check if the user is logged in
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+# set up authentication system
+oauth = OAuth(app)
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
 
 # landing route
 @app.route('/')
 def index():
-    return render_template('signup.html')
+    return redirect(url_for("login"))
+
+# create login route that redirects to Auth0
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+# create a callback route for getting user ifno
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect(url_for("home")) # redirect user to home page
 
 # home page route
 @app.route('/home')
@@ -66,102 +80,6 @@ def new_prompt():
 def about_page():
     # return the page about the game
     return render_template('about.html')
-
-# sign up route
-@app.route("/signup", methods=['GET', 'POST'])
-def signup():
-    if request.method == "POST":
-        # get info from form
-        username = request.form["username"]
-        password = request.form["password"]
-        
-        # validate input
-        if not username or not password:
-            return render_template("signup.html", message="Please fill in all fields.")
-        
-        if len(password) < 6:
-            return render_template("signup.html", message="Password must be at least 6 characters.")
-        
-        # prevent extremely long passwords
-        if len(password) > 128:
-            return render_template("signup.html", message="Password must be less than 128 characters.")
-        
-        if len(username) < 3:
-            return render_template("signup.html", message="Username must be at least 3 characters.")
-        
-        # add maximum length check for username
-        if len(username) > 50:
-            return render_template("signup.html", message="Username must be less than 50 characters.")
-        
-        # check if username already exists (removed the duplicate call)
-        try:
-            existing_user = db.get_user(username)
-            if existing_user:
-                return render_template("signup.html", message="Username already exists. Please choose another.")
-        except Exception as e:
-            # log the error for debugging but don't expose it to user
-            print(f"Database error checking user: {e}")
-            return render_template("signup.html", message="An error occurred. Please try again.")
-        
-        # Use plain password since db.add_user() handles hashing internally
-        try:
-            print(f"Debug - Creating user: {username}")  # Debug line
-        
-        except Exception as e:
-            print(f"Error preparing user data: {e}")
-            return render_template("signup.html", message="An error occurred. Please try again.")
-        
-        # attempt to create the new user
-        try:
-            result = db.add_user(username, password)  # Pass plain password - db.add_user() will hash it
-            
-            # Check if user creation was successful
-            if result is not None:
-                # success - redirect to login with success message
-                flash("Account created successfully! Please log in.", "success")
-                return redirect(url_for('login'))
-            
-            else:
-                # database operation failed
-                return render_template("signup.html", message="Failed to create account. Please try again.")
-                
-        except Exception as e:
-            # handle any unexpected errors during user creation
-            print(f"Error creating user account: {e}")
-            
-            return render_template("signup.html", message="An error occurred while creating your account. Please try again.")
-    
-    return render_template("signup.html")
-
-# login route
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if request.method == "POST":
-        # get info from form
-        username = request.form["username"]
-        password = request.form["password"]
-        
-        # validate input
-        if not username or not password:
-            return render_template("login.html", message="Please fill in all fields.")
-        
-        # Use authenticate_user function which handles password hashing verification
-        user = db.authenticate_user(username, password)
-        
-        if user:
-            print(f"Debug - Authentication successful for user: {username}")
-            
-            # store user id in session
-            session['user_id'] = str(user['id'])
-            session['username'] = username
-            
-            # redirect to home page
-            return redirect(url_for('home'))
-        else:
-            print(f"Debug - Authentication failed for user: {username}")
-            return render_template("login.html", message="Username or password is incorrect.")
-    
-    return render_template("login.html")
 
 # reset password route
 @app.route("/reset-password", methods=['GET', 'POST'])
@@ -375,10 +293,20 @@ def test_db():
         return f"<h2>Database Test Error</h2><p>{str(e)}</p>"
 
 # logout route
-@app.route('/logout')
+@app.route("/logout")
 def logout():
-    session.clear() # clear the session data
-    return redirect('/login') # redirect to the login page
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
 
 # mainloop
 if __name__ == "__main__":

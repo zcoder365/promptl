@@ -4,4 +4,4 @@ authlib>=1.0
 requests>=2.27.1
 python-jose[cryptography]
 pymongo>=4.0
-bson>=0.5.10
+# bson>=0.5.10

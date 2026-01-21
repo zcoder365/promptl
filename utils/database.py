@@ -2,446 +2,40 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 import json
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 # Load the environment variables from the .env file
 load_dotenv()
 
-# get and clean URL
-DATABASE_URL = os.getenv("DATABASE_URL")
-DATABASE_URL = DATABASE_URL.strip()
+# Get MongoDB connection string from environment
+MONGODB_URI = os.getenv("MONGODB_URI")
+DATABASE_NAME = "promptl"  # database name
 
-# Helper function to get database connection
-def get_db_connection():
-    try:
-        # psycopg2 can use the DATABASE_URL directly
-        # RealDictCursor returns rows as dictionaries instead of tuples
-        conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
-        return conn
-    except Exception as e:
-        logger.error(f"Failed to connect to database: {e}")
-        raise
+# Global client variable
+_mongo_client = None
+_db = None
 
-def add_user(username: str, password: str):
+def get_db():
     """
-    Add a new user to the database with hashed password
-    Args:
-        username (str): User's chosen username
-        password (str): User's plain text password (will be hashed)
+    Get MongoDB database connection
     Returns:
-        dict: User data if successful, None if failed
+        Database: MongoDB database instance
     """
-    conn = None
-    cur = None
-    try:
-        # Validate inputs before database operation
-        if not username or not password:
-            logger.error("Username or password is empty")
-            return None
-            
-        # Validate username format
-        if len(username) < 3 or len(username) > 20:
-            logger.error("Username must be between 3-20 characters")
-            return None
-            
-        # Validate password strength
-        if len(password) < 6:
-            logger.error("Password must be at least 6 characters")
-            return None
-        
-        logger.debug(f"Attempting to add user: {username}")
-        
-        # Hash the password before storing (SECURITY FIX)
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-        
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        # Insert into database with proper error handling
-        logger.debug(f"Inserting user entry for: {username}")
-        cur.execute(
-            """
-            INSERT INTO users (username, password, parent_email, points, streak) 
-            VALUES (%s, %s, %s, %s, %s) 
-            RETURNING *
-            """,
-            (username, hashed_password.decode('utf-8'), "", 0, 0)
-        )
-        
-        # Get the inserted user data
-        new_user = cur.fetchone()
-        conn.commit()  # commit the transaction
-        
-        if new_user:
-            logger.info(f"Successfully created user: {username}")
-            return dict(new_user)  # convert to regular dict
-        else:
-            logger.error(f"Failed to create user: {username} - No data returned")
-            return None
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error adding user '{username}': {e}")
-        if conn:
-            conn.rollback()  # rollback on error
-        return None
-    except Exception as e:
-        logger.error(f"Unexpected error adding user '{username}': {e}")
-        if conn:
-            conn.rollback()
-        return None
-    finally:
-        # always close cursor and connection
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
-
-def authenticate_user(username: str, password: str):
-    """
-    Verify user credentials against stored hash
-    Args:
-        username (str): Username to authenticate
-        password (str): Plain text password to verify
-    Returns:
-        dict: User data if authentication successful, None if failed
-    """
-    try:
-        user = get_user(username)
-        if not user:
-            logger.warning(f"Authentication failed: User {username} not found")
-            return None
-            
-        # Check password against stored hash
-        stored_hash = user['password'].encode('utf-8')
-        if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
-            logger.info(f"Authentication successful for user: {username}")
-            return user
-        else:
-            logger.warning(f"Authentication failed: Invalid password for user {username}")
-            return None
-            
-    except Exception as e:
-        logger.error(f"Authentication error for user {username}: {e}")
-        return None
+    global _mongo_client, _db
     
-def get_user(username: str):
-    """
-    Retrieve user data by username
-    Args:
-        username (str): Username to search for
-    Returns:
-        dict: User data if found, None if not found
-    """
-    conn = None
-    cur = None
     try:
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
+        # Only create client once (singleton pattern)
+        if _mongo_client is None:
+            _mongo_client = MongoClient(MONGODB_URI)
+            _db = _mongo_client[DATABASE_NAME]
+            # Test the connection
+            _mongo_client.admin.command('ping')
         
-        # Query for user
-        cur.execute(
-            "SELECT * FROM users WHERE username = %s",
-            (username,)
-        )
-        
-        user = cur.fetchone()
-        
-        if user:
-            logger.debug(f"Found user: {username}")
-            return dict(user)  # convert to regular dict
-        else:
-            logger.debug(f"User not found: {username}")
-            return None  # Explicitly return None when user not found
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error getting user {username}: {e}")
-        return None
+        return _db
     except Exception as e:
-        logger.error(f"Unexpected error getting user {username}: {e}")
-        return None
-    finally:
-        # always close cursor and connection
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
-
-def update_user_points(username: str, points_to_add: int):
-    """
-    Update user's points by adding new points to current total
-    Args:
-        username (str): Username to update
-        points_to_add (int): Points to add to current total
-    Returns:
-        bool: True if successful, False if failed
-    """
-    conn = None
-    cur = None
-    try:
-        # First get current points
-        current_user = get_user(username)
-        if not current_user:
-            logger.error(f"Cannot update points: User {username} not found")
-            return False
-            
-        current_points = current_user.get('points', 0) or 0
-        new_points = current_points + points_to_add
-        
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        # Update points
-        cur.execute(
-            "UPDATE users SET points = %s WHERE username = %s RETURNING *",
-            (new_points, username)
-        )
-        
-        updated_user = cur.fetchone()
-        conn.commit()
-        
-        if updated_user:
-            logger.info(f"User {username} points updated. New total: {new_points}")
-            return True
-        else:
-            logger.error(f"Failed to update points for user {username}")
-            return False
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error updating points for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    except Exception as e:
-        logger.error(f"Unexpected error updating points for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
-
-def get_user_streak(username: str):
-    """
-    Get user's current streak count
-    Args:
-        username (str): Username to get streak for
-    Returns:
-        int: Current streak count, 0 if user not found or error
-    """
-    conn = None
-    cur = None
-    try:
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        # Query for user's streak
-        cur.execute(
-            "SELECT streak FROM users WHERE username = %s",
-            (username,)
-        )
-        
-        result = cur.fetchone()
-        
-        if result:
-            streak = result.get('streak', 0) or 0
-            logger.debug(f"User {username} streak: {streak}")
-            return streak
-        else:
-            logger.warning(f"Failed to get streak for user {username}")
-            return 0
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error getting streak for {username}: {e}")
-        return 0
-    except Exception as e:
-        logger.error(f"Unexpected error getting streak for {username}: {e}")
-        return 0
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
-
-def update_user_streak(username: str, streak: int):
-    """
-    Update user's streak count
-    Args:
-        username (str): Username to update
-        streak (int): New streak value
-    Returns:
-        bool: True if successful, False if failed
-    """
-    conn = None
-    cur = None
-    try:
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        # Update streak
-        cur.execute(
-            "UPDATE users SET streak = %s WHERE username = %s RETURNING *",
-            (streak, username)
-        )
-        
-        updated_user = cur.fetchone()
-        conn.commit()
-        
-        if updated_user:
-            logger.info(f"User {username} streak updated to {streak}")
-            return True
-        else:
-            logger.error(f"Failed to update streak for user {username}")
-            return False
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error updating streak for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    except Exception as e:
-        logger.error(f"Unexpected error updating streak for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
-
-def update_user_password(username: str, old_password: str, new_password: str):
-    """
-    Update user's password after verifying old password
-    Args:
-        username (str): Username to update
-        old_password (str): Current password for verification
-        new_password (str): New password to set
-    Returns:
-        bool: True if successful, False if failed
-    """
-    conn = None
-    cur = None
-    try:
-        # First authenticate with old password
-        user = authenticate_user(username, old_password)
-        if not user:
-            logger.warning(f"Password update failed: Invalid current password for {username}")
-            return False
-        
-        # Validate new password
-        if len(new_password) < 6:
-            logger.error("New password must be at least 6 characters")
-            return False
-        
-        # Hash new password
-        salt = bcrypt.gensalt()
-        hashed_new_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
-        
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        # Update password in database
-        cur.execute(
-            "UPDATE users SET password = %s WHERE username = %s RETURNING *",
-            (hashed_new_password.decode('utf-8'), username)
-        )
-        
-        updated_user = cur.fetchone()
-        conn.commit()
-        
-        if updated_user:
-            logger.info(f"Password updated successfully for user {username}")
-            return True
-        else:
-            logger.error(f"Failed to update password for user {username}")
-            return False
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error updating password for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    except Exception as e:
-        logger.error(f"Unexpected error updating password for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
-
-def reset_user_password(username: str, new_password: str):
-    """
-    Reset user's password without requiring old password (for password resets)
-    Args:
-        username (str): Username to update
-        new_password (str): New password to set
-    Returns:
-        bool: True if successful, False if failed
-    """
-    conn = None
-    cur = None
-    try:
-        # Check if user exists
-        user = get_user(username)
-        if not user:
-            logger.error(f"Cannot reset password: User {username} not found")
-            return False
-        
-        # Validate new password
-        if len(new_password) < 6:
-            logger.error("New password must be at least 6 characters")
-            return False
-        
-        # Hash new password
-        salt = bcrypt.gensalt()
-        hashed_new_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
-        
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        # Update password in database
-        cur.execute(
-            "UPDATE users SET password = %s WHERE username = %s RETURNING *",
-            (hashed_new_password.decode('utf-8'), username)
-        )
-        
-        updated_user = cur.fetchone()
-        conn.commit()
-        
-        if updated_user:
-            logger.info(f"Password reset successfully for user {username}")
-            return True
-        else:
-            logger.error(f"Failed to reset password for user {username}")
-            return False
-            
-    except psycopg2.Error as e:
-        logger.error(f"Database error resetting password for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    except Exception as e:
-        logger.error(f"Unexpected error resetting password for {username}: {e}")
-        if conn:
-            conn.rollback()
-        return False
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
+        print(f"Failed to connect to MongoDB: {e}")
+        raise
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
     """
@@ -454,64 +48,40 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         points_earned (int): Points earned for this story
         username (str): Author's username
     Returns:
-        int: Story ID if successful, None if failed
+        str: Story ID if successful, None if failed
     """
-    conn = None
-    cur = None
     try:
         # Validate input parameters
         if not title or not story_content or not username:
-            logger.error("Missing required fields for story")
             return None
         
-        logger.debug(f"Adding story '{title}' for user: {username}")
-        logger.debug(f"Word count: {word_count}, Points: {points_earned}")
+        # Get database connection
+        db = get_db()
+        stories_collection = db.stories
         
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
+        # Create story document
+        story_doc = {
+            "title": title,
+            "story": story_content,
+            "prompts": prompts,  # MongoDB stores dicts natively as BSON
+            "word_count": word_count,
+            "points_earned": points_earned,
+            "author_username": username,
+            "created_at": datetime.now()
+        }
         
-        # Insert the story into database
-        # prompts dict will be converted to JSON automatically by psycopg2
-        cur.execute(
-            """
-            INSERT INTO stories (title, story, prompts, word_count, points_earned, author_username, created_at) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s) 
-            RETURNING id
-            """,
-            (title, story_content, json.dumps(prompts), word_count, points_earned, username, datetime.now())
-        )
+        # Insert the story into MongoDB
+        result = stories_collection.insert_one(story_doc)
         
-        result = cur.fetchone()
-        conn.commit()
-        
-        if result:
-            story_id = result['id']
-            logger.info(f"Story '{title}' saved successfully with ID: {story_id}")
-            
-            # Update user's points
-            update_user_points(username, points_earned)
-            
+        if result.inserted_id:
+            story_id = str(result.inserted_id)  # Convert ObjectId to string
             return story_id
         else:
-            logger.error("No data returned from story insert operation")
             return None
         
-    except psycopg2.Error as e:
-        logger.error(f"Database error saving story: {e}")
-        if conn:
-            conn.rollback()
-        return None
     except Exception as e:
-        logger.error(f"Unexpected error saving story: {e}")
-        if conn:
-            conn.rollback()
+        print(f"Error saving story: {e}")
         return None
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
 
 def get_user_stories(username: str):
     """
@@ -521,41 +91,28 @@ def get_user_stories(username: str):
     Returns:
         list: List of story dictionaries, empty list if none found
     """
-    conn = None
-    cur = None
     try:
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
+        # Get database connection
+        db = get_db()
+        stories_collection = db.stories
         
         # Query for user's stories, ordered by creation date (newest first)
-        cur.execute(
-            "SELECT * FROM stories WHERE author_username = %s ORDER BY created_at DESC",
-            (username,)
-        )
+        cursor = stories_collection.find(
+            {"author_username": username}
+        ).sort("created_at", -1)  # -1 for descending order
         
-        stories = cur.fetchall()
+        # Convert cursor to list of dicts
+        stories_list = []
+        for story in cursor:
+            # Convert ObjectId to string for JSON serialization
+            story['_id'] = str(story['_id'])
+            stories_list.append(story)
         
-        if stories:
-            # Convert to list of dicts
-            stories_list = [dict(story) for story in stories]
-            logger.info(f"Found {len(stories_list)} stories for user {username}")
-            return stories_list
-        else:
-            logger.debug(f"No stories found for user {username}")
-            return []
+        return stories_list
             
-    except psycopg2.Error as e:
-        logger.error(f"Database error getting stories for {username}: {e}")
-        return []
     except Exception as e:
-        logger.error(f"Unexpected error getting stories for {username}: {e}")
+        print(f"Error getting stories for {username}: {e}")
         return []
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
 
 def get_all_stories():
     """
@@ -563,38 +120,82 @@ def get_all_stories():
     Returns:
         list: List of all story dictionaries, empty list if none found
     """
-    conn = None
-    cur = None
     try:
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
+        # Get database connection
+        db = get_db()
+        stories_collection = db.stories
         
         # Query for all stories, ordered by creation date (newest first)
-        cur.execute("SELECT * FROM stories ORDER BY created_at DESC")
+        cursor = stories_collection.find().sort("created_at", -1)
         
-        stories = cur.fetchall()
+        # Convert cursor to list of dicts
+        stories_list = []
+        for story in cursor:
+            # Convert ObjectId to string for JSON serialization
+            story['_id'] = str(story['_id'])
+            stories_list.append(story)
         
-        if stories:
-            # Convert to list of dicts
-            stories_list = [dict(story) for story in stories]
-            logger.info(f"Retrieved {len(stories_list)} total stories")
-            return stories_list
-        else:
-            logger.debug("No stories found in database")
-            return []
+        return stories_list
             
-    except psycopg2.Error as e:
-        logger.error(f"Database error getting all stories: {e}")
-        return []
     except Exception as e:
-        logger.error(f"Unexpected error getting all stories: {e}")
+        print(f"Error getting all stories: {e}")
         return []
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
+
+def get_story_by_id(story_id: str):
+    """
+    Get a specific story by its ID
+    Args:
+        story_id (str): Story ID to retrieve
+    Returns:
+        dict: Story document if found, None if not found
+    """
+    try:
+        # Get database connection
+        db = get_db()
+        stories_collection = db.stories
+        
+        # Convert string ID to ObjectId
+        story = stories_collection.find_one({"_id": ObjectId(story_id)})
+        
+        if story:
+            # Convert ObjectId to string for JSON serialization
+            story['_id'] = str(story['_id'])
+            return story
+        else:
+            return None
+            
+    except Exception as e:
+        print(f"Error getting story by ID {story_id}: {e}")
+        return None
+
+def delete_story(story_id: str, username: str):
+    """
+    Delete a story (only if the user is the author)
+    Args:
+        story_id (str): Story ID to delete
+        username (str): Username attempting to delete (for authorization)
+    Returns:
+        bool: True if successful, False if failed
+    """
+    try:
+        # Get database connection
+        db = get_db()
+        stories_collection = db.stories
+        
+        # Delete only if the user is the author
+        result = stories_collection.delete_one({
+            "_id": ObjectId(story_id),
+            "author_username": username
+        })
+        
+        if result.deleted_count > 0:
+            return True
+        else:
+            return False
+            
+    except Exception as e:
+        print(f"Error deleting story {story_id}: {e}")
+        return False
 
 def test_connection():
     """
@@ -602,25 +203,27 @@ def test_connection():
     Returns:
         bool: True if connection successful, False otherwise
     """
-    conn = None
-    cur = None
     try:
-        # Connect to database
-        conn = get_db_connection()
-        cur = conn.cursor()
+        # Get database connection
+        db = get_db()
         
-        # Simple test query - count users
-        cur.execute("SELECT COUNT(*) as count FROM users")
-        result = cur.fetchone()
+        # Simple test query - count stories
+        count = db.stories.count_documents({})
         
-        logger.info(f"Database connection test successful. Found {result['count']} users")
+        print(f"MongoDB connection test successful. Found {count} stories")
         return True
         
     except Exception as e:
-        logger.error(f"Database connection test failed: {e}")
+        print(f"MongoDB connection test failed: {e}")
         return False
-    finally:
-        if cur:
-            cur.close()
-        if conn:
-            conn.close()
+
+def close_connection():
+    """
+    Close the MongoDB connection
+    """
+    global _mongo_client
+    
+    if _mongo_client:
+        _mongo_client.close()
+        _mongo_client = None
+        print("MongoDB connection closed")

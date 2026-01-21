@@ -53,7 +53,6 @@ def callback():
 
 # home page route
 @app.route('/home')
-@login_required
 def home():
     # Generate new prompts and store them in session for later use in save_writing
     story_prompts = prompts.gen_all_prompts()
@@ -116,7 +115,6 @@ def reset_password():
 
 # prior pieces route
 @app.route('/prior-pieces')
-@login_required
 def prior_pieces():
     try:
         username = session.get('username')
@@ -136,7 +134,6 @@ def prior_pieces():
 
 # user's account page
 @app.route('/my-account')
-@login_required
 def my_account():
     try:
         # Get username from session
@@ -169,7 +166,6 @@ def my_account():
 
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
-@login_required
 def save_writing():
     if request.method == "POST":
         # get info from the form
@@ -221,7 +217,6 @@ def save_writing():
 
 # read a story page
 @app.route("/read-story/<story_title>")
-@login_required
 def read_story(story_title):
     try:
         # Get username from session
@@ -251,7 +246,6 @@ def read_story(story_title):
 
 # Test route for debugging database connection and operations
 @app.route('/test-db')
-@login_required
 def test_db():
     """Test database connection and basic operations for debugging purposes"""
     try:

@@ -1,39 +1,17 @@
-import psycopg2
-from psycopg2.extras import RealDictCursor
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-import bcrypt
-import logging
 import json
-
-# Set up logging for better debugging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 # Load the environment variables from the .env file
 load_dotenv()
+
+# get and clean URL
 DATABASE_URL = os.getenv("DATABASE_URL")
-
-# Debug: Check if environment variable is loaded correctly
-logger.info(f"DEBUG - DATABASE_URL present: {bool(DATABASE_URL)}")
-
-# Validate environment variable before creating connection
-if not DATABASE_URL:
-    logger.error("DATABASE_URL must be set in .env file")
-    logger.error("Please check your .env file exists and contains the correct variables")
-    raise ValueError("DATABASE_URL must be set in .env file")
-
-# Clean up URL if it has extra characters
 DATABASE_URL = DATABASE_URL.strip()
 
 # Helper function to get database connection
 def get_db_connection():
-    """
-    Create and return a database connection
-    Returns:
-        connection: psycopg2 connection object with RealDictCursor
-    """
     try:
         # psycopg2 can use the DATABASE_URL directly
         # RealDictCursor returns rows as dictionaries instead of tuples

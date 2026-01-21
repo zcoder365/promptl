@@ -40,7 +40,7 @@ def get_current_user():
     token = session.get("user")
     if not token:
         return None
-    id_token = token.get("id_token")  # Auth0 returns id_token + access_token
+    id_token = token.get("id_token") # Auth0 returns id_token + access_token
     payload = jwt.get_unverified_claims(id_token)
     return {
         "auth0_id": payload["sub"],

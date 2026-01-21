@@ -9,11 +9,12 @@ from os import environ as env
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 from urllib.parse import quote_plus, urlencode
-
-# import project files
 import utils.prompts as prompts
 import utils.model as model
 import utils.database as db
+
+# load env file
+load_dotenv()
 
 # create the flask app and add configurations
 app = Flask(__name__)

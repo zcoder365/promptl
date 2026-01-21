@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 import bcrypt
 import logging
-from postgrest.exceptions import APIError
+import json
 
 # Set up logging for better debugging
 logging.basicConfig(level=logging.DEBUG)
@@ -13,38 +13,35 @@ logger = logging.getLogger(__name__)
 
 # Load the environment variables from the .env file
 load_dotenv()
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SERVICE_ROLE_KEY")  # Use service role key for full database access
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Debug: Check if environment variables are loaded correctly
-logger.info(f"DEBUG - SUPABASE_URL: {SUPABASE_URL}")
-logger.info(f"DEBUG - SERVICE_ROLE_KEY present: {bool(SUPABASE_KEY)}")
-logger.info(f"DEBUG - SERVICE_ROLE_KEY length: {len(SUPABASE_KEY) if SUPABASE_KEY else 0}")
+# Debug: Check if environment variable is loaded correctly
+logger.info(f"DEBUG - DATABASE_URL present: {bool(DATABASE_URL)}")
 
-# Validate environment variables before creating client
-if not SUPABASE_URL or not SUPABASE_KEY:
-    logger.error("SUPABASE_URL and SERVICE_ROLE_KEY must be set in .env file")
+# Validate environment variable before creating connection
+if not DATABASE_URL:
+    logger.error("DATABASE_URL must be set in .env file")
     logger.error("Please check your .env file exists and contains the correct variables")
-    raise ValueError("SUPABASE_URL and SERVICE_ROLE_KEY must be set in .env file")
+    raise ValueError("DATABASE_URL must be set in .env file")
 
 # Clean up URL if it has extra characters
-SUPABASE_URL = SUPABASE_URL.strip()
-SUPABASE_KEY = SUPABASE_KEY.strip()
+DATABASE_URL = DATABASE_URL.strip()
 
-if not SUPABASE_URL.startswith('https://'):
-    logger.error(f"Invalid URL format: {SUPABASE_URL}")
-    logger.error("SUPABASE_URL must start with 'https://' and should look like: https://your-project.supabase.co")
-    raise ValueError("SUPABASE_URL must start with 'https://'")
-
-# Initialize the supabase client
-try:
-    logger.info("Attempting to create Supabase client...")
-    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-    logger.info("Supabase client created successfully")
-except Exception as e:
-    logger.error(f"Failed to create Supabase client: {e}")
-    logger.error("Please verify your SUPABASE_URL and SERVICE_ROLE_KEY are correct")
-    raise
+# Helper function to get database connection
+def get_db_connection():
+    """
+    Create and return a database connection
+    Returns:
+        connection: psycopg2 connection object with RealDictCursor
+    """
+    try:
+        # psycopg2 can use the DATABASE_URL directly
+        # RealDictCursor returns rows as dictionaries instead of tuples
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+        return conn
+    except Exception as e:
+        logger.error(f"Failed to connect to database: {e}")
+        raise
 
 def add_user(username: str, password: str):
     """
@@ -55,6 +52,8 @@ def add_user(username: str, password: str):
     Returns:
         dict: User data if successful, None if failed
     """
+    conn = None
+    cur = None
     try:
         # Validate inputs before database operation
         if not username or not password:
@@ -77,33 +76,48 @@ def add_user(username: str, password: str):
         salt = bcrypt.gensalt()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         
-        # Create user entry with hashed password
-        new_user_entry = {
-            "username": username,
-            "password": hashed_password.decode('utf-8'),  # Store hash, not plain text
-            "parent_email": "",
-            "points": 0,
-            "streak": 0  # Initialize streak field
-        }
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
         # Insert into database with proper error handling
         logger.debug(f"Inserting user entry for: {username}")
-        response = supabase.table("users").insert(new_user_entry).execute()
+        cur.execute(
+            """
+            INSERT INTO users (username, password, parent_email, points, streak) 
+            VALUES (%s, %s, %s, %s, %s) 
+            RETURNING *
+            """,
+            (username, hashed_password.decode('utf-8'), "", 0, 0)
+        )
         
-        # Check if the insertion was successful
-        if response.data and len(response.data) > 0:
+        # Get the inserted user data
+        new_user = cur.fetchone()
+        conn.commit()  # commit the transaction
+        
+        if new_user:
             logger.info(f"Successfully created user: {username}")
-            return response.data[0]  # Return the created user data
+            return dict(new_user)  # convert to regular dict
         else:
             logger.error(f"Failed to create user: {username} - No data returned")
             return None
             
-    except APIError as e:
-        logger.error(f"Supabase API error adding user '{username}': {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error adding user '{username}': {e}")
+        if conn:
+            conn.rollback()  # rollback on error
         return None
     except Exception as e:
         logger.error(f"Unexpected error adding user '{username}': {e}")
+        if conn:
+            conn.rollback()
         return None
+    finally:
+        # always close cursor and connection
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def authenticate_user(username: str, password: str):
     """
@@ -141,23 +155,40 @@ def get_user(username: str):
     Returns:
         dict: User data if found, None if not found
     """
+    conn = None
+    cur = None
     try:
-        response = supabase.table("users").select("*").eq("username", username).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data and len(response.data) > 0:
-            user = response.data[0]
+        # Query for user
+        cur.execute(
+            "SELECT * FROM users WHERE username = %s",
+            (username,)
+        )
+        
+        user = cur.fetchone()
+        
+        if user:
             logger.debug(f"Found user: {username}")
-            return user
+            return dict(user)  # convert to regular dict
         else:
             logger.debug(f"User not found: {username}")
             return None  # Explicitly return None when user not found
             
-    except APIError as e:
-        logger.error(f"Supabase API error getting user {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error getting user {username}: {e}")
         return None
     except Exception as e:
         logger.error(f"Unexpected error getting user {username}: {e}")
         return None
+    finally:
+        # always close cursor and connection
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def update_user_points(username: str, points_to_add: int):
     """
@@ -168,6 +199,8 @@ def update_user_points(username: str, points_to_add: int):
     Returns:
         bool: True if successful, False if failed
     """
+    conn = None
+    cur = None
     try:
         # First get current points
         current_user = get_user(username)
@@ -176,27 +209,43 @@ def update_user_points(username: str, points_to_add: int):
             return False
             
         current_points = current_user.get('points', 0) or 0
-        
         new_points = current_points + points_to_add
         
-        # Update points
-        response = supabase.table("users").update({
-            "points": new_points
-        }).eq("username", username).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data:
+        # Update points
+        cur.execute(
+            "UPDATE users SET points = %s WHERE username = %s RETURNING *",
+            (new_points, username)
+        )
+        
+        updated_user = cur.fetchone()
+        conn.commit()
+        
+        if updated_user:
             logger.info(f"User {username} points updated. New total: {new_points}")
             return True
         else:
             logger.error(f"Failed to update points for user {username}")
             return False
             
-    except APIError as e:
-        logger.error(f"Supabase API error updating points for {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error updating points for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
     except Exception as e:
         logger.error(f"Unexpected error updating points for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def get_user_streak(username: str):
     """
@@ -206,23 +255,40 @@ def get_user_streak(username: str):
     Returns:
         int: Current streak count, 0 if user not found or error
     """
+    conn = None
+    cur = None
     try:
-        response = supabase.table("users").select("streak").eq("username", username).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data and len(response.data) > 0:
-            streak = response.data[0].get('streak', 0) or 0
+        # Query for user's streak
+        cur.execute(
+            "SELECT streak FROM users WHERE username = %s",
+            (username,)
+        )
+        
+        result = cur.fetchone()
+        
+        if result:
+            streak = result.get('streak', 0) or 0
             logger.debug(f"User {username} streak: {streak}")
             return streak
         else:
             logger.warning(f"Failed to get streak for user {username}")
             return 0
             
-    except APIError as e:
-        logger.error(f"Supabase API error getting streak for {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error getting streak for {username}: {e}")
         return 0
     except Exception as e:
         logger.error(f"Unexpected error getting streak for {username}: {e}")
         return 0
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def update_user_streak(username: str, streak: int):
     """
@@ -233,22 +299,44 @@ def update_user_streak(username: str, streak: int):
     Returns:
         bool: True if successful, False if failed
     """
+    conn = None
+    cur = None
     try:
-        response = supabase.table("users").update({"streak": streak}).eq("username", username).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data:
+        # Update streak
+        cur.execute(
+            "UPDATE users SET streak = %s WHERE username = %s RETURNING *",
+            (streak, username)
+        )
+        
+        updated_user = cur.fetchone()
+        conn.commit()
+        
+        if updated_user:
             logger.info(f"User {username} streak updated to {streak}")
             return True
         else:
             logger.error(f"Failed to update streak for user {username}")
             return False
             
-    except APIError as e:
-        logger.error(f"Supabase API error updating streak for {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error updating streak for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
     except Exception as e:
         logger.error(f"Unexpected error updating streak for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def update_user_password(username: str, old_password: str, new_password: str):
     """
@@ -260,6 +348,8 @@ def update_user_password(username: str, old_password: str, new_password: str):
     Returns:
         bool: True if successful, False if failed
     """
+    conn = None
+    cur = None
     try:
         # First authenticate with old password
         user = authenticate_user(username, old_password)
@@ -276,24 +366,41 @@ def update_user_password(username: str, old_password: str, new_password: str):
         salt = bcrypt.gensalt()
         hashed_new_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
         
-        # Update password in database
-        response = supabase.table("users").update({
-            "password": hashed_new_password.decode('utf-8')
-        }).eq("username", username).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data:
+        # Update password in database
+        cur.execute(
+            "UPDATE users SET password = %s WHERE username = %s RETURNING *",
+            (hashed_new_password.decode('utf-8'), username)
+        )
+        
+        updated_user = cur.fetchone()
+        conn.commit()
+        
+        if updated_user:
             logger.info(f"Password updated successfully for user {username}")
             return True
         else:
             logger.error(f"Failed to update password for user {username}")
             return False
             
-    except APIError as e:
-        logger.error(f"Supabase API error updating password for {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error updating password for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
     except Exception as e:
         logger.error(f"Unexpected error updating password for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def reset_user_password(username: str, new_password: str):
     """
@@ -304,6 +411,8 @@ def reset_user_password(username: str, new_password: str):
     Returns:
         bool: True if successful, False if failed
     """
+    conn = None
+    cur = None
     try:
         # Check if user exists
         user = get_user(username)
@@ -320,24 +429,41 @@ def reset_user_password(username: str, new_password: str):
         salt = bcrypt.gensalt()
         hashed_new_password = bcrypt.hashpw(new_password.encode('utf-8'), salt)
         
-        # Update password in database
-        response = supabase.table("users").update({
-            "password": hashed_new_password.decode('utf-8')
-        }).eq("username", username).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data:
+        # Update password in database
+        cur.execute(
+            "UPDATE users SET password = %s WHERE username = %s RETURNING *",
+            (hashed_new_password.decode('utf-8'), username)
+        )
+        
+        updated_user = cur.fetchone()
+        conn.commit()
+        
+        if updated_user:
             logger.info(f"Password reset successfully for user {username}")
             return True
         else:
             logger.error(f"Failed to reset password for user {username}")
             return False
             
-    except APIError as e:
-        logger.error(f"Supabase API error resetting password for {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error resetting password for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
     except Exception as e:
         logger.error(f"Unexpected error resetting password for {username}: {e}")
+        if conn:
+            conn.rollback()
         return False
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
     """
@@ -350,8 +476,10 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         points_earned (int): Points earned for this story
         username (str): Author's username
     Returns:
-        str: Story ID if successful, None if failed
+        int: Story ID if successful, None if failed
     """
+    conn = None
+    cur = None
     try:
         # Validate input parameters
         if not title or not story_content or not username:
@@ -361,27 +489,26 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         logger.debug(f"Adding story '{title}' for user: {username}")
         logger.debug(f"Word count: {word_count}, Points: {points_earned}")
         
-        # Check if supabase client is properly initialized
-        if not supabase:
-            logger.error("Supabase client not initialized")
-            return None
-            
-        story_data = {
-            "title": title,
-            "story": story_content,
-            "prompts": prompts,  # This will be stored as JSON in PostgreSQL
-            "word_count": word_count,
-            "points_earned": points_earned,
-            "author_username": username,
-            "created_at": datetime.now().isoformat()
-        }
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        # Insert the story into Supabase
-        result = supabase.table('stories').insert(story_data).execute()
+        # Insert the story into database
+        # prompts dict will be converted to JSON automatically by psycopg2
+        cur.execute(
+            """
+            INSERT INTO stories (title, story, prompts, word_count, points_earned, author_username, created_at) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s) 
+            RETURNING id
+            """,
+            (title, story_content, json.dumps(prompts), word_count, points_earned, username, datetime.now())
+        )
         
-        # Check if the insert was successful
-        if result.data and len(result.data) > 0:
-            story_id = result.data[0]['id']
+        result = cur.fetchone()
+        conn.commit()
+        
+        if result:
+            story_id = result['id']
             logger.info(f"Story '{title}' saved successfully with ID: {story_id}")
             
             # Update user's points
@@ -392,12 +519,21 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             logger.error("No data returned from story insert operation")
             return None
         
-    except APIError as e:
-        logger.error(f"Supabase API error saving story: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error saving story: {e}")
+        if conn:
+            conn.rollback()
         return None
     except Exception as e:
         logger.error(f"Unexpected error saving story: {e}")
+        if conn:
+            conn.rollback()
         return None
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def get_user_stories(username: str):
     """
@@ -407,23 +543,41 @@ def get_user_stories(username: str):
     Returns:
         list: List of story dictionaries, empty list if none found
     """
+    conn = None
+    cur = None
     try:
-        response = supabase.table("stories").select("*").eq("author_username", username).order("created_at", desc=True).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data:
-            stories = response.data
-            logger.info(f"Found {len(stories)} stories for user {username}")
-            return stories
+        # Query for user's stories, ordered by creation date (newest first)
+        cur.execute(
+            "SELECT * FROM stories WHERE author_username = %s ORDER BY created_at DESC",
+            (username,)
+        )
+        
+        stories = cur.fetchall()
+        
+        if stories:
+            # Convert to list of dicts
+            stories_list = [dict(story) for story in stories]
+            logger.info(f"Found {len(stories_list)} stories for user {username}")
+            return stories_list
         else:
             logger.debug(f"No stories found for user {username}")
             return []
             
-    except APIError as e:
-        logger.error(f"Supabase API error getting stories for {username}: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error getting stories for {username}: {e}")
         return []
     except Exception as e:
         logger.error(f"Unexpected error getting stories for {username}: {e}")
         return []
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def get_all_stories():
     """
@@ -431,35 +585,64 @@ def get_all_stories():
     Returns:
         list: List of all story dictionaries, empty list if none found
     """
+    conn = None
+    cur = None
     try:
-        response = supabase.table("stories").select("*").order("created_at", desc=True).execute()
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
         
-        if response.data:
-            stories = response.data
-            logger.info(f"Retrieved {len(stories)} total stories")
-            return stories
+        # Query for all stories, ordered by creation date (newest first)
+        cur.execute("SELECT * FROM stories ORDER BY created_at DESC")
+        
+        stories = cur.fetchall()
+        
+        if stories:
+            # Convert to list of dicts
+            stories_list = [dict(story) for story in stories]
+            logger.info(f"Retrieved {len(stories_list)} total stories")
+            return stories_list
         else:
             logger.debug("No stories found in database")
             return []
             
-    except APIError as e:
-        logger.error(f"Supabase API error getting all stories: {e}")
+    except psycopg2.Error as e:
+        logger.error(f"Database error getting all stories: {e}")
         return []
     except Exception as e:
         logger.error(f"Unexpected error getting all stories: {e}")
         return []
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 def test_connection():
     """
-    Test the Supabase connection
+    Test the database connection
     Returns:
         bool: True if connection successful, False otherwise
     """
+    conn = None
+    cur = None
     try:
-        # Simple test query
-        response = supabase.table("users").select("count", count="exact").execute()
-        logger.info("Supabase connection test successful")
+        # Connect to database
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Simple test query - count users
+        cur.execute("SELECT COUNT(*) as count FROM users")
+        result = cur.fetchone()
+        
+        logger.info(f"Database connection test successful. Found {result['count']} users")
         return True
+        
     except Exception as e:
-        logger.error(f"Supabase connection test failed: {e}")
+        logger.error(f"Database connection test failed: {e}")
         return False
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()

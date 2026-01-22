@@ -10,7 +10,7 @@ load_dotenv()
 
 # Get MongoDB connection string from environment
 MONGODB_URI = os.getenv("MONGODB_URI")
-DATABASE_NAME = "promptl"  # database name
+DATABASE_NAME = "Promptl"  # database name
 
 # Global client variable
 _mongo_client = None
@@ -37,10 +37,10 @@ def get_db():
         print(f"Failed to connect to MongoDB: {e}")
         raise
 
-def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, auth0_user_id: str):
+def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, user_email: str):
     try:
         # Validate input parameters
-        if not title or not story_content or not auth0_user_id:
+        if not title or not story_content or not user_email:
             return None
         
         # Get database connection
@@ -54,7 +54,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "prompts": prompts,  # MongoDB stores dicts natively as BSON
             "word_count": word_count,
             "points_earned": points_earned,
-            "auth0_user_id": auth0_user_id,
+            "user_email": user_email,
             "created_at": datetime.now()
         }
         
@@ -71,7 +71,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         print(f"Error saving story: {e}")
         return None
 
-def get_user_stories(auth0_user_id: str):
+def get_user_stories(user_email: str):
     try:
         # Get database connection
         db = get_db()
@@ -79,7 +79,7 @@ def get_user_stories(auth0_user_id: str):
         
         # Query for user's stories, ordered by creation date (newest first)
         cursor = stories_collection.find(
-            {"auth0_user_id": auth0_user_id}
+            {"user_email": user_email}
         ).sort("created_at", -1)  # -1 for descending order
         
         # Convert cursor to list of dicts
@@ -137,7 +137,7 @@ def get_story_by_id(story_id: str):
         print(f"Error getting story by ID {story_id}: {e}")
         return None
 
-def delete_story(story_id: str, auth0_user_id: str):
+def delete_story(story_id: str, user_email: str):
     try:
         # Get database connection
         db = get_db()
@@ -146,7 +146,7 @@ def delete_story(story_id: str, auth0_user_id: str):
         # Delete only if the user is the author
         result = stories_collection.delete_one({
             "_id": ObjectId(story_id),
-            "auth0_user_id": auth0_user_id
+            "user_email": user_email
         })
         
         if result.deleted_count > 0:
@@ -157,6 +157,34 @@ def delete_story(story_id: str, auth0_user_id: str):
     except Exception as e:
         print(f"Error deleting story {story_id}: {e}")
         return False
+
+def add_user(username: str, password: str):
+    user_document = {
+        "username": username,
+        "password": password
+    }
+    
+    db = get_db()
+    users_collection = db.users
+    result = users_collection.insert_one(user_document)
+    
+    if result.inserted_id:
+            user_id = str(result.inserted_id)  # Convert ObjectId to string
+            return user_id
+    else:
+        return None
+
+def find_user(username: str):
+    db = get_db()
+    users_collection = db.users
+    
+    result = users_collection.find_one({"username": username})
+    
+    if result is not None:
+        return result
+    else:
+        print(f"Error getting user with username {username}.")
+        return None
 
 def test_connection():
     try:

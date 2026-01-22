@@ -56,16 +56,50 @@ def index():
 # create login route that redirects to Auth0
 @app.route("/login")
 def login():
-    return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True)
-    )
+    if request.method == "POST":
+        un = request.form['username']
+        pw = request.form['password']
+        
+        # validate user
+        user_verified = model.validate_user_login(un, pw)
+        if user_verified == True:
+            print(f"User {un} logged in, returning to home page")
+            return redirect(url_for("home"))
+        
+        elif user_verified == False or user_verified == None:
+            print(f"No such user with username {un} exists, sending to sign up...")
+    
+    return render_template("login.html")
+    
+    # return oauth.auth0.authorize_redirect(
+    #     redirect_uri=url_for("callback", _external=True)
+    # )
 
-# create a callback route for getting user ifno
-@app.route("/callback", methods=["GET", "POST"])
-def callback():
-    token = oauth.auth0.authorize_access_token()
-    session["user"] = token
-    return redirect(url_for("home")) # redirect user to home page
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+    if request.method == "POST":
+        un = request.form['username']
+        pw = request.form['password']
+        
+        # determine if user exists
+        user_exists = model.validate_user_signup(un, pw)
+        if user_exists:
+            return redirect(url_for("login"))
+        
+        added = db.add_user(un, pw)
+        if added is None:
+            return render_template("signup.html", error="There was an error creating your account.")
+        
+        return redirect(url_for("home"))
+    
+    return render_template("signup.html")
+
+# # create a callback route for getting user ifno
+# @app.route("/callback", methods=["GET", "POST"])
+# def callback():
+#     token = oauth.auth0.authorize_access_token()
+#     session["user"] = token
+#     return redirect(url_for("home")) # redirect user to home page
 
 # home page route
 @app.route('/home')

@@ -67,10 +67,9 @@ def create_story_document(title, written_raw, prompts, metrics, user_id):
         "created_at": datetime.now()
     }
     
-def validate_user(username: str, password: str):
+def validate_user_login(username: str, password: str):
     user = find_user(username)
-    if user:
+    if user is None:
         return False
     
-    if user is None:
-        add_user(username, password)
+    return True

@@ -62,6 +62,9 @@ def login():
         # validate user
         user_verified = model.validate_user_login(un, pw)
         if user_verified == True:
+            # add username to session
+            session['username'] = un
+            
             # print(f"User {un} logged in, returning to home page")
             return redirect(url_for("home"))
         
@@ -90,6 +93,8 @@ def signup():
         if added is None:
             return redirect(url_for("login"))
         
+        # add user's username to session and redirect to home page
+        session['username'] = un
         return redirect(url_for("home"))
     
     return render_template("signup.html")
@@ -190,11 +195,10 @@ def save_writing():
         if not written_raw or not title:
             return render_template("index.html", message="Please provide both title and story content.")
         
-        # Get username from session
-        user_info = get_current_user()
-        user_id = user_info['auth0_id']
+        # get username from session
+        username = session['username']
         
-        if not user_id:
+        if not username:
             return render_template("index.html", message="User session expired. Please log in again.")
         
         # Get prompts from session instead of relying on global variable

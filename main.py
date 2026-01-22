@@ -212,7 +212,7 @@ def save_writing():
         print(f"DEBUG MAIN - Metrics: {metrics}")
         
         # Save the story to database
-        story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], user_id)
+        story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], username)
         
         if story_id:
             # Clear the used prompts from session after successful save

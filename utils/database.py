@@ -28,7 +28,7 @@ def get_db():
         # Only create client once (singleton pattern)
         if _mongo_client is None:
             _mongo_client = MongoClient(MONGODB_URI)
-            _db = _mongo_client[DATABASE_NAME]
+            _db = _mongo_client["Promptl"]
             # Test the connection
             _mongo_client.admin.command('ping')
         

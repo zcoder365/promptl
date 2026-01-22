@@ -37,10 +37,10 @@ def get_db():
         print(f"Failed to connect to MongoDB: {e}")
         raise
 
-def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, user_email: str):
+def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
     try:
         # Validate input parameters
-        if not title or not story_content or not user_email:
+        if not title or not story_content or not username:
             return None
         
         # Get database connection
@@ -54,7 +54,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
             "prompts": prompts,  # MongoDB stores dicts natively as BSON
             "word_count": word_count,
             "points_earned": points_earned,
-            "user_email": user_email,
+            "username": username,
             "created_at": datetime.now()
         }
         
@@ -71,7 +71,7 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         print(f"Error saving story: {e}")
         return None
 
-def get_user_stories(user_email: str):
+def get_user_stories(username: str):
     try:
         # Get database connection
         db = get_db()
@@ -79,7 +79,7 @@ def get_user_stories(user_email: str):
         
         # Query for user's stories, ordered by creation date (newest first)
         cursor = stories_collection.find(
-            {"user_email": user_email}
+            {"username": username}
         ).sort("created_at", -1)  # -1 for descending order
         
         # Convert cursor to list of dicts
@@ -92,7 +92,7 @@ def get_user_stories(user_email: str):
         return stories_list
             
     except Exception as e:
-        print(f"Error getting stories for {auth0_user_id}: {e}")
+        print(f"Error getting stories for {username}: {e}")
         return []
 
 def get_all_stories():
@@ -137,7 +137,7 @@ def get_story_by_id(story_id: str):
         print(f"Error getting story by ID {story_id}: {e}")
         return None
 
-def delete_story(story_id: str, user_email: str):
+def delete_story(story_id: str, username: str):
     try:
         # Get database connection
         db = get_db()
@@ -146,7 +146,7 @@ def delete_story(story_id: str, user_email: str):
         # Delete only if the user is the author
         result = stories_collection.delete_one({
             "_id": ObjectId(story_id),
-            "user_email": user_email
+            "username": username
         })
         
         if result.deleted_count > 0:

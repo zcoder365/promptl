@@ -68,8 +68,14 @@ def create_story_document(title, written_raw, prompts, metrics, user_id):
     }
     
 def validate_user_login(username: str, password: str):
+    # find user and validate them
     user = find_user(username)
-    if user is None:
-        return False
+    if user: 
+        # compare passwords
+        if password == user["password"]:
+            return True
     
-    return True
+    return False
+
+def validate_user_signup(username: str, password: str):
+    pass

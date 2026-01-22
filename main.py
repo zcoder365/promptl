@@ -257,17 +257,7 @@ def read_story(story_title):
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(
-        "https://" + env.get("AUTH0_DOMAIN")
-        + "/v2/logout?"
-        + urlencode(
-            {
-                "returnTo": url_for("index", _external=True),
-                "client_id": env.get("AUTH0_CLIENT_ID"),
-            },
-            quote_via=quote_plus,
-        )
-    )
+    return redirect(url_for("login"))
 
 # mainloop
 if __name__ == "__main__":

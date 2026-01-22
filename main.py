@@ -138,14 +138,14 @@ def about_page():
 @app.route('/prior-pieces')
 def prior_pieces():
     try:
-        user_info = get_current_user()
-        user_id = user_info['auth0_id']
+        # get user's username
+        username = session['username']
         
-        if not user_id:
+        if not username:
             return redirect(url_for('login'))
         
         # Get user-specific stories from database
-        stories = db.get_user_stories(user_id)
+        stories = db.get_user_stories(username)
         
         return render_template('prior-pieces.html', stories=stories)
     

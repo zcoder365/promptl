@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from utils.database import add_user, find_user
 
 def calculate_points(prompts, story):
     # set vars to keep track of story, points, and used prompts
@@ -65,3 +66,11 @@ def create_story_document(title, written_raw, prompts, metrics, user_id):
         "author_id": user_id,
         "created_at": datetime.now()
     }
+    
+def validate_user(username: str, password: str):
+    user = find_user(username)
+    if user:
+        return False
+    
+    if user is None:
+        add_user(username, password)

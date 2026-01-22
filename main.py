@@ -53,7 +53,6 @@ def get_current_user():
 def index():
     return redirect(url_for("login"))
 
-# create login route that redirects to Auth0
 @app.route("/login")
 def login():
     if request.method == "POST":
@@ -63,11 +62,12 @@ def login():
         # validate user
         user_verified = model.validate_user_login(un, pw)
         if user_verified == True:
-            print(f"User {un} logged in, returning to home page")
+            # print(f"User {un} logged in, returning to home page")
             return redirect(url_for("home"))
         
         elif user_verified == False or user_verified == None:
-            print(f"No such user with username {un} exists, sending to sign up...")
+            # print(f"No such user with username {un} exists, sending to sign up...")
+            return redirect(url_for("login"))
     
     return render_template("login.html")
     
@@ -88,7 +88,7 @@ def signup():
         
         added = db.add_user(un, pw)
         if added is None:
-            return render_template("signup.html", error="There was an error creating your account.")
+            return redirect(url_for("login"))
         
         return redirect(url_for("home"))
     
@@ -106,7 +106,7 @@ def signup():
 def home():
     # Generate new prompts and store them in session for later use in save_writing
     story_prompts = prompts.gen_all_prompts()
-    session['current_prompts'] = story_prompts  # Store prompts in session to persist across requests
+    session['current_prompts'] = story_prompts
         
     # allocate each prompt to a variable
     name = story_prompts['name']

@@ -53,7 +53,7 @@ def get_current_user():
 def index():
     return redirect(url_for("login"))
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
         un = request.form['username']

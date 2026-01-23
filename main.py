@@ -51,6 +51,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 # landing route
 @app.route('/')
 def index():
+    # redirect user to home page as accounts are being fixed
     return redirect(url_for("home"))
 
 # @app.route("/login", methods=['GET', 'POST'])

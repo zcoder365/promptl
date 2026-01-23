@@ -196,11 +196,11 @@ def save_writing():
         if not written_raw or not title:
             return render_template("index.html", message="Please provide both title and story content.")
         
-        # get username from session
-        username = session['username']
+        # # get username from session
+        # username = session['username']
         
-        if not username:
-            return render_template("index.html", message="User session expired. Please log in again.")
+        # if not username:
+        #     return render_template("index.html", message="User session expired. Please log in again.")
         
         # Get prompts from session instead of relying on global variable
         story_prompts = session.get('current_prompts')
@@ -210,10 +210,12 @@ def save_writing():
         
         # Calculate metrics using the retrieved prompts
         metrics = model.get_story_metrics(written_raw, story_prompts)
-        print(f"DEBUG MAIN - Metrics: {metrics}")
+        
+        # create a story document
+        story_doc = model.create_story_document(title, written_raw, story_prompts, metrics, user_id=None)
         
         # Save the story to database
-        story_id = db.add_story_no_username(title, written_raw, story_prompts, metrics['word_count'], metrics['points'])
+        story_id = db.add_story_no_username(story_doc)
         
         if story_id:
             # Clear the used prompts from session after successful save

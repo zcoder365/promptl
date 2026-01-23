@@ -23,81 +23,81 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 
-# set up authentication system
-oauth = OAuth(app)
-oauth.register(
-    "auth0",
-    client_id=env.get("AUTH0_CLIENT_ID"),
-    client_secret=env.get("AUTH0_CLIENT_SECRET"),
-    client_kwargs={
-        "scope": "openid profile email",
-    },
-    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
-)
+# # set up authentication system
+# oauth = OAuth(app)
+# oauth.register(
+#     "auth0",
+#     client_id=env.get("AUTH0_CLIENT_ID"),
+#     client_secret=env.get("AUTH0_CLIENT_SECRET"),
+#     client_kwargs={
+#         "scope": "openid profile email",
+#     },
+#     server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+# )
 
-# have a function to get current user's info
-def get_current_user():
-    token = session.get("user")
-    if not token:
-        return None
-    id_token = token.get("id_token") # Auth0 returns id_token + access_token
-    payload = jwt.get_unverified_claims(id_token)
-    return {
-        "auth0_id": payload["sub"],
-        "email": payload.get("email"),
-        "name": payload.get("name")
-    }
+# # have a function to get current user's info
+# def get_current_user():
+#     token = session.get("user")
+#     if not token:
+#         return None
+#     id_token = token.get("id_token") # Auth0 returns id_token + access_token
+#     payload = jwt.get_unverified_claims(id_token)
+#     return {
+#         "auth0_id": payload["sub"],
+#         "email": payload.get("email"),
+#         "name": payload.get("name")
+#     }
 
 # landing route
 @app.route('/')
 def index():
-    return redirect(url_for("login"))
+    return redirect(url_for("home"))
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if request.method == "POST":
-        un = request.form['username']
-        pw = request.form['password']
+# @app.route("/login", methods=['GET', 'POST'])
+# def login():
+#     if request.method == "POST":
+#         un = request.form['username']
+#         pw = request.form['password']
         
-        # validate user
-        user_verified = model.validate_user_login(un, pw)
-        if user_verified == True:
-            # add username to session
-            session['username'] = un
+#         # validate user
+#         user_verified = model.validate_user_login(un, pw)
+#         if user_verified == True:
+#             # add username to session
+#             session['username'] = un
             
-            # print(f"User {un} logged in, returning to home page")
-            return redirect(url_for("home"))
+#             # print(f"User {un} logged in, returning to home page")
+#             return redirect(url_for("home"))
         
-        elif user_verified == False or user_verified == None:
-            # print(f"No such user with username {un} exists, sending to sign up...")
-            return redirect(url_for("login"))
+#         elif user_verified == False or user_verified == None:
+#             # print(f"No such user with username {un} exists, sending to sign up...")
+#             return redirect(url_for("login"))
     
-    return render_template("login.html")
+#     return render_template("login.html")
     
     # return oauth.auth0.authorize_redirect(
     #     redirect_uri=url_for("callback", _external=True)
     # )
 
-@app.route("/signup", methods=['GET', 'POST'])
-def signup():
-    if request.method == "POST":
-        un = request.form['username']
-        pw = request.form['password']
+# @app.route("/signup", methods=['GET', 'POST'])
+# def signup():
+#     if request.method == "POST":
+#         un = request.form['username']
+#         pw = request.form['password']
         
-        # determine if user exists
-        user_exists = model.validate_user_signup(un, pw)
-        if user_exists:
-            return redirect(url_for("login"))
+#         # determine if user exists
+#         user_exists = model.validate_user_signup(un, pw)
+#         if user_exists:
+#             return redirect(url_for("login"))
         
-        added = db.add_user(un, pw)
-        if added is None:
-            return redirect(url_for("login"))
+#         added = db.add_user(un, pw)
+#         if added is None:
+#             return redirect(url_for("login"))
         
-        # add user's username to session and redirect to home page
-        session['username'] = un
-        return redirect(url_for("home"))
+#         # add user's username to session and redirect to home page
+#         session['username'] = un
+#         return redirect(url_for("home"))
     
-    return render_template("signup.html")
+#     return render_template("signup.html")
 
 # # create a callback route for getting user ifno
 # @app.route("/callback", methods=["GET", "POST"])
@@ -135,23 +135,23 @@ def about_page():
     return render_template('about.html')
 
 # prior pieces route
-@app.route('/prior-pieces')
-def prior_pieces():
-    try:
-        # get user's username
-        username = session['username']
+# @app.route('/prior-pieces')
+# def prior_pieces():
+#     try:
+#         # get user's username
+#         username = session['username']
         
-        if not username:
-            return redirect(url_for('login'))
+#         if not username:
+#             return redirect(url_for('login'))
         
-        # Get user-specific stories from database
-        stories = db.get_user_stories(username)
+#         # Get user-specific stories from database
+#         stories = db.get_user_stories(username)
         
-        return render_template('prior-pieces.html', stories=stories)
+#         return render_template('prior-pieces.html', stories=stories)
     
-    except Exception as e:
-        print(f"DEBUG MAIN - Error retrieving stories: {e}")
-        return render_template('prior-pieces.html', stories=[])
+#     except Exception as e:
+#         print(f"DEBUG MAIN - Error retrieving stories: {e}")
+#         return render_template('prior-pieces.html', stories=[])
 
 # # user's account page
 # @app.route('/my-account')
@@ -212,7 +212,7 @@ def save_writing():
         print(f"DEBUG MAIN - Metrics: {metrics}")
         
         # Save the story to database
-        story_id = db.add_story(title, written_raw, story_prompts, metrics['word_count'], metrics['points'], username)
+        story_id = db.add_story_no_username(title, written_raw, story_prompts, metrics['word_count'], metrics['points'])
         
         if story_id:
             # Clear the used prompts from session after successful save

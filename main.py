@@ -222,36 +222,36 @@ def save_writing():
     
     return redirect(url_for("home"))
 
-# read a story page
-@app.route("/read-story/<story_title>")
-def read_story(story_title):
-    try:
-        # Get username from session
-        user_info = get_current_user()
-        user_id = user_info['auth0_id']
+# # read a story page
+# @app.route("/read-story/<story_title>")
+# def read_story(story_title):
+#     try:
+#         # Get username from session
+#         user_info = get_current_user()
+#         user_id = user_info['auth0_id']
         
-        if not user_id:
-            return redirect(url_for('login'))
+#         if not user_id:
+#             return redirect(url_for('login'))
         
-        # Get user's stories and find the specific one by title
-        stories = db.get_user_stories(user_id)
-        story = None
+#         # Get user's stories and find the specific one by title
+#         stories = db.get_user_stories(user_id)
+#         story = None
         
-        for s in stories:
-            if s['title'] == story_title:
-                story = s
-                break
+#         for s in stories:
+#             if s['title'] == story_title:
+#                 story = s
+#                 break
         
-        # If story not found, redirect to prior pieces with error message
-        if not story:
-            print(f"[ Error ] Story '{story_title}' not found.")
-            return redirect(url_for("prior_pieces"))
+#         # If story not found, redirect to prior pieces with error message
+#         if not story:
+#             print(f"[ Error ] Story '{story_title}' not found.")
+#             return redirect(url_for("prior_pieces"))
 
-        return render_template("read-story.html", story=story)
+#         return render_template("read-story.html", story=story)
     
-    except Exception as e:
-        print(f"Error reading story: {e}")
-        return redirect(url_for("prior_pieces"))
+#     except Exception as e:
+#         print(f"Error reading story: {e}")
+#         return redirect(url_for("prior_pieces"))
 
 # logout route
 @app.route("/logout")

@@ -212,10 +212,10 @@ def save_writing():
         metrics = model.get_story_metrics(written_raw, story_prompts)
         
         # create a story document
-        story_doc = model.create_story_document(title, written_raw, story_prompts, metrics, user_id=None)
+        # story_doc = model.create_story_document(title, written_raw, story_prompts, metrics, user_id=None)
         
         # Save the story to database
-        story_id = db.add_story_no_username(story_doc)
+        # story_id = db.add_story_no_username(story_doc)
         
         session.pop('current_prompts', None)
         

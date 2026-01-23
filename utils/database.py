@@ -71,6 +71,35 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         print(f"Error saving story: {e}")
         return None
 
+def add_story_no_username(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int):
+    try:        
+        # Get database connection
+        db = get_db()
+        stories_collection = db.stories
+        
+        # Create story document
+        story_doc = {
+            "title": title,
+            "story": story_content,
+            "prompts": prompts,  # MongoDB stores dicts natively as BSON
+            "word_count": word_count,
+            "points_earned": points_earned,
+            "created_at": datetime.now()
+        }
+        
+        # Insert the story into MongoDB
+        result = stories_collection.insert_one(story_doc)
+        
+        if result.inserted_id:
+            story_id = str(result.inserted_id)  # Convert ObjectId to string
+            return story_id
+        else:
+            return None
+        
+    except Exception as e:
+        print(f"Error saving story: {e}")
+        return None
+
 def get_user_stories(username: str):
     try:
         # Get database connection

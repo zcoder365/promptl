@@ -217,11 +217,9 @@ def save_writing():
         # Save the story to database
         story_id = db.add_story_no_username(story_doc)
         
-        if story_id:
-            # Clear the used prompts from session after successful save
-            session.pop('current_prompts', None)
-            
-            return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
+        session.pop('current_prompts', None)
+        
+        return render_template("congrats.html", title=title, story_len=metrics['word_count'], points=metrics['points'], words=metrics['num_used_prompts'])
     
     return redirect(url_for("home"))
 

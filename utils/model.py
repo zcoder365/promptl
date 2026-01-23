@@ -63,19 +63,19 @@ def create_story_document(title, written_raw, prompts, metrics, user_id):
         "prompt": prompts,
         "word_count": metrics['word_count'],
         "points": metrics['points'],
-        "author_id": user_id,
+        # "author_id": user_id,
         "created_at": datetime.now()
     }
     
-def validate_user_login(username: str, password: str):
-    # find user and validate them
-    user = find_user(username)
-    if user: 
-        # compare passwords
-        if password == user["password"]:
-            return True
+# def validate_user_login(username: str, password: str):
+#     # find user and validate them
+#     user = find_user(username)
+#     if user: 
+#         # compare passwords
+#         if password == user["password"]:
+#             return True
     
-    return False
+#     return False
 
-def validate_user_signup(username: str, password: str):
-    pass
+# def validate_user_signup(username: str, password: str):
+#     pass

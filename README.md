@@ -2,12 +2,25 @@
 
 *A web app to make writing fun and rewarding for kids with learning differences.*
 
-## Overview 📖
-### Earn points! 🎉
-By writing a certain number of words in your stories, you can earn points! Write over 70 words and use all 5 words in the prompt to earn points, and write over 100 words to get bonus points! (Your words are tracked underneath the textbox where you write your story.)
+Live Site: [promptl.com](https://promptl.com)
 
-### Save your work! 🛟
-Click the "publish" button at the bottom of the page to save your work (don't worry, it isn't posted anywhere – only you get to see what you've written).
+## Overview
 
-# Running
-Promptl is currently available at [promptl.com](https://promptl.com)!
+Promptl is a gamified writing platform designed specifically for children with learning differences like dyslexia. By combining creative writing prompts with a point-based reward system, Promptl makes writing practice engaging and motivating.
+
+## Key Features
+
+🎯 Daily Writing Prompts - Get creative prompts with 5 words to inspire your story
+⭐ Point System - Earn points by writing!
+    - Write 70+ words using all 5 prompt words → earn points
+    - Write 100+ words → bonus points!
+📝 Word Tracker - Real-time word count displayed as you write
+💾 Save Your Stories - Publish and save your work privately (only you can see it)
+🏆 Progress Tracking - Watch your points grow as you write more
+
+## Tech Stack
+
+Backend: Python, Flask
+Frontend: HTML, CSS, JavaScript
+Database: MongoDB
+Deployment: Render

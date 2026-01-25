@@ -41,6 +41,5 @@ promptl/
 
 ## Contact
 
-Creator: Zoe
-GitHub: @zcoder365
-Portfolio: zcoder365.github.io/PortfolioSite
+- Creator: Zoe
+- Portfolio: zcoder365.github.io/PortfolioSite

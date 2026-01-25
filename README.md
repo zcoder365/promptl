@@ -1,6 +1,8 @@
+# Promptl
+
 ![Header image](./static/assets/logo.png)
 
-*A web app to make writing fun and rewarding for kids with learning differences.*
+A web app to make writing fun and rewarding for kids with learning differences.
 
 Live Site: [promptl.com](https://promptl.com)
 

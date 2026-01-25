@@ -11,10 +11,3 @@ Click the "publish" button at the bottom of the page to save your work (don't wo
 
 # Running
 Promptl is currently available at [promptl.com](https://promptl.com)!
-
-# Todo
-- [ ] Display
-    - [ ] Nav bar
-    - [ ] General layout for different devices
-- [x] ~~Fix sign up logic~~
-- [x] ~~Save story~~

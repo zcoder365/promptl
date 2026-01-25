@@ -51,6 +51,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 # landing route
 @app.route('/')
 def index():
+    """Landing page route that redirects to home page."""
     # redirect user to home page as accounts are being fixed
     return redirect(url_for("home"))
 
@@ -110,6 +111,14 @@ def index():
 # home page route
 @app.route('/home')
 def home():
+    """Home page route that displays writing prompts for the user.
+    
+    Generates a new set of prompts (name, job, location, object, bonus) and
+    stores them in the session for later use when saving a story.
+    
+    Returns:
+        Rendered index.html template with story prompts.
+    """
     # Generate new prompts and store them in session for later use in save_writing
     story_prompts = prompts.gen_all_prompts()
     session['current_prompts'] = story_prompts
@@ -127,12 +136,24 @@ def home():
 # generate a new prompt by reloading home page
 @app.route('/new-prompt')
 def new_prompt():
+    """Route to generate a new set of prompts.
+    
+    Redirects to the home page to generate and display a fresh set of writing prompts.
+    
+    Returns:
+        Redirect to home route.
+    """
     # reload the page to get a new 5 prompts
     return redirect(url_for("home"))
 
 # about page route
 @app.route('/about')
 def about_page():
+    """Display the about page.
+    
+    Returns:
+        Rendered about.html template.
+    """
     return render_template('about.html')
 
 # prior pieces route
@@ -187,6 +208,15 @@ def about_page():
 # save the user's writing
 @app.route('/save-writing', methods=['GET', 'POST'])
 def save_writing():
+    """Handle story submission and calculate writing metrics.
+    
+    POST: Accepts a story title and content, calculates word count and points earned,
+    then displays a congratulations page with the story metrics.
+    
+    Returns:
+        On POST with valid data: Rendered congrats.html with story metrics.
+        On GET or invalid data: Redirect to home page.
+    """
     if request.method == "POST":
         # get info from the form
         written_raw = request.form.get('story')
@@ -257,6 +287,11 @@ def save_writing():
 # logout route
 @app.route("/logout")
 def logout():
+    """Clear user session and redirect to login page.
+    
+    Returns:
+        Redirect to login route.
+    """
     session.clear()
     return redirect(url_for("login"))
 

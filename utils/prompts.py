@@ -12,6 +12,14 @@ prompt_file_names = [BONUS_FILE, JOBS_FILE, NAMES_FILE, OBJECTS_FILE, PLACES_FIL
 
 # generate a single prompt using a specific file
 def gen_prompt(file_name):
+    """Generate a random prompt from a specified text file.
+    
+    Args:
+        file_name (str): Name of the text file containing prompts.
+    
+    Returns:
+        str: A randomly selected prompt in uppercase.
+    """
     with open("text/" + file_name, "r") as f:
         data = f.read()
         data2 = data.replace("\n", ",").split(',')
@@ -21,6 +29,15 @@ def gen_prompt(file_name):
 
 # generate all the prompts using all the files
 def gen_all_prompts():
+    """Generate all writing prompts from their respective files.
+    
+    Generates one prompt each for name, job, object, location, and bonus categories
+    by randomly selecting from their corresponding text files.
+    
+    Returns:
+        dict: Dictionary containing keys 'name', 'job', 'object', 'location', 'bonus',
+              each with a randomly selected prompt value in uppercase.
+    """
     # keep track of prompts
     story_prompts = {}
     
@@ -36,6 +53,11 @@ def gen_all_prompts():
 
 # generate a compliment for the results page
 def gen_compliment():
-	compliments = ['Great Job!', 'Excellent Work!', 'Super Job!', 'Way to Go!']
+    """Generate a random compliment for display on the results page.
+    
+    Returns:
+        str: A randomly selected compliment message.
+    """
+    compliments = ['Great Job!', 'Excellent Work!', 'Super Job!', 'Way to Go!']
 
-	return random.choice(compliments)
+    return random.choice(compliments)

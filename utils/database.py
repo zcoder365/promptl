@@ -38,6 +38,19 @@ def get_db():
         raise
 
 def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
+    """Save a story to the database with username association.
+    
+    Args:
+        title (str): The story title.
+        story_content (str): The full story text.
+        prompts (dict): Dictionary of prompts used in the story.
+        word_count (int): Total word count of the story.
+        points_earned (int): Points earned for this story.
+        username (str): Username of the story author.
+    
+    Returns:
+        str: The inserted story ID if successful, None otherwise.
+    """
     try:
         # Validate input parameters
         if not title or not story_content or not username:
@@ -72,6 +85,15 @@ def add_story(title: str, story_content: str, prompts: dict, word_count: int, po
         return None
 
 def add_story_no_username(story_document: dict):
+    """Save a story to the database without username association.
+    
+    Args:
+        story_document (dict): Story document containing 'title', 'story', 'prompts',
+                              'word_count', and 'points_earned' keys.
+    
+    Returns:
+        str: The inserted story ID if successful, None otherwise.
+    """
     try:        
         # Get database connection
         db = get_db()
@@ -101,6 +123,15 @@ def add_story_no_username(story_document: dict):
         return None
 
 def get_user_stories(username: str):
+    """Retrieve all stories written by a specific user, ordered by creation date.
+    
+    Args:
+        username (str): The username to retrieve stories for.
+    
+    Returns:
+        list: List of story documents ordered by creation date (newest first).
+              Returns empty list if an error occurs.
+    """
     try:
         # Get database connection
         db = get_db()
@@ -125,6 +156,12 @@ def get_user_stories(username: str):
         return []
 
 def get_all_stories():
+    """Retrieve all stories in the database, ordered by creation date.
+    
+    Returns:
+        list: List of all story documents ordered by creation date (newest first).
+              Returns empty list if an error occurs.
+    """
     try:
         # Get database connection
         db = get_db()
@@ -147,6 +184,14 @@ def get_all_stories():
         return []
 
 def get_story_by_id(story_id: str):
+    """Retrieve a specific story by its ID.
+    
+    Args:
+        story_id (str): The MongoDB ObjectId as a string.
+    
+    Returns:
+        dict: The story document if found, None otherwise.
+    """
     try:
         # Get database connection
         db = get_db()
@@ -167,6 +212,15 @@ def get_story_by_id(story_id: str):
         return None
 
 def delete_story(story_id: str, username: str):
+    """Delete a story from the database if the user is the author.
+    
+    Args:
+        story_id (str): The MongoDB ObjectId as a string.
+        username (str): The username of the requesting user (must be the author).
+    
+    Returns:
+        bool: True if story was deleted, False otherwise.
+    """
     try:
         # Get database connection
         db = get_db()
@@ -188,6 +242,15 @@ def delete_story(story_id: str, username: str):
         return False
 
 def add_user(username: str, password: str):
+    """Create a new user account in the database.
+    
+    Args:
+        username (str): The username for the new account.
+        password (str): The password for the new account.
+    
+    Returns:
+        str: The inserted user ID if successful, None otherwise.
+    """
     user_document = {
         "username": username,
         "password": password
@@ -204,6 +267,14 @@ def add_user(username: str, password: str):
         return None
 
 def find_user(username: str):
+    """Retrieve a user by username.
+    
+    Args:
+        username (str): The username to look up.
+    
+    Returns:
+        dict: The user document if found, None otherwise.
+    """
     db = get_db()
     users_collection = db.users
     
@@ -216,6 +287,13 @@ def find_user(username: str):
         return None
 
 def test_connection():
+    """Test the MongoDB database connection.
+    
+    Performs a ping to verify connectivity and counts available stories.
+    
+    Returns:
+        bool: True if connection is successful, False otherwise.
+    """
     try:
         # Get database connection
         db = get_db()

@@ -11,12 +11,18 @@ Promptl is a gamified writing platform designed specifically for children with l
 ## Key Features
 
 🎯 Daily Writing Prompts - Get creative prompts with 5 words to inspire your story
+
 ⭐ Point System - Earn points by writing!
-    - Write 70+ words using all 5 prompt words → earn points
-    - Write 100+ words → bonus points!
+
+- Write 70+ words using all 5 prompt words → earn points
+- Write 100+ words → bonus points!
+
 📝 Word Tracker - Real-time word count displayed as you write
-💾 Save Your Stories - Publish and save your work privately (only you can see it)
-🏆 Progress Tracking - Watch your points grow as you write more
+
+💾 Save Your Stories - "Publish" and save your work (don't worry, it doesn't go to anyone else)
+<!-- privately (only you can see it) -->
+
+<!-- 🏆 Progress Tracking - Watch your points grow as you write more -->
 
 ## Tech Stack
 

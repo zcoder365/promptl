@@ -24,3 +24,23 @@ Backend: Python, Flask
 Frontend: HTML, CSS, JavaScript
 Database: MongoDB
 Deployment: Render
+
+## Project Structure
+
+```plaintext
+promptl/
+├── main.py                 # Flask application entry point
+├── requirements.txt        # Python dependencies
+├── render.yaml            # Deployment configuration
+├── static/                # Static assets (CSS, JS, images)
+├── templates/             # HTML templates
+├── utils/                 # Utility functions
+├── UserInterface/         # UI components
+└── text/                  # Text processing utilities
+```
+
+## Contact
+
+Creator: Zoe
+GitHub: @zcoder365
+Portfolio: zcoder365.github.io/PortfolioSite

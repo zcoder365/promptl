@@ -20,10 +20,10 @@ Promptl is a gamified writing platform designed specifically for children with l
 
 ## Tech Stack
 
-Backend: Python, Flask
-Frontend: HTML, CSS, JavaScript
-Database: MongoDB
-Deployment: Render
+- Backend: Python, Flask
+- Frontend: HTML, CSS, JavaScript
+- Database: MongoDB
+- Deployment: Render
 
 ## Project Structure
 

@@ -4,7 +4,7 @@
 
 A web app to make writing fun and rewarding for kids with learning differences.
 
-Live Site: [promptl.com](https://promptl.com)
+Live Site: [promptl.com](https://promptl.com) (allow Render a few moments to load the web app)
 
 ## Overview
 

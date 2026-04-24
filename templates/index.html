@@ -1,92 +1,90 @@
 {% extends "template.html" %}
 {% block content %}
-	
-<div align='center' class="promptl-welcome">
-	<b class="promptl-text">Welcome to Promptl!</b><br><br>
 
-	<b style="font-size:20px">Use the words below in your story!</b>
-	
-	<br><br>
-</div>
-	
-<div align='center'>
-	<table align="center" style="width:auto">
-		<tr>
-			<td>✏️ </td>
-			<td class="writing-info">Each Promptl word is worth 10 points. The bonus word is worth 20 points.</td>
-		</tr>
-
-		<tr>
-			<td>✏️ </td>
-			<td class="writing-info">You need to write at least 70 words to be awarded any points for your story.</td>
-		</tr>
-
-		<tr>
-			<td>✏️ </td>
-			<td class="writing-info">If your story is greater than 100 words, you will get an extra 25 points!</td>
-		</tr>
-	</table>
-
-	<br>
-
-	<span style='font-size:16px; color:#FF5349'><i>Please don't reload this page while you are writing (the prompts will change and your writing will disappear).</i></span>
+<!-- ── 🆕 welcome hero (replaces old centered <b> tag) ── -->
+<div class="promptl-welcome">
+	<span class="promptl-text">Welcome to Promptl! ✏️</span>
+	<p class="promptl-subtitle">Use all 5 words below to write your story</p>
 </div>
 
-<br>
+<!-- ── 🆕 tip cards (replaces the old <table> of rules) ── -->
+<div class="tips-container">
+	<div class="tip-card">
+		<div class="tip-icon">⭐</div>
+		<div class="tip-text">Each word = <strong>10 points</strong><br>Bonus word = <strong>20 points</strong></div>
+	</div>
+	<div class="tip-card">
+		<div class="tip-icon">📝</div>
+		<div class="tip-text">Write at least <strong>70 words</strong> to earn points</div>
+	</div>
+	<div class="tip-card">
+		<div class="tip-icon">🚀</div>
+		<div class="tip-text">Write <strong>100+ words</strong> for an extra <strong>25 points!</strong></div>
+	</div>
+</div>
 
-<div align='center'>
-	<a href='/new-prompt'><button class="new-prompt"><img src='/static/assets/generate.png' class="new-prompt"></button></a>
+<!-- ── friendly reload warning ── -->
+<div class="reload-warning">
+	<strong>Heads up!</strong> Don't reload while writing — the prompts will change and your work will disappear.
+</div>
 
-	<br><br>
-	
+<!-- ── prompts section ── -->
+<div class="prompts-section">
+	<div class="prompts-header">
+		<div class="prompts-title">Your 5 Words</div>
+		<a href="/new-prompt" class="new-prompt-btn">
+			🔄 New prompts
+		</a>
+	</div>
+
 	<div class="prompts-flex">
-        <div class="flex-item">
-            <img src='static/assets/name.png'>
-            <b>{{ name }}</b>
-        </div>
+		<div class="flex-item">
+			<img src="/static/assets/name.png" alt="character icon">
+			<b>{{ name }}</b>
+		</div>
 
-        <div class="flex-item" onclick='showRandomFrom("jobs.txt")'>
-            <img src='static/assets/job.png'>
-            <b>{{ job }}</b>
-        </div>
+		<div class="flex-item">
+			<img src="/static/assets/job.png" alt="job icon">
+			<b>{{ job }}</b>
+		</div>
 
-        <div class="flex-item" onclick='showRandomFrom("objects.txt")'>
-            <img src='static/assets/thing.png'>
-            <b>{{ object }}</b>
-        </div>
+		<div class="flex-item">
+			<img src="/static/assets/thing.png" alt="object icon">
+			<b>{{ object }}</b>
+		</div>
 
-        <div class="flex-item" onclick='showRandomFrom("places.txt")'>
-            <img src='static/assets/place.png'>
-            <b>{{ place }}</b>
-        </div>
+		<div class="flex-item">
+			<img src="/static/assets/place.png" alt="place icon">
+			<b>{{ place }}</b>
+		</div>
 
-        <div class="flex-item" onclick='showRandomFrom("bonus.txt")'>
-            <img src='static/assets/bonus.png'>
-            <b>{{ bonus }}</b>
-        </div>
-    </div>
+		<!-- 🆕 bonus word gets special "2x" treatment -->
+		<div class="flex-item bonus">
+			<img src="/static/assets/bonus.png" alt="bonus icon">
+			<b>{{ bonus }}</b>
+		</div>
+	</div>
 
-	<br>
-	
-	<a href="https://www.thesaurus.com" target="_blank">
-		<button class="help"><img class="help" src="/static/assets/help.png"></button>
-	</a>
-
+	<div style="text-align:center;">
+		<a href="https://www.thesaurus.com" target="_blank" class="help-link">
+			💡 Need word ideas? Try the thesaurus
+		</a>
+	</div>
 </div>
-	
-<br>
-	
-<form action='/save-writing' method='post'>
-	<label for='title' style='padding-right:10px' id="title-label">Title:</label>
-	<input type="text" name='title' id="title" placeholder='Your Title Here...'>
 
-	<br>
+<!-- ── writing section ── -->
+<div class="writing-section">
+	<form action="/save-writing" method="post">
+		<label for="title" class="field-label">Story title</label>
+		<input type="text" name="title" id="title" placeholder="What's your story called?">
 
-	<textarea name="story" id="story" rows="10" cols="90" placeholder='Start Typing Here...'></textarea>
+		<label for="story" class="field-label">Your story</label>
+		<textarea name="story" id="story" placeholder="Once upon a time..."></textarea>
 
-	<br>
-
-	<button type="submit" class="save-writing"><img src="/static/assets/save.png" alt="save writting button with an open book" class="save-writing-img"></button>
-</form>
+		<button type="submit" class="save-writing">
+			📖 Publish my story
+		</button>
+	</form>
+</div>
 
 {% endblock %}

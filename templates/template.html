@@ -5,15 +5,21 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Promptl</title>
 		<link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
-		<link rel="stylesheet" href="static/styles.css">
-		<script type="text/javascript" src="static/script.js"></script>
-	</head>
-	
-	<body align='center'>
-		<nav>
-			<a href="/home" align="left"><img align="left" src="static/assets/logo.png" alt="prompt-l written with a lightbulb replacing the O" class="logo-btn-nav"></a>
 
-			<div class="navigation" align="center">
+		<!-- 🆕 nunito font (warm, friendly, kid-appropriate) -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+		<link rel="stylesheet" href="/static/styles.css">
+		<script type="text/javascript" src="/static/script.js"></script>
+	</head>
+
+	<body>
+		<nav>
+			<a href="/home"><img src="/static/assets/logo.png" alt="prompt-l with a lightbulb replacing the O" class="logo-btn-nav"></a>
+
+			<div class="navigation">
 				<a href="/home"><button>Home</button></a>
 				<a href="/about"><button>About</button></a>
 				<!-- <a href="/prior-pieces"><button>Prior Pieces</button></a>
@@ -22,30 +28,29 @@
 			</div>
 		</nav>
 
-		<br>
+		<!-- 🆕 wrap content in page-container so it has proper max-width + padding -->
+		<div class="page-container">
+			{% block content %} {% endblock %}
+		</div>
 
-		{% block content %} {% endblock %}
-	
-	<script>
-	// First attach an event listener to the textarea
-	document.querySelector('textarea').addEventListener('keyup', function() {
-		
-		// Next grab the value of the textarea, trim whitespace and split to get the word count
-		// The if statement handles when a user removes everything from the textarea
-		let wordCount = document.querySelector('textarea').value.trim().split(' ').length;
-		if (document.querySelector('textarea').value === "") { 
-			wordCount = 0;
-		}
-		
-		// Last, inject the word count into the page
-		// Note: if you add an HTML element directly into the page template
-		// you can remove the if/else statement and use the code from line 16 only
-		if (document.querySelector('.wordcount') !== null) {
-			document.querySelector('.wordcount').innerHTML=("Word count: "+wordCount.toString());
-		} else {
-			document.querySelector('textarea').insertAdjacentHTML("afterend", "<br><p class='wordcount'>Word count: 1</p>");
-		}
-	});
-	</script>
+		<script>
+			// ── word count tracker (only runs on pages with a textarea) ──
+			const textarea = document.querySelector('textarea');
+			if (textarea) {
+				textarea.addEventListener('keyup', function() {
+					const trimmed = textarea.value.trim();
+					const wordCount = trimmed === "" ? 0 : trimmed.split(/\s+/).length;
+
+					// inject or update the word count display
+					let wordCountEl = document.querySelector('.wordcount');
+					if (wordCountEl) {
+						wordCountEl.textContent = `Word count: ${wordCount}`;
+					} else {
+						textarea.insertAdjacentHTML("afterend",
+							`<p class='wordcount'>Word count: ${wordCount}</p>`);
+					}
+				});
+			}
+		</script>
 	</body>
 </html>

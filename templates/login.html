@@ -5,64 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Promptl — Login</title>
     <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+
+    <!-- nunito font (same as rest of app) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body align="center">
     <br><br><br>
-    <img src="/static/assets/logo.png" alt="promptl logo" height="100">
-    
+    <img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O" height="100">
+
     <h2>Login</h2>
-    
+
+    <!-- error message slot — hidden by default, shown if login fails -->
     <p id="error-msg" class="message" style="display:none;"></p>
-    
-    <!-- email/password form -->
+
+    <!-- email/password login form -->
     <form id="login-form">
         <label for="email">Email:</label><br>
         <input type="email" id="email" required><br><br>
-        
+
         <label for="password">Password:</label><br>
         <input type="password" id="password" required><br><br>
-        
+
         <button type="submit">Login</button>
     </form>
-    
+
     <br>
     <p>— or —</p>
-    
+
     <!-- google sign-in button -->
     <button id="google-signin" class="save-writing" style="max-width:300px;">
         🔑 Sign in with Google
     </button>
-    
+
     <br><br>
-    <p>Don't have an account? <a href="/signup">Sign up</a></p>
-    
-    <!-- firebase SDK (modular v9+ via CDN) -->
+    <p>Don't have an account? <a href="/signup">Sign up</a>.</p>
+    <p>Forgot your password? <a href="/reset-password">Reset password</a>.</p>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         FIREBASE AUTH MODULE
+         handles email/password + google login, then sends token to flask
+         ───────────────────────────────────────────────────────────── -->
     <script type="module">
-        // import only what we need from firebase
+        // shared config (public — safe to expose in client-side JS)
         import { firebaseConfig } from "/static/firebase-config.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+
+        // firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
         import {
             getAuth,
             signInWithEmailAndPassword,
             GoogleAuthProvider,
             signInWithPopup,
-        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        
+        } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+        // initialize firebase + get auth instance
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
+
+        // ── helpers ──
         const errorMsg = document.getElementById("error-msg");
-        
-        // helper: show an error to the user
+
+        // show an error message to the user
         function showError(msg) {
             errorMsg.textContent = msg;
             errorMsg.style.display = "block";
         }
-        
-        // helper: after firebase login succeeds, send the ID token to flask
+
+        // after firebase login succeeds, send the ID token to flask
+        // so the backend can verify it + create a session cookie
         async function sendTokenToBackend(user) {
             const idToken = await user.getIdToken();
             const response = await fetch("/auth/session", {
@@ -70,43 +84,52 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ idToken }),
             });
-            
+
             if (response.ok) {
-                window.location.href = "/home";  // success — go to the writing page
+                // session cookie is set — go to the writing page!
+                window.location.href = "/home";
             } else {
                 showError("Something went wrong. Please try again.");
             }
         }
-        
-        // email/password login
+
+        // ── email/password login ──
         document.getElementById("login-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
+            e.preventDefault();  // prevent the form from doing a normal POST
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
-            
+
             try {
+                // firebase verifies the credentials and returns a user object
                 const result = await signInWithEmailAndPassword(auth, email, password);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                // firebase gives us nice error codes — map them to friendly messages
+                // map firebase error codes to friendly messages for kids
                 if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
                     showError("Wrong email or password. Try again!");
                 } else if (err.code === "auth/user-not-found") {
                     showError("No account with that email. Sign up first!");
+                } else if (err.code === "auth/too-many-requests") {
+                    showError("Too many tries. Wait a minute and try again.");
                 } else {
                     showError("Login failed: " + err.message);
                 }
             }
         });
-        
-        // google sign-in
+
+        // ── google sign-in ──
         document.getElementById("google-signin").addEventListener("click", async () => {
             const provider = new GoogleAuthProvider();
             try {
+                // signInWithPopup opens a google login window
+                // it auto-creates an account on first login (or signs in if existing)
                 const result = await signInWithPopup(auth, provider);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                showError("Google sign-in failed: " + err.message);
+                // popup-closed-by-user is common if they cancel — don't show an error for that
+                if (err.code !== "auth/popup-closed-by-user") {
+                    showError("Google sign-in failed: " + err.message);
+                }
             }
         });
     </script>

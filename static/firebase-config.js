@@ -1,4 +1,11 @@
-// shared firebase config — imported by login, signup, and template
+// ─────────────────────────────────────────────
+// shared firebase configuration
+// imported by login.html, signup.html, template.html
+// ─────────────────────────────────────────────
+// note: these values are PUBLIC (designed to be in client-side JS).
+// real security comes from firestore rules + backend token verification.
+// ─────────────────────────────────────────────
+
 export const firebaseConfig = {
     apiKey: "AIzaSyBjyTaTEsvSqsAUo6dyMhtZpjG2gNTse2c",
     authDomain: "promptl-35e17.firebaseapp.com",

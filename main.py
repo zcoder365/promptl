@@ -175,7 +175,22 @@ def save_writing():
 @require_login
 def prior_pieces():
     """Show a read-only archive of the user's past stories."""
-    stories = db.get_user_stories(session["uid"])
+    raw_stories = db.get_user_stories(session["uid"])
+    
+    # transform firestore's camelCase fields into snake_case for templates.
+    # this keeps templates clean (no knowledge of db field names) and
+    # consistent with my-account.html's variable style.
+    stories = [
+        {
+            "id": s.get("id"),
+            "title": s.get("title"),
+            "word_count": s.get("wordCount", 0),
+            "points_earned": s.get("pointsEarned", 0),
+            "created_at": s.get("createdAt"),
+        }
+        for s in raw_stories
+    ]
+    
     return render_template("prior-pieces.html", stories=stories)
 
 @app.route('/read-story/<story_id>')

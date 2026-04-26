@@ -42,10 +42,11 @@ def require_login(view_func):
 
 @app.route('/')
 def index():
-    """Landing — redirect to home if logged in, else login page."""
-    if session.get("uid"):
-        return redirect(url_for("home"))
-    return redirect(url_for("login"))
+    """Landing page — public, but customizes the CTA for logged-in users."""
+    # we pass `logged_in` to the template so the hero CTA can switch between
+    # "sign up" (for new visitors) and "continue to your account" (for returning users)
+    logged_in = bool(session.get("uid"))
+    return render_template("landing.html", logged_in=logged_in)
 
 @app.route('/login')
 def login():

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promptl — Writing made fun for every kid</title>
+    <meta name="description" content="A gamified writing platform designed for kids with learning differences. Earn points, build streaks, and discover that writing can be fun.">
+    <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+
+    <!-- nunito font (matches the rest of the app) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="landing-page">
+
+    <!-- ── lightweight nav (just logo + login link) ── -->
+    <nav class="landing-nav">
+        <a href="/" class="landing-nav-logo">
+            <img src="/static/assets/logo.png" alt="promptl logo">
+        </a>
+        <div class="landing-nav-links">
+            {% if logged_in %}
+                <a href="/home" class="landing-nav-link">Continue to app →</a>
+            {% else %}
+                <a href="/login" class="landing-nav-link">Login</a>
+                <a href="/signup" class="landing-nav-cta">Sign up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         HERO SECTION
+         ───────────────────────────────────────────────────────────── -->
+    <section class="hero">
+        <div class="hero-inner">
+            <span class="hero-badge">✨ Built for kids with learning differences</span>
+
+            <h1 class="hero-title">
+                Writing, but make it <span class="hero-title-accent">fun.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                Promptl turns writing practice into a game. Daily prompts, point streaks, and confidence — for every kind of writer.
+            </p>
+
+            <div class="hero-ctas">
+                {% if logged_in %}
+                    <a href="/home" class="cta-button">✏️ Continue to your account</a>
+                {% else %}
+                    <a href="/signup" class="cta-button">Get started — it's free</a>
+                    <a href="/login" class="cta-button-secondary">I already have an account</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         HOW IT WORKS
+         ───────────────────────────────────────────────────────────── -->
+    <section class="section">
+        <div class="section-inner">
+            <h2 class="section-heading">How it works</h2>
+            <p class="section-subheading">Three simple steps to make writing rewarding</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">🎲</div>
+                    <h3 class="step-title">Get 5 prompts</h3>
+                    <p class="step-text">
+                        Each session, Promptl generates a name, job, place, object, and bonus word to spark a story.
+                    </p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">✏️</div>
+                    <h3 class="step-title">Write a story</h3>
+                    <p class="step-text">
+                        Use the words however you want. Write 70+ words for points, 100+ for a bonus.
+                    </p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">🔥</div>
+                    <h3 class="step-title">Build a streak</h3>
+                    <p class="step-text">
+                        Write daily to keep your streak going. Watch your point total grow over time.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         FAQ
+         ───────────────────────────────────────────────────────────── -->
+    <section class="section section-alt">
+        <div class="section-inner section-narrow">
+            <h2 class="section-heading">Common questions</h2>
+
+            <!-- ── using <details> + <summary> = a native expandable FAQ with no JS ✨ -->
+            <details class="faq-item">
+                <summary class="faq-question">Is Promptl free?</summary>
+                <p class="faq-answer">
+                    Yes! Promptl is completely free to use. There are no subscriptions, no in-app purchases, and no ads.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Who is Promptl for?</summary>
+                <p class="faq-answer">
+                    Promptl is designed for kids with learning differences like dyslexia who find writing intimidating — but it works just as well for any kid (or adult!) who wants to make writing more fun. There's no minimum or maximum age.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">How is this different from regular writing prompts?</summary>
+                <p class="faq-answer">
+                    Most writing prompts give you a starting sentence or topic. Promptl gives you 5 random words and lets you build the story however you want — which lowers the pressure to come up with something "perfect" and makes it feel more like play.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Is my child's data safe?</summary>
+                <p class="faq-answer">
+                    Stories are stored privately and only visible to the account that wrote them. No data is sold to third parties, and stories are never shared publicly. Promptl uses Firebase Authentication (the same tech that powers many major apps) to keep accounts secure.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Will there be a teacher version?</summary>
+                <p class="faq-answer">
+                    A teacher dashboard is in development! It will let educators assign writing prompts and view their students' submissions. If you're a teacher interested in early access, reach out below.
+                </p>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Who built Promptl?</summary>
+                <p class="faq-answer">
+                    Promptl was built by Zoe Droulias, a McGill University Computer Science student, originally inspired by her younger sister who has dyslexia and saw writing as a chore.
+                </p>
+            </details>
+        </div>
+    </section>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         FINAL CTA (catches users who scrolled all the way down)
+         ───────────────────────────────────────────────────────────── -->
+    {% if not logged_in %}
+        <section class="final-cta">
+            <div class="section-inner">
+                <h2 class="final-cta-title">Ready to get started?</h2>
+                <p class="final-cta-text">It takes less than a minute to create an account.</p>
+                <a href="/signup" class="cta-button">Sign up — it's free</a>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- ─────────────────────────────────────────────────────────────
+         FOOTER
+         ───────────────────────────────────────────────────────────── -->
+    <footer class="landing-footer">
+        <div class="section-inner">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="/static/assets/logo.png" alt="promptl" class="footer-logo">
+                    <p class="footer-tagline">Writing made fun for every kind of writer.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-heading">Product</h4>
+                    <a href="/signup">Sign up</a>
+                    <a href="/login">Login</a>
+                    <a href="/about">About</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-heading">Connect</h4>
+                    <a href="mailto:hello@promptl.com">hello@promptl.com</a>
+                    <a href="https://github.com/zcoder365" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Promptl · Made with 💛 in Montreal</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

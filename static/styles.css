@@ -1206,3 +1206,406 @@ body.auth-page {
   .story-read-card { padding: 28px 20px; }
   .story-read-title { font-size: 24px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LANDING PAGE
+   public-facing marketing page — different layout from the app
+   ═══════════════════════════════════════════════════════════════ */
+
+body.landing-page {
+  background: var(--bg);
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── lightweight landing nav ─── */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-nav-logo img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.landing-nav-links {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.landing-nav-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background 0.15s;
+}
+
+.landing-nav-link:hover {
+  background: var(--primary-light);
+}
+
+.landing-nav-cta {
+  font-size: 14px;
+  font-weight: 800;
+  color: white;
+  background: var(--accent);
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(255, 107, 91, 0.25);
+}
+
+.landing-nav-cta:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 91, 0.35);
+}
+
+/* ─── hero section ─── */
+.hero {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--accent-light) 100%);
+  padding: 80px 32px 100px;
+  text-align: center;
+}
+
+.hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: white;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 24px;
+}
+
+.hero-title {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.hero-title-accent {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.hero-subtitle {
+  font-size: 19px;
+  color: var(--text-2);
+  font-weight: 600;
+  line-height: 1.5;
+  max-width: 560px;
+  margin: 0 auto 36px;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 14px 28px;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.cta-button-secondary:hover {
+  background: var(--primary-light);
+}
+
+/* ─── generic section wrapper (used for "how it works" + FAQ) ─── */
+.section {
+  padding: 80px 32px;
+}
+
+.section-alt {
+  background: var(--bg-2);
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-narrow {
+  max-width: 720px;
+}
+
+.section-heading {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.section-subheading {
+  font-size: 16px;
+  color: var(--text-2);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+/* ─── how it works: 3-step cards ─── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.step-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.step-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* the "1, 2, 3" pill in the corner of each step card */
+.step-number {
+  position: absolute;
+  top: -14px;
+  left: 24px;
+  background: var(--accent);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(255, 107, 91, 0.3);
+}
+
+.step-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.step-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.step-text {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* ─── FAQ: native HTML <details> styled like custom accordion ─── */
+.faq-item {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.faq-item:hover {
+  border-color: var(--primary);
+}
+
+/* the <summary> is the always-visible question */
+.faq-question {
+  padding: 18px 22px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary);
+  cursor: pointer;
+  list-style: none;  /* hide the default disclosure triangle */
+  position: relative;
+  padding-right: 48px;  /* leave room for our custom +/− indicator */
+  user-select: none;
+}
+
+/* hide default arrow on chrome/safari/firefox */
+.faq-question::-webkit-details-marker { display: none; }
+
+/* custom +/− indicator on the right side */
+.faq-question::after {
+  content: '+';
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+
+/* when expanded, rotate the + into an ×, basically */
+.faq-item[open] .faq-question::after {
+  content: '−';
+}
+
+.faq-answer {
+  padding: 0 22px 18px;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ─── final CTA section ─── */
+.final-cta {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--warning-light) 100%);
+  padding: 64px 32px;
+  text-align: center;
+}
+
+.final-cta-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.final-cta-text {
+  font-size: 17px;
+  color: var(--text-2);
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* ─── footer ─── */
+.landing-footer {
+  background: var(--text);
+  color: white;
+  padding: 48px 32px 24px;
+}
+
+.landing-footer .section-inner {
+  max-width: 1100px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.footer-logo {
+  height: 36px;
+  width: auto;
+  /* invert + lighten the logo so it's readable on dark bg */
+  filter: brightness(0) invert(1);
+  margin-bottom: 12px;
+}
+
+.footer-tagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
+.footer-heading {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.footer-col a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+/* ─── responsive ─── */
+@media (max-width: 900px) {
+  .steps-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .landing-nav { padding: 14px 20px; }
+  .landing-nav-logo img { height: 32px; }
+  .landing-nav-link, .landing-nav-cta {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  .hero { padding: 48px 20px 64px; }
+  .hero-title { font-size: 38px; }
+  .hero-subtitle { font-size: 16px; }
+
+  .section { padding: 56px 20px; }
+  .section-heading { font-size: 28px; }
+
+  .step-card { padding: 28px 20px; }
+
+  .faq-question { font-size: 15px; padding: 16px 18px; padding-right: 44px; }
+  .faq-answer { padding: 0 18px 16px; font-size: 14px; }
+
+  .final-cta { padding: 48px 20px; }
+  .final-cta-title { font-size: 26px; }
+}

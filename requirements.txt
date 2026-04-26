@@ -1,7 +1,5 @@
 flask>=2.0.3
 python-dotenv>=0.19.2
-authlib>=1.0
 requests>=2.27.1
-python-jose[cryptography]
-pymongo>=4.0
-# bson>=0.5.10
+firebase-admin>=6.0.0
+gunicorn>=21.0.0

@@ -5,16 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Promptl — Sign Up</title>
     <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+
+    <!-- nunito font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body align="center">
     <br><br><br>
-    <img src="/static/assets/logo.png" alt="promptl logo" height="100">
+    <img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O" height="100">
 
     <h2>Sign Up</h2>
 
+    <!-- error message slot -->
     <p id="error-msg" class="message" style="display:none;"></p>
 
     <!-- email/password signup form -->
@@ -31,21 +36,25 @@
     <br>
     <p>— or —</p>
 
-    <!-- google sign-up button (same flow as sign-in) -->
+    <!-- google signup button (same flow handles both signup + signin) -->
     <button id="google-signup" class="save-writing" style="max-width:300px;">
         🔑 Sign up with Google
     </button>
 
     <br><br>
-    <p>Already have an account? <a href="/login">Login</a></p>
+    <p>Already have an account? <a href="/login">Login</a>.</p>
 
+    <!-- ─────────────────────────────────────────────────────────────
+         FIREBASE SIGNUP MODULE
+         creates a new firebase user, then sends token to flask
+         ───────────────────────────────────────────────────────────── -->
     <script type="module">
-        // ✅ import config from shared file (same as login.html)
         import { firebaseConfig } from "/static/firebase-config.js";
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
         import {
             getAuth,
-            createUserWithEmailAndPassword,  // ← the only difference from login!
+            createUserWithEmailAndPassword,  // ← key difference from login.html
             GoogleAuthProvider,
             signInWithPopup,
         } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
@@ -55,14 +64,12 @@
 
         const errorMsg = document.getElementById("error-msg");
 
-        // helper: show an error to the user
         function showError(msg) {
             errorMsg.textContent = msg;
             errorMsg.style.display = "block";
         }
 
-        // helper: after firebase signup succeeds, send the ID token to flask
-        // (this is identical to the login version — same backend endpoint)
+        // same pattern as login: send firebase token → flask → session cookie
         async function sendTokenToBackend(user) {
             const idToken = await user.getIdToken();
             const response = await fetch("/auth/session", {
@@ -72,25 +79,26 @@
             });
 
             if (response.ok) {
-                window.location.href = "/home";  // success — go write a story!
+                window.location.href = "/home";
             } else {
                 showError("Something went wrong. Please try again.");
             }
         }
 
-        // email/password signup
+        // ── email/password signup ──
         document.getElementById("signup-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
             try {
-                // createUserWithEmailAndPassword creates the firebase auth user.
-                // it auto-signs them in too, so we get back a logged-in user immediately.
+                // createUserWithEmailAndPassword:
+                //   1. creates the firebase auth user
+                //   2. auto-signs them in (returns a logged-in user)
                 const result = await createUserWithEmailAndPassword(auth, email, password);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                // map firebase's error codes to friendly messages
+                // friendly error messages
                 if (err.code === "auth/email-already-in-use") {
                     showError("That email is already registered. Try logging in!");
                 } else if (err.code === "auth/weak-password") {
@@ -103,14 +111,16 @@
             }
         });
 
-        // google signup (identical to login — firebase auto-creates the account)
+        // ── google signup (firebase handles "is this user new or existing") ──
         document.getElementById("google-signup").addEventListener("click", async () => {
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                showError("Google sign-up failed: " + err.message);
+                if (err.code !== "auth/popup-closed-by-user") {
+                    showError("Google sign-up failed: " + err.message);
+                }
             }
         });
     </script>

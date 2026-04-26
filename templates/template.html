@@ -1,90 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Promptl</title>
-		<link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promptl</title>
+    <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
 
-		<!-- nunito font (warm, friendly, kid-appropriate) -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- nunito font (warm, friendly, kid-appropriate) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-		<link rel="stylesheet" href="/static/styles.css">
-		<script type="text/javascript" src="/static/script.js"></script>
-	</head>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script type="text/javascript" src="/static/script.js"></script>
+</head>
 
-	<body>
-		<nav>
-			<a href="/home"><img src="/static/assets/logo.png" alt="prompt-l with a lightbulb replacing the O" class="logo-btn-nav"></a>
-			
-			<div class="navigation">
-				<a href="/home"><button>Home</button></a>
-				<a href="/about"><button>About</button></a>
-				<a href="/prior-pieces"><button>Prior Pieces</button></a>
-				<a href="/my-account"><button>My Account</button></a>
-				<a href="/logout" id="logout-link"><button>Logout</button></a>
-			</div>
-		</nav>
+<body>
+    <nav>
+        <a href="/home">
+            <img src="/static/assets/logo.png" alt="prompt-l with a lightbulb replacing the O" class="logo-btn-nav">
+        </a>
 
-		<!-- wrap content in page-container so it has proper max-width + padding -->
-		<div class="page-container">
-			{% block content %} {% endblock %}
-		</div>
+        <div class="navigation">
+            <a href="/home"><button>Home</button></a>
+            <a href="/about"><button>About</button></a>
+            <a href="/prior-pieces"><button>Prior Pieces</button></a>
+            <a href="/my-account"><button>My Account</button></a>
+            <a href="/logout" id="logout-link"><button>Logout</button></a>
+        </div>
+    </nav>
 
-		<!-- ─────────────────────────────────────────────────────────────
-		     SCRIPT 1: regular (non-module) — word count tracker
-		     this runs on every page that has a textarea (the writing form).
-		     it can't be a module because it needs to run synchronously.
-		     ───────────────────────────────────────────────────────────── -->
-		<script>
-			// ── word count tracker ──
-			const textarea = document.querySelector('textarea');
-			if (textarea) {
-				textarea.addEventListener('keyup', function() {
-					const trimmed = textarea.value.trim();
-					const wordCount = trimmed === "" ? 0 : trimmed.split(/\s+/).length;
+    <!-- wrap content in page-container so it has proper max-width + padding -->
+    <div class="page-container">
+        {% block content %} {% endblock %}
+    </div>
 
-					// inject or update the word count display
-					let wordCountEl = document.querySelector('.wordcount');
-					if (wordCountEl) {
-						wordCountEl.textContent = `Word count: ${wordCount}`;
-					} else {
-						textarea.insertAdjacentHTML("afterend",
-							`<p class='wordcount'>Word count: ${wordCount}</p>`);
-					}
-				});
-			}
-		</script>
+    <!-- ─────────────────────────────────────────────────────────────
+         SCRIPT 1: regular (non-module) — word count tracker
+         this runs on every page that has a textarea (the writing form).
+         ───────────────────────────────────────────────────────────── -->
+    <script>
+        // ── word count tracker ──
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('keyup', function() {
+                const trimmed = textarea.value.trim();
+                const wordCount = trimmed === "" ? 0 : trimmed.split(/\s+/).length;
 
-		<!-- ─────────────────────────────────────────────────────────────
-		     SCRIPT 2: module — firebase logout
-		     this needs type="module" because it uses ES module imports
-		     to load the firebase SDK from google's CDN.
-		     ───────────────────────────────────────────────────────────── -->
-		<script type="module">
-            import { firebaseConfig } from "/static/firebase-config.js";
-			import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-			import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+                // inject or update the word count display
+                let wordCountEl = document.querySelector('.wordcount');
+                if (wordCountEl) {
+                    wordCountEl.textContent = `Word count: ${wordCount}`;
+                } else {
+                    textarea.insertAdjacentHTML("afterend",
+                        `<p class='wordcount'>Word count: ${wordCount}</p>`);
+                }
+            });
+        }
+    </script>
 
-			// init firebase (safe to call on every page; it's idempotent)
-			const app = initializeApp(firebaseConfig);
-			const auth = getAuth(app);
+    <!-- ─────────────────────────────────────────────────────────────
+         SCRIPT 2: module — firebase logout
+         needs type="module" because it uses ES module imports.
+         when user clicks logout, sign out of firebase BEFORE hitting flask
+         (otherwise firebase still thinks they're logged in next visit).
+         ───────────────────────────────────────────────────────────── -->
+    <script type="module">
+        import { firebaseConfig } from "/static/firebase-config.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-			// when user clicks logout: sign out of firebase first, then hit flask /logout
-			const logoutLink = document.getElementById("logout-link");
-			if (logoutLink) {
-				logoutLink.addEventListener("click", async (e) => {
-					e.preventDefault();  // stop the link from navigating immediately
-					try {
-						await signOut(auth);  // clear firebase auth state
-					} catch (err) {
-						console.warn("firebase signOut error (continuing anyway):", err);
-					}
-					window.location.href = "/logout";  // now hit flask to clear session
-				});
-			}
-		</script>
-	</body>
+        // init firebase (idempotent — safe to run on every page)
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // wire up the logout link
+        const logoutLink = document.getElementById("logout-link");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", async (e) => {
+                e.preventDefault();  // don't navigate yet
+                try {
+                    await signOut(auth);  // clear firebase auth state
+                } catch (err) {
+                    // if firebase logout fails, log it but still proceed —
+                    // we don't want to trap the user if firebase is having issues
+                    console.warn("firebase signOut error (continuing anyway):", err);
+                }
+                window.location.href = "/logout";  // hit flask to clear session
+            });
+        }
+    </script>
+</body>
 </html>

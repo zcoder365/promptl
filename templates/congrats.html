@@ -1,26 +1,33 @@
 {% extends "template.html" %}
 {% block content %}
-<br><br><br><br>
-<div align="center">
-	<span style="color:#FF5349"><b style='font-size:28px'>{{ compliment }}</b></span>
-	<br><br>
-	<div style="outline:2px solid navy; width:200px">
-		<p>Title: {{ title }}</p>
-	</div>
 
-	<br>
-	
-	<div class="congrats-info-container">
-		<span style="color:#FF5349"><b>{{ words }}</b></span> out of <span style="color:#FF5349"><b>5</b></span> words used
-		<br>
-		
-		<span style="color:#FF5349"><b>{{ story_len }}</b></span> words written
+<div class="congrats-card">
+    <div class="congrats-emoji">🎉</div>
+    <h1 class="congrats-title-text">{{ compliment }}</h1>
 
-		<br>
-		
-		<span style="color:#FF5349"><b>{{ points }}</b></span> points earned
-		<br>
-	</div>
+    <div class="congrats-story-title">
+        <span class="label">Title:</span>{{ title }}
+    </div>
+
+    <!-- big shiny stats -->
+    <div class="stats-grid">
+        <div class="stat-cell">
+            <span class="stat-number">{{ words }}/5</span>
+            <span class="stat-label">Words used</span>
+        </div>
+        <div class="stat-cell">
+            <span class="stat-number">{{ story_len }}</span>
+            <span class="stat-label">Words written</span>
+        </div>
+        <div class="stat-cell">
+            <span class="stat-number">{{ points }}</span>
+            <span class="stat-label">Points earned</span>
+        </div>
+    </div>
+
+    <a href="/home" class="cta-button">
+        ✏️ Write another story
+    </a>
 </div>
-<br><br><br><br><br><br><br><br>
+
 {% endblock %}

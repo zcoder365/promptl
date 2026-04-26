@@ -1,33 +1,28 @@
 {% extends "template.html" %}
 {% block content %}
 
-<div align='center' style='margin-left:50px; margin-right:50px'>
-	<h2 align="center">Prior Pieces</h2>
+<h1 class="page-heading">Your stories ✨</h1>
+<p class="page-subheading">All the wonderful things you've written</p>
 
-	<table class="table table-hover" style="width:80%">
-			<tr>
-				<th scope="col">Story Name</th>
-				<th scope="col">Word Count</th>
-				<th scope="col">Points Earned</th>
-				<!-- <th scope="col">Actions</th> -->
-			</tr>
-	{% for story in stories %}
-			<tr>
-				<td class="table-data">
-					{{ story.title }}
-				</td>
-				<td class="table-data">
-					{{ story.word_count }}
-				</td>
-				<td class="table-data">
-					{{ story.points_earned }}
-				</td>
-				<!-- <td class="table-data">
-					<a href="/read-story/{{story.id}}" style="text-decoration:none; color:blue">Read</a>
-				</td> -->
-			</tr>
-	{% endfor %}		
-	</table>
-</div>
+{% if stories %}
+    <div class="stories-grid">
+        {% for story in stories %}
+            <div class="story-card">
+                <div class="story-info">
+                    <div class="story-title">{{ story.title }}</div>
+                    <div class="story-meta">{{ story.word_count }} words written</div>
+                </div>
+                <div class="story-points">⭐ {{ story.points_earned }} pts</div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- friendly empty state for users who haven't written anything yet -->
+    <div class="empty-state">
+        <span class="empty-icon">📝</span>
+        <p class="empty-text">No stories yet — let's write your first one!</p>
+        <a href="/home" class="cta-button">Start writing</a>
+    </div>
+{% endif %}
 
 {% endblock %}

@@ -1,45 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Promptl</title>
-		<link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
-		<link rel="stylesheet" href="static/styles.css">
-		<script type="text/javascript" src="static/script.js"></script>
-	</head>
-
-	<body align='center'>
-		<br><br><br>
-		
-		<img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O" height="100">
-
-		{% if message %}
-			<p class="message">{{ message }}</p>
-		{% endif %}
-
-		<br>
-
-		<h2>Login</h2>
-
-		<form action="/login" method="post">
-			<label for="username">Username:</label><br>
-			<input type="text" name="username">
-
-			<br><br>
-			
-			<label for="password">Password:</label><br>
-			<input type="password" name="password">
-
-			<br><br>
-			
-			<input type="submit" value="Login">
-		</form>
-
-		<br>
-
-		<p>Don't have an account? <a href="/signup">Signup</a>.</p>
-
-		<p>Forgot your password? <a href="/reset-password">Reset password</a>.</p>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promptl — Login</title>
+    <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body align="center">
+    <br><br><br>
+    <img src="/static/assets/logo.png" alt="promptl logo" height="100">
+    
+    <h2>Login</h2>
+    
+    <p id="error-msg" class="message" style="display:none;"></p>
+    
+    <!-- email/password form -->
+    <form id="login-form">
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" required><br><br>
+        
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" required><br><br>
+        
+        <button type="submit">Login</button>
+    </form>
+    
+    <br>
+    <p>— or —</p>
+    
+    <!-- google sign-in button -->
+    <button id="google-signin" class="save-writing" style="max-width:300px;">
+        🔑 Sign in with Google
+    </button>
+    
+    <br><br>
+    <p>Don't have an account? <a href="/signup">Sign up</a></p>
+    
+    <!-- firebase SDK (modular v9+ via CDN) -->
+    <script type="module">
+        // import only what we need from firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            GoogleAuthProvider,
+            signInWithPopup,
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        
+        // ⚠️ paste YOUR firebase config here (from console → project settings → your apps)
+        const firebaseConfig = {
+            apiKey: "...",
+            authDomain: "promptl-app.firebaseapp.com",
+            projectId: "promptl-app",
+            // ... rest of the config
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        const errorMsg = document.getElementById("error-msg");
+        
+        // helper: show an error to the user
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = "block";
+        }
+        
+        // helper: after firebase login succeeds, send the ID token to flask
+        async function sendTokenToBackend(user) {
+            const idToken = await user.getIdToken();
+            const response = await fetch("/auth/session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idToken }),
+            });
+            
+            if (response.ok) {
+                window.location.href = "/home";  // success — go to the writing page
+            } else {
+                showError("Something went wrong. Please try again.");
+            }
+        }
+        
+        // email/password login
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            try {
+                const result = await signInWithEmailAndPassword(auth, email, password);
+                await sendTokenToBackend(result.user);
+            } catch (err) {
+                // firebase gives us nice error codes — map them to friendly messages
+                if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
+                    showError("Wrong email or password. Try again!");
+                } else if (err.code === "auth/user-not-found") {
+                    showError("No account with that email. Sign up first!");
+                } else {
+                    showError("Login failed: " + err.message);
+                }
+            }
+        });
+        
+        // google sign-in
+        document.getElementById("google-signin").addEventListener("click", async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await sendTokenToBackend(result.user);
+            } catch (err) {
+                showError("Google sign-in failed: " + err.message);
+            }
+        });
+    </script>
+</body>
 </html>

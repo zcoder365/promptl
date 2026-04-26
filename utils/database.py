@@ -20,11 +20,7 @@ _db = None  # module-level cache for the firestore client
 
 def _initialize_firebase():
     """Initialize the firebase admin SDK (only runs once per process)."""
-    # firebase_admin tracks initialized apps internally; calling initialize_app
-    # twice raises an error, so we check first.
     if not firebase_admin._apps:
-        # the credentials JSON is stored as a string in the env var,
-        # so we parse it back into a dict before passing to firebase
         cred_json = os.getenv("FIREBASE_CREDENTIALS")
         if not cred_json:
             raise RuntimeError("FIREBASE_CREDENTIALS env var not set!")
@@ -40,6 +36,12 @@ def get_db():
         _initialize_firebase()
         _db = firestore.client()
     return _db
+
+# 🆕 initialize firebase eagerly at module import time.
+# this means firebase admin SDK is ready as soon as `import utils.database`
+# runs in main.py, so there's no risk of auth functions being called
+# before init.
+_initialize_firebase()
 
 # ─────────────────────────────────────────────────────────────
 # AUTH HELPERS

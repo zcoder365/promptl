@@ -197,9 +197,21 @@ def prior_pieces():
 @require_login
 def read_story(story_id):
     """Show a single story (read-only)."""
-    story = db.get_story(session["uid"], story_id)
-    if not story:
+    raw_story = db.get_story(session["uid"], story_id)
+    if not raw_story:
         return redirect(url_for("prior_pieces"))
+    
+    # transform firestore's camelCase to snake_case for the template
+    story = {
+        "id": raw_story.get("id"),
+        "title": raw_story.get("title"),
+        "content": raw_story.get("content"),
+        "word_count": raw_story.get("wordCount", 0),
+        "points_earned": raw_story.get("pointsEarned", 0),
+        "prompts": raw_story.get("prompts", {}),
+        "created_at": raw_story.get("createdAt"),
+    }
+    
     return render_template("read-story.html", story=story)
 
 @app.route('/my-account')

@@ -7,17 +7,19 @@
 {% if stories %}
     <div class="stories-grid">
         {% for story in stories %}
-            <div class="story-card">
-                <div class="story-info">
-                    <div class="story-title">{{ story.title }}</div>
-                    <div class="story-meta">{{ story.word_count }} words written</div>
+            <!-- 🆕 wrap the card in an <a> so the whole card is clickable -->
+            <a href="/read-story/{{ story.id }}" class="story-card-link">
+                <div class="story-card">
+                    <div class="story-info">
+                        <div class="story-title">{{ story.title }}</div>
+                        <div class="story-meta">{{ story.word_count }} words written</div>
+                    </div>
+                    <div class="story-points">⭐ {{ story.points_earned }} pts</div>
                 </div>
-                <div class="story-points">⭐ {{ story.points_earned }} pts</div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 {% else %}
-    <!-- friendly empty state for users who haven't written anything yet -->
     <div class="empty-state">
         <span class="empty-icon">📝</span>
         <p class="empty-text">No stories yet — let's write your first one!</p>

@@ -1,15 +1,38 @@
 {% extends "template.html" %}
 {% block content %}
 
-<div align='center'>
-	<h2>{{ story.title }}</h2>
-	<p style="font-size:18px"><b>Word Count:</b> {{ story.word_count }}</p>
-	<div style="width:80%">
-		<p style="font-size:16px">{{ story.story }}</p>
-	</div>
+<!-- back link at top so users can easily return to their archive -->
+<a href="/prior-pieces" class="back-link">← Back to your stories</a>
 
-	<a href="{{url_for('prior_pieces')}}">Back</a>
-	<br><br><br>
+<article class="story-read-card">
+    <h1 class="story-read-title">{{ story.title }}</h1>
+
+    <!-- 🆕 little stats row showing word count + points -->
+    <div class="story-read-meta">
+        <span class="meta-pill">📖 {{ story.word_count }} words</span>
+        <span class="meta-pill points">⭐ {{ story.points_earned }} points</span>
+    </div>
+
+    <!-- 🆕 show the prompts the user used (cute reminder of what they were working with!) -->
+    {% if story.prompts %}
+        <div class="story-read-prompts">
+            <span class="prompts-label">Words used in this story:</span>
+            <div class="prompts-tags">
+                {% if story.prompts.name %}<span class="prompt-tag">{{ story.prompts.name }}</span>{% endif %}
+                {% if story.prompts.job %}<span class="prompt-tag">{{ story.prompts.job }}</span>{% endif %}
+                {% if story.prompts.object %}<span class="prompt-tag">{{ story.prompts.object }}</span>{% endif %}
+                {% if story.prompts.location %}<span class="prompt-tag">{{ story.prompts.location }}</span>{% endif %}
+                {% if story.prompts.bonus %}<span class="prompt-tag bonus">⭐ {{ story.prompts.bonus }}</span>{% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- the actual story content -->
+    <div class="story-read-content">{{ story.content }}</div>
+</article>
+
+<div style="text-align:center; margin-top: 24px;">
+    <a href="/home" class="cta-button">✏️ Write another story</a>
 </div>
-	
+
 {% endblock %}

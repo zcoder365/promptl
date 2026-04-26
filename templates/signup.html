@@ -6,55 +6,55 @@
     <title>Promptl — Sign Up</title>
     <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
 
-    <!-- nunito font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body align="center">
-    <br><br><br>
-    <img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O" height="100">
+<body class="auth-page">
 
-    <h2>Sign Up</h2>
+    <div class="auth-card">
 
-    <!-- error message slot -->
-    <p id="error-msg" class="message" style="display:none;"></p>
+        <img src="/static/assets/logo.png" alt="promptl logo" class="auth-logo">
+        <h1 class="auth-title">Let's start writing! ✏️</h1>
+        <p class="auth-subtitle">Create your account in seconds</p>
 
-    <!-- email/password signup form -->
-    <form id="signup-form">
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" required><br><br>
+        <div id="error-msg" class="auth-error" style="display:none;"></div>
 
-        <label for="password">Password (at least 6 characters):</label><br>
-        <input type="password" id="password" required minlength="6"><br><br>
+        <!-- email/password signup form -->
+        <form id="signup-form" class="auth-form">
+            <div class="auth-field">
+                <label for="email" class="auth-label">Email</label>
+                <input type="email" id="email" class="auth-input" placeholder="you@example.com" required>
+            </div>
 
-        <button type="submit">Create Account</button>
-    </form>
+            <div class="auth-field">
+                <label for="password" class="auth-label">Password (6+ characters)</label>
+                <input type="password" id="password" class="auth-input" placeholder="••••••••" required minlength="6">
+            </div>
 
-    <br>
-    <p>— or —</p>
+            <button type="submit" class="auth-button-primary">Create account</button>
+        </form>
 
-    <!-- google signup button (same flow handles both signup + signin) -->
-    <button id="google-signup" class="save-writing" style="max-width:300px;">
-        🔑 Sign up with Google
-    </button>
+        <div class="auth-divider">or</div>
 
-    <br><br>
-    <p>Already have an account? <a href="/login">Login</a>.</p>
+        <button id="google-signup" class="auth-button-google">
+            🔑 Sign up with Google
+        </button>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         FIREBASE SIGNUP MODULE
-         creates a new firebase user, then sends token to flask
-         ───────────────────────────────────────────────────────────── -->
+        <div class="auth-helpers">
+            <p>Already have an account? <a href="/login">Login</a></p>
+        </div>
+
+    </div>
+
     <script type="module">
         import { firebaseConfig } from "/static/firebase-config.js";
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
         import {
             getAuth,
-            createUserWithEmailAndPassword,  // ← key difference from login.html
+            createUserWithEmailAndPassword,
             GoogleAuthProvider,
             signInWithPopup,
         } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
@@ -69,7 +69,6 @@
             errorMsg.style.display = "block";
         }
 
-        // same pattern as login: send firebase token → flask → session cookie
         async function sendTokenToBackend(user) {
             const idToken = await user.getIdToken();
             const response = await fetch("/auth/session", {
@@ -85,20 +84,15 @@
             }
         }
 
-        // ── email/password signup ──
         document.getElementById("signup-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
             try {
-                // createUserWithEmailAndPassword:
-                //   1. creates the firebase auth user
-                //   2. auto-signs them in (returns a logged-in user)
                 const result = await createUserWithEmailAndPassword(auth, email, password);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                // friendly error messages
                 if (err.code === "auth/email-already-in-use") {
                     showError("That email is already registered. Try logging in!");
                 } else if (err.code === "auth/weak-password") {
@@ -111,7 +105,6 @@
             }
         });
 
-        // ── google signup (firebase handles "is this user new or existing") ──
         document.getElementById("google-signup").addEventListener("click", async () => {
             const provider = new GoogleAuthProvider();
             try {

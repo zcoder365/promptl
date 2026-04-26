@@ -1,7 +1,7 @@
 services:
--type: web
-name: promptl
-env: python
-buildCommand: pip install -r requirements.txt
-startCommand: gunicorn app:main
-plan: free
+  - type: web
+    name: promptl
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app  # ← was "app:main", which is backwards
+    plan: free

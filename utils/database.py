@@ -59,6 +59,11 @@ def verify_id_token(id_token: str):
         dict: Decoded token payload with 'uid', 'email', etc., or None if invalid.
     """
     try:
+        # 🆕 ensure firebase is initialized before calling auth functions.
+        # this matters because verify_id_token() can be called before any
+        # firestore operation, so get_db() may not have run yet.
+        _initialize_firebase()
+        
         # firebase_auth.verify_id_token() does cryptographic verification —
         # it checks the signature, expiration, and issuer. trust this fn.
         decoded = firebase_auth.verify_id_token(id_token)

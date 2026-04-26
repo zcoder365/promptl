@@ -6,54 +6,63 @@
     <title>Promptl — Login</title>
     <link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
 
-    <!-- nunito font (same as rest of app) -->
+    <!-- nunito font (matches the rest of the app) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body align="center">
-    <br><br><br>
-    <img src="/static/assets/logo.png" alt="promptl logo with a lightbulb as the O" height="100">
+<!-- 🆕 add 'auth-page' class to body so it gets the gradient background -->
+<body class="auth-page">
 
-    <h2>Login</h2>
+    <!-- 🆕 single white card holds everything, centered automatically by flexbox -->
+    <div class="auth-card">
 
-    <!-- error message slot — hidden by default, shown if login fails -->
-    <p id="error-msg" class="message" style="display:none;"></p>
+        <img src="/static/assets/logo.png" alt="promptl logo" class="auth-logo">
+        <h1 class="auth-title">Welcome back!</h1>
+        <p class="auth-subtitle">Login to keep your streak going 🔥</p>
 
-    <!-- email/password login form -->
-    <form id="login-form">
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" required><br><br>
+        <!-- error message slot — hidden until something fails -->
+        <div id="error-msg" class="auth-error" style="display:none;"></div>
 
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" required><br><br>
+        <!-- email/password form -->
+        <form id="login-form" class="auth-form">
+            <div class="auth-field">
+                <label for="email" class="auth-label">Email</label>
+                <input type="email" id="email" class="auth-input" placeholder="you@example.com" required>
+            </div>
 
-        <button type="submit">Login</button>
-    </form>
+            <div class="auth-field">
+                <label for="password" class="auth-label">Password</label>
+                <input type="password" id="password" class="auth-input" placeholder="••••••••" required>
+            </div>
 
-    <br>
-    <p>— or —</p>
+            <button type="submit" class="auth-button-primary">Login</button>
+        </form>
 
-    <!-- google sign-in button -->
-    <button id="google-signin" class="save-writing" style="max-width:300px;">
-        🔑 Sign in with Google
-    </button>
+        <!-- divider -->
+        <div class="auth-divider">or</div>
 
-    <br><br>
-    <p>Don't have an account? <a href="/signup">Sign up</a>.</p>
-    <p>Forgot your password? <a href="/reset-password">Reset password</a>.</p>
+        <!-- google sign-in -->
+        <button id="google-signin" class="auth-button-google">
+            🔑 Sign in with Google
+        </button>
+
+        <!-- helper links -->
+        <div class="auth-helpers">
+            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+            <p>Forgot your password? <a href="/reset-password">Reset password</a></p>
+        </div>
+
+    </div>
 
     <!-- ─────────────────────────────────────────────────────────────
          FIREBASE AUTH MODULE
-         handles email/password + google login, then sends token to flask
+         (logic unchanged — just updated to use new CSS classes)
          ───────────────────────────────────────────────────────────── -->
     <script type="module">
-        // shared config (public — safe to expose in client-side JS)
         import { firebaseConfig } from "/static/firebase-config.js";
-
-        // firebase SDK imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
         import {
             getAuth,
@@ -62,21 +71,16 @@
             signInWithPopup,
         } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-        // initialize firebase + get auth instance
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // ── helpers ──
         const errorMsg = document.getElementById("error-msg");
 
-        // show an error message to the user
         function showError(msg) {
             errorMsg.textContent = msg;
             errorMsg.style.display = "block";
         }
 
-        // after firebase login succeeds, send the ID token to flask
-        // so the backend can verify it + create a session cookie
         async function sendTokenToBackend(user) {
             const idToken = await user.getIdToken();
             const response = await fetch("/auth/session", {
@@ -86,25 +90,21 @@
             });
 
             if (response.ok) {
-                // session cookie is set — go to the writing page!
                 window.location.href = "/home";
             } else {
                 showError("Something went wrong. Please try again.");
             }
         }
 
-        // ── email/password login ──
         document.getElementById("login-form").addEventListener("submit", async (e) => {
-            e.preventDefault();  // prevent the form from doing a normal POST
+            e.preventDefault();
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
             try {
-                // firebase verifies the credentials and returns a user object
                 const result = await signInWithEmailAndPassword(auth, email, password);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                // map firebase error codes to friendly messages for kids
                 if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password") {
                     showError("Wrong email or password. Try again!");
                 } else if (err.code === "auth/user-not-found") {
@@ -117,16 +117,12 @@
             }
         });
 
-        // ── google sign-in ──
         document.getElementById("google-signin").addEventListener("click", async () => {
             const provider = new GoogleAuthProvider();
             try {
-                // signInWithPopup opens a google login window
-                // it auto-creates an account on first login (or signs in if existing)
                 const result = await signInWithPopup(auth, provider);
                 await sendTokenToBackend(result.user);
             } catch (err) {
-                // popup-closed-by-user is common if they cancel — don't show an error for that
                 if (err.code !== "auth/popup-closed-by-user") {
                     showError("Google sign-in failed: " + err.message);
                 }

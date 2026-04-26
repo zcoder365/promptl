@@ -568,3 +568,211 @@ textarea {
 
   .save-writing { font-size: 16px; padding: 14px 20px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH PAGES (login, signup, reset-password)
+   shared layout: centered card on warm background
+   ═══════════════════════════════════════════════════════════════ */
+
+/* the body background gets a soft gradient on auth pages */
+body.auth-page {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* the white card holding the form */
+.auth-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+}
+
+.auth-logo {
+  height: 80px;
+  width: auto;
+  margin-bottom: 12px;
+}
+
+.auth-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  font-size: 15px;
+  color: var(--text-2);
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+
+/* error message banner */
+.auth-error {
+  background: var(--accent-light);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--accent-dark);
+  font-weight: 600;
+  text-align: left;
+}
+
+/* form layout */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.auth-input:focus {
+  border-color: var(--accent);
+  background: white;
+}
+
+.auth-input::placeholder {
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+/* primary submit button (login / create account) */
+.auth-button-primary {
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(255, 107, 91, 0.25);
+  margin-top: 4px;
+}
+
+.auth-button-primary:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 107, 91, 0.35);
+}
+
+.auth-button-primary:active { transform: translateY(0); }
+
+/* "— or —" divider between email form and google button */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* google sign-in button (secondary style: outlined, not filled) */
+.auth-button-google {
+  width: 100%;
+  background: white;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.auth-button-google:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* helper links at the bottom (sign up / login / reset password) */
+.auth-helpers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.auth-helpers a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-helpers a:hover {
+  text-decoration: underline;
+}
+
+/* mobile tweaks */
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 32px 24px;
+    border-radius: var(--radius-lg);
+  }
+  .auth-logo { height: 64px; }
+  .auth-title { font-size: 24px; }
+}

@@ -64,18 +64,9 @@
 		     to load the firebase SDK from google's CDN.
 		     ───────────────────────────────────────────────────────────── -->
 		<script type="module">
+            import { firebaseConfig } from "/static/firebase-config.js";
 			import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 			import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
-
-			// firebase config — same as login.html and signup.html
-			const firebaseConfig = {
-				apiKey: "AIzaSyBjyTaTEsvSqsAUo6dyMhtZpjG2gNTse2c",
-				authDomain: "promptl-35e17.firebaseapp.com",
-				projectId: "promptl-35e17",
-				storageBucket: "promptl-35e17.firebasestorage.app",
-				messagingSenderId: "434478496754",
-				appId: "1:434478496754:web:94b392bc6f210d53ff096b"
-			};
 
 			// init firebase (safe to call on every page; it's idempotent)
 			const app = initializeApp(firebaseConfig);

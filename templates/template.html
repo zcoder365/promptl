@@ -6,7 +6,7 @@
 		<title>Promptl</title>
 		<link rel="shortcut icon" href="/static/assets/favicon.png" type="image/x-icon">
 
-		<!-- 🆕 nunito font (warm, friendly, kid-appropriate) -->
+		<!-- nunito font (warm, friendly, kid-appropriate) -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -16,21 +16,30 @@
 	</head>
 
 	<body>
-		<div class="navigation">
-            <a href="/home"><button>Home</button></a>
-            <a href="/about"><button>About</button></a>
-            <a href="/prior-pieces"><button>Prior Pieces</button></a>
-            <a href="/my-account"><button>My Account</button></a>
-            <a href="/logout"><button>Logout</button></a>
-        </div>
+		<nav>
+			<a href="/home"><img src="/static/assets/logo.png" alt="prompt-l with a lightbulb replacing the O" class="logo-btn-nav"></a>
+			
+			<div class="navigation">
+				<a href="/home"><button>Home</button></a>
+				<a href="/about"><button>About</button></a>
+				<a href="/prior-pieces"><button>Prior Pieces</button></a>
+				<a href="/my-account"><button>My Account</button></a>
+				<a href="/logout" id="logout-link"><button>Logout</button></a>
+			</div>
+		</nav>
 
-		<!-- 🆕 wrap content in page-container so it has proper max-width + padding -->
+		<!-- wrap content in page-container so it has proper max-width + padding -->
 		<div class="page-container">
 			{% block content %} {% endblock %}
 		</div>
 
+		<!-- ─────────────────────────────────────────────────────────────
+		     SCRIPT 1: regular (non-module) — word count tracker
+		     this runs on every page that has a textarea (the writing form).
+		     it can't be a module because it needs to run synchronously.
+		     ───────────────────────────────────────────────────────────── -->
 		<script>
-			// ── word count tracker (only runs on pages with a textarea) ──
+			// ── word count tracker ──
 			const textarea = document.querySelector('textarea');
 			if (textarea) {
 				textarea.addEventListener('keyup', function() {
@@ -45,6 +54,44 @@
 						textarea.insertAdjacentHTML("afterend",
 							`<p class='wordcount'>Word count: ${wordCount}</p>`);
 					}
+				});
+			}
+		</script>
+
+		<!-- ─────────────────────────────────────────────────────────────
+		     SCRIPT 2: module — firebase logout
+		     this needs type="module" because it uses ES module imports
+		     to load the firebase SDK from google's CDN.
+		     ───────────────────────────────────────────────────────────── -->
+		<script type="module">
+			import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+			import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+			// firebase config — same as login.html and signup.html
+			const firebaseConfig = {
+				apiKey: "AIzaSyBjyTaTEsvSqsAUo6dyMhtZpjG2gNTse2c",
+				authDomain: "promptl-35e17.firebaseapp.com",
+				projectId: "promptl-35e17",
+				storageBucket: "promptl-35e17.firebasestorage.app",
+				messagingSenderId: "434478496754",
+				appId: "1:434478496754:web:94b392bc6f210d53ff096b"
+			};
+
+			// init firebase (safe to call on every page; it's idempotent)
+			const app = initializeApp(firebaseConfig);
+			const auth = getAuth(app);
+
+			// when user clicks logout: sign out of firebase first, then hit flask /logout
+			const logoutLink = document.getElementById("logout-link");
+			if (logoutLink) {
+				logoutLink.addEventListener("click", async (e) => {
+					e.preventDefault();  // stop the link from navigating immediately
+					try {
+						await signOut(auth);  // clear firebase auth state
+					} catch (err) {
+						console.warn("firebase signOut error (continuing anyway):", err);
+					}
+					window.location.href = "/logout";  // now hit flask to clear session
 				});
 			}
 		</script>

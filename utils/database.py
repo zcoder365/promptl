@@ -1,320 +1,262 @@
-import os
-from dotenv import load_dotenv
-from datetime import datetime
-import json
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+"""Database layer for Promptl - handles all Firestore interactions."""
 
-# Load the environment variables from the .env file
+import os
+import json
+from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials, firestore, auth as firebase_auth
+
+# load env vars from .env file (only matters locally; render injects them directly)
 load_dotenv()
 
-# Get MongoDB connection string from environment
-MONGODB_URI = os.getenv("MONGODB_URI")
-DATABASE_NAME = "Promptl"  # database name
+# ─────────────────────────────────────────────────────────────
+# FIREBASE INITIALIZATION
+# ─────────────────────────────────────────────────────────────
+# we use a singleton pattern: initialize firebase once, reuse the connection.
+# this matches how you set up lockd in's backend.
 
-# Global client variable
-_mongo_client = None
-_db = None
+_db = None  # module-level cache for the firestore client
+
+def _initialize_firebase():
+    """Initialize the firebase admin SDK (only runs once per process)."""
+    # firebase_admin tracks initialized apps internally; calling initialize_app
+    # twice raises an error, so we check first.
+    if not firebase_admin._apps:
+        # the credentials JSON is stored as a string in the env var,
+        # so we parse it back into a dict before passing to firebase
+        cred_json = os.getenv("FIREBASE_CREDENTIALS")
+        if not cred_json:
+            raise RuntimeError("FIREBASE_CREDENTIALS env var not set!")
+        
+        cred_dict = json.loads(cred_json)
+        cred = credentials.Certificate(cred_dict)
+        firebase_admin.initialize_app(cred)
 
 def get_db():
-    """
-    Get MongoDB database connection
-    Returns:
-        Database: MongoDB database instance
-    """
-    global _mongo_client, _db
-    
-    try:
-        # Only create client once (singleton pattern)
-        if _mongo_client is None:
-            _mongo_client = MongoClient(MONGODB_URI)
-            _db = _mongo_client["Promptl"]
-            # Test the connection
-            _mongo_client.admin.command('ping')
-        
-        return _db
-    except Exception as e:
-        print(f"Failed to connect to MongoDB: {e}")
-        raise
+    """Get the firestore client, initializing firebase if needed."""
+    global _db
+    if _db is None:
+        _initialize_firebase()
+        _db = firestore.client()
+    return _db
 
-def add_story(title: str, story_content: str, prompts: dict, word_count: int, points_earned: int, username: str):
-    """Save a story to the database with username association.
+# ─────────────────────────────────────────────────────────────
+# AUTH HELPERS
+# ─────────────────────────────────────────────────────────────
+
+def verify_id_token(id_token: str):
+    """Verify a firebase ID token sent from the frontend.
+    
+    The frontend logs the user in via firebase JS SDK, gets an ID token,
+    then sends it to our flask backend. We verify it here to confirm
+    the user is who they claim to be.
     
     Args:
-        title (str): The story title.
-        story_content (str): The full story text.
-        prompts (dict): Dictionary of prompts used in the story.
-        word_count (int): Total word count of the story.
-        points_earned (int): Points earned for this story.
-        username (str): Username of the story author.
+        id_token (str): The ID token string from the client.
     
     Returns:
-        str: The inserted story ID if successful, None otherwise.
+        dict: Decoded token payload with 'uid', 'email', etc., or None if invalid.
     """
     try:
-        # Validate input parameters
-        if not title or not story_content or not username:
-            return None
-        
-        # Get database connection
+        # firebase_auth.verify_id_token() does cryptographic verification —
+        # it checks the signature, expiration, and issuer. trust this fn.
+        decoded = firebase_auth.verify_id_token(id_token)
+        return decoded
+    except Exception as e:
+        print(f"[auth] token verification failed: {e}")
+        return None
+
+# ─────────────────────────────────────────────────────────────
+# USER OPERATIONS
+# ─────────────────────────────────────────────────────────────
+
+def get_or_create_user(uid: str, email: str, display_name: str = None):
+    """Fetch a user document, creating it if this is their first login.
+    
+    Firebase auth handles authentication, but we still need a firestore
+    doc for each user to track points, streak, etc.
+    
+    Args:
+        uid (str): Firebase auth user ID.
+        email (str): User's email address.
+        display_name (str, optional): Display name (from google sign-in).
+    
+    Returns:
+        dict: The user's document data (with their uid included).
+    """
+    db = get_db()
+    user_ref = db.collection("users").document(uid)
+    user_doc = user_ref.get()
+    
+    if user_doc.exists:
+        # user already exists — just return their data
+        data = user_doc.to_dict()
+        data["uid"] = uid
+        return data
+    
+    # first time login — create their doc with default values
+    new_user = {
+        "email": email,
+        "displayName": display_name or email.split("@")[0],
+        "createdAt": datetime.now(timezone.utc),
+        "totalPoints": 0,
+        "totalWords": 0,
+        "currentStreak": 0,
+        "lastStoryDate": None,  # will be set when they write their first story
+    }
+    user_ref.set(new_user)
+    new_user["uid"] = uid
+    return new_user
+
+def get_user(uid: str):
+    """Fetch a user document by uid. Returns None if not found."""
+    db = get_db()
+    user_doc = db.collection("users").document(uid).get()
+    if user_doc.exists:
+        data = user_doc.to_dict()
+        data["uid"] = uid
+        return data
+    return None
+
+# ─────────────────────────────────────────────────────────────
+# STORY OPERATIONS
+# ─────────────────────────────────────────────────────────────
+
+def add_story(uid: str, title: str, story_content: str, prompts: dict,
+              word_count: int, points_earned: int):
+    """Save a new story to firestore + update the user's stats and streak.
+    
+    Stories are stored as a subcollection under the user, so the path is:
+        users/{uid}/stories/{auto-generated story id}
+    
+    This function does TWO things atomically-ish:
+      1. Adds the story document
+      2. Updates the parent user doc's totals (points, words) + streak
+    
+    Args:
+        uid (str): The author's firebase uid.
+        title (str): Story title.
+        story_content (str): The full story text.
+        prompts (dict): The prompts that were used.
+        word_count (int): Number of words in the story.
+        points_earned (int): Points earned for this story.
+    
+    Returns:
+        str: The new story's ID, or None on failure.
+    """
+    try:
         db = get_db()
-        stories_collection = db.stories
+        user_ref = db.collection("users").document(uid)
         
-        # Create story document
+        # build the story document
         story_doc = {
             "title": title,
-            "story": story_content,
-            "prompts": prompts,  # MongoDB stores dicts natively as BSON
-            "word_count": word_count,
-            "points_earned": points_earned,
-            "username": username,
-            "created_at": datetime.now()
+            "content": story_content,
+            "prompts": prompts,
+            "wordCount": word_count,
+            "pointsEarned": points_earned,
+            "createdAt": datetime.now(timezone.utc),
         }
         
-        # Insert the story into MongoDB
-        result = stories_collection.insert_one(story_doc)
+        # add() generates a unique ID automatically — preferable to set() here
+        # because we want firestore to handle ID generation.
+        _, story_ref = user_ref.collection("stories").add(story_doc)
         
-        if result.inserted_id:
-            story_id = str(result.inserted_id)  # Convert ObjectId to string
-            return story_id
-        else:
-            return None
+        # now update the user's running totals + streak
+        _update_user_stats_after_story(uid, word_count, points_earned)
         
+        return story_ref.id
     except Exception as e:
-        print(f"Error saving story: {e}")
+        print(f"[db] error saving story: {e}")
         return None
 
-def add_story_no_username(story_document: dict):
-    """Save a story to the database without username association.
+def _update_user_stats_after_story(uid: str, word_count: int, points: int):
+    """Update user totals + streak after a story is saved.
     
-    Args:
-        story_document (dict): Story document containing 'title', 'story', 'prompts',
-                              'word_count', and 'points_earned' keys.
+    Streak logic:
+      - If they've never written: streak = 1
+      - If last story was today: streak unchanged (multiple stories same day = same streak)
+      - If last story was yesterday: streak += 1
+      - If last story was 2+ days ago: streak resets to 1
     
-    Returns:
-        str: The inserted story ID if successful, None otherwise.
-    """
-    try:        
-        # Get database connection
-        db = get_db()
-        stories_collection = db.stories
-        
-        # Create story document
-        story_doc = {
-            "title": story_document["title"],
-            "story": story_document["story"],
-            "prompts": story_document["prompts"],  # MongoDB stores dicts natively as BSON
-            "word_count": story_document["word_count"],
-            "points_earned": story_document["points_earned"],
-            "created_at": datetime.now()
-        }
-        
-        # Insert the story into MongoDB
-        result = stories_collection.insert_one(story_doc)
-        
-        if result.inserted_id:
-            story_id = str(result.inserted_id)  # Convert ObjectId to string
-            return story_id
-        else:
-            return None
-        
-    except Exception as e:
-        print(f"Error saving story: {e}")
-        return None
-
-def get_user_stories(username: str):
-    """Retrieve all stories written by a specific user, ordered by creation date.
-    
-    Args:
-        username (str): The username to retrieve stories for.
-    
-    Returns:
-        list: List of story documents ordered by creation date (newest first).
-              Returns empty list if an error occurs.
-    """
-    try:
-        # Get database connection
-        db = get_db()
-        stories_collection = db.stories
-        
-        # Query for user's stories, ordered by creation date (newest first)
-        cursor = stories_collection.find(
-            {"username": username}
-        ).sort("created_at", -1)  # -1 for descending order
-        
-        # Convert cursor to list of dicts
-        stories_list = []
-        for story in cursor:
-            # Convert ObjectId to string for JSON serialization
-            story['_id'] = str(story['_id'])
-            stories_list.append(story)
-        
-        return stories_list
-            
-    except Exception as e:
-        print(f"Error getting stories for {username}: {e}")
-        return []
-
-def get_all_stories():
-    """Retrieve all stories in the database, ordered by creation date.
-    
-    Returns:
-        list: List of all story documents ordered by creation date (newest first).
-              Returns empty list if an error occurs.
-    """
-    try:
-        # Get database connection
-        db = get_db()
-        stories_collection = db.stories
-        
-        # Query for all stories, ordered by creation date (newest first)
-        cursor = stories_collection.find().sort("created_at", -1)
-        
-        # Convert cursor to list of dicts
-        stories_list = []
-        for story in cursor:
-            # Convert ObjectId to string for JSON serialization
-            story['_id'] = str(story['_id'])
-            stories_list.append(story)
-        
-        return stories_list
-            
-    except Exception as e:
-        print(f"Error getting all stories: {e}")
-        return []
-
-def get_story_by_id(story_id: str):
-    """Retrieve a specific story by its ID.
-    
-    Args:
-        story_id (str): The MongoDB ObjectId as a string.
-    
-    Returns:
-        dict: The story document if found, None otherwise.
-    """
-    try:
-        # Get database connection
-        db = get_db()
-        stories_collection = db.stories
-        
-        # Convert string ID to ObjectId
-        story = stories_collection.find_one({"_id": ObjectId(story_id)})
-        
-        if story:
-            # Convert ObjectId to string for JSON serialization
-            story['_id'] = str(story['_id'])
-            return story
-        else:
-            return None
-            
-    except Exception as e:
-        print(f"Error getting story by ID {story_id}: {e}")
-        return None
-
-def delete_story(story_id: str, username: str):
-    """Delete a story from the database if the user is the author.
-    
-    Args:
-        story_id (str): The MongoDB ObjectId as a string.
-        username (str): The username of the requesting user (must be the author).
-    
-    Returns:
-        bool: True if story was deleted, False otherwise.
-    """
-    try:
-        # Get database connection
-        db = get_db()
-        stories_collection = db.stories
-        
-        # Delete only if the user is the author
-        result = stories_collection.delete_one({
-            "_id": ObjectId(story_id),
-            "username": username
-        })
-        
-        if result.deleted_count > 0:
-            return True
-        else:
-            return False
-            
-    except Exception as e:
-        print(f"Error deleting story {story_id}: {e}")
-        return False
-
-def add_user(username: str, password: str):
-    """Create a new user account in the database.
-    
-    Args:
-        username (str): The username for the new account.
-        password (str): The password for the new account.
-    
-    Returns:
-        str: The inserted user ID if successful, None otherwise.
-    """
-    user_document = {
-        "username": username,
-        "password": password
-    }
-    
-    db = get_db()
-    users_collection = db.users
-    result = users_collection.insert_one(user_document)
-    
-    if result.inserted_id:
-            user_id = str(result.inserted_id)  # Convert ObjectId to string
-            return user_id
-    else:
-        return None
-
-def find_user(username: str):
-    """Retrieve a user by username.
-    
-    Args:
-        username (str): The username to look up.
-    
-    Returns:
-        dict: The user document if found, None otherwise.
+    Note: this uses UTC dates. for a production app you'd want to use the
+    user's local timezone, but UTC is fine for now.
     """
     db = get_db()
-    users_collection = db.users
+    user_ref = db.collection("users").document(uid)
+    user = user_ref.get().to_dict()
     
-    result = users_collection.find_one({"username": username})
+    today = datetime.now(timezone.utc).date()
+    last_date = user.get("lastStoryDate")
     
-    if result is not None:
-        return result
+    # firestore returns timestamps as datetime objects — extract just the date part
+    if last_date is not None:
+        last_date = last_date.date() if hasattr(last_date, "date") else last_date
+    
+    # figure out the new streak value
+    if last_date is None:
+        new_streak = 1  # first story ever
+    elif last_date == today:
+        new_streak = user.get("currentStreak", 1)  # already wrote today, no change
+    elif last_date == today - timedelta(days=1):
+        new_streak = user.get("currentStreak", 0) + 1  # consecutive day! 🔥
     else:
-        print(f"Error getting user with username {username}.")
-        return None
-
-def test_connection():
-    """Test the MongoDB database connection.
+        new_streak = 1  # streak broken, restart at 1
     
-    Performs a ping to verify connectivity and counts available stories.
+    # firestore.Increment is atomic — safer than read-modify-write for counters
+    # (it prevents race conditions if two writes happen at the same time)
+    user_ref.update({
+        "totalPoints": firestore.Increment(points),
+        "totalWords": firestore.Increment(word_count),
+        "currentStreak": new_streak,
+        "lastStoryDate": datetime.now(timezone.utc),
+    })
+
+def get_user_stories(uid: str):
+    """Fetch all stories for a user, newest first.
     
     Returns:
-        bool: True if connection is successful, False otherwise.
+        list: List of story dicts (with 'id' field added). Empty list on error.
     """
     try:
-        # Get database connection
         db = get_db()
-        
-        # Simple test query - count stories
-        count = db.stories.count_documents({})
-        
-        print(f"MongoDB connection test successful. Found {count} stories")
-        return True
-        
+        stories_ref = (
+            db.collection("users")
+            .document(uid)
+            .collection("stories")
+            .order_by("createdAt", direction=firestore.Query.DESCENDING)
+        )
+        stories = []
+        for doc in stories_ref.stream():
+            data = doc.to_dict()
+            data["id"] = doc.id  # include the doc ID so we can link to it
+            stories.append(data)
+        return stories
     except Exception as e:
-        print(f"MongoDB connection test failed: {e}")
-        return False
+        print(f"[db] error fetching stories for {uid}: {e}")
+        return []
 
-def close_connection():
-    """
-    Close the MongoDB connection
-    """
-    global _mongo_client
+def get_story(uid: str, story_id: str):
+    """Fetch a single story by ID (only if it belongs to the given user).
     
-    if _mongo_client:
-        _mongo_client.close()
-        _mongo_client = None
-        print("MongoDB connection closed")
+    Scoping the lookup under the user's subcollection means we automatically
+    can't accidentally return another user's story. ✨
+    """
+    try:
+        db = get_db()
+        doc = (
+            db.collection("users")
+            .document(uid)
+            .collection("stories")
+            .document(story_id)
+            .get()
+        )
+        if doc.exists:
+            data = doc.to_dict()
+            data["id"] = doc.id
+            return data
+        return None
+    except Exception as e:
+        print(f"[db] error fetching story {story_id}: {e}")
+        return None

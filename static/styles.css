@@ -119,6 +119,13 @@ nav {
   margin-bottom: 32px;
 }
 
+.welcome-bulb {
+  display: block;
+  margin: 0 auto 12px;
+  height: 72px;
+  width: auto;
+}
+
 /* ── 🆕 large playful welcome heading ── */
 .promptl-text {
   font-size: 36px;

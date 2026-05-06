@@ -122,8 +122,15 @@ nav {
 .welcome-bulb {
   display: block;
   margin: 0 auto 12px;
-  height: 72px;
+  height: 90px;
   width: auto;
+}
+
+.help-link-bulb {
+  height: 14px;
+  width: auto;
+  vertical-align: middle;
+  margin-right: 2px;
 }
 
 /* ── 🆕 large playful welcome heading ── */

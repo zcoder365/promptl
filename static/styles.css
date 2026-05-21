@@ -5,30 +5,30 @@
 :root {
   /* ── 🆕 refreshed color palette ── */
   /* warmer, friendlier, more 2026 */
-  --primary:        #3D52A0;   /* softer blue (was #00008B navy) */
-  --primary-dark:   #2C3E7F;
-  --primary-light:  #E8ECF7;   /* light tint for backgrounds */
+  --primary:        #4361EE;   /* vibrant blue */
+  --primary-dark:   #3451D1;
+  --primary-light:  #E8EDFF;   /* light tint for backgrounds */
 
-  --accent:         #FF6B5B;   /* warm coral (was #FF5349 tomato) */
-  --accent-dark:    #E5503F;
+  --accent:         #FF5C49;   /* bright coral-red */
+  --accent-dark:    #E5432F;
   --accent-light:   #FFE8E5;   /* light tint */
 
-  --success:        #7BAE7F;   /* sage green for points/wins */
-  --success-light:  #E8F2E9;
+  --success:        #2ECC71;   /* bright green for points/wins */
+  --success-light:  #D5F5E3;
 
   --warning:        #F4B860;   /* warm amber for tips */
-  --warning-light:  #FBF1DD;
+  --warning-light:  #FEF3DC;
 
-  --text:           #2A2D43;   /* soft dark navy (was pure black) */
-  --text-2:         #6B6F8A;   /* muted secondary text */
-  --text-3:         #A8ADC2;   /* tertiary/placeholder */
+  --text:           #1A1D35;   /* deep navy */
+  --text-2:         #5A5E7A;   /* muted secondary text */
+  --text-3:         #A0A4BE;   /* tertiary/placeholder */
 
-  --bg:             #FFF8F0;   /* 🆕 warm off-white background (was pure white) */
-  --bg-2:           #FDF1E1;   /* slightly deeper warm bg */
-  --bg-card:        #FFFFFF;   /* cards stay pure white to pop */
+  --bg:             #FFFFFF;   /* clean white */
+  --bg-2:           #F4F6FF;   /* light periwinkle for alternate sections */
+  --bg-card:        #FFFFFF;   /* cards */
 
-  --border:         #E8DCC8;   /* warm beige border */
-  --border-strong:  #D4C4A8;
+  --border:         #E0E4F0;   /* soft blue-grey border */
+  --border-strong:  #C5CBE5;
 
   /* ── spacing + radius tokens ── */
   --radius-sm: 8px;
@@ -1238,8 +1238,9 @@ body.landing-page {
   align-items: center;
   justify-content: space-between;
   padding: 16px 32px;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
 }
 
 .landing-nav-logo img {
@@ -1601,7 +1602,7 @@ body.landing-page {
 }
 
 @media (max-width: 600px) {
-  .landing-nav { padding: 14px 20px; }
+  .landing-nav { padding: 12px 20px; }
   .landing-nav-logo img { height: 32px; }
   .landing-nav-link, .landing-nav-cta {
     font-size: 13px;

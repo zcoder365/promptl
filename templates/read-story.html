@@ -8,8 +8,8 @@
     <h1 class="story-read-title">{{ story.title }}</h1>
 
     <div class="story-read-meta">
-        <span class="meta-pill">📖 {{ story.word_count }} words</span>
-        <span class="meta-pill points">⭐ {{ story.points_earned }} points</span>
+        <span class="meta-pill">{{ story.word_count }} words</span>
+        <span class="meta-pill points">{{ story.points_earned }} points</span>
     </div>
 
     {% if story.prompts %}
@@ -20,7 +20,7 @@
                 {% if story.prompts.job %}<span class="prompt-tag">{{ story.prompts.job }}</span>{% endif %}
                 {% if story.prompts.object %}<span class="prompt-tag">{{ story.prompts.object }}</span>{% endif %}
                 {% if story.prompts.location %}<span class="prompt-tag">{{ story.prompts.location }}</span>{% endif %}
-                {% if story.prompts.bonus %}<span class="prompt-tag bonus">⭐ {{ story.prompts.bonus }}</span>{% endif %}
+                {% if story.prompts.bonus %}<span class="prompt-tag bonus">{{ story.prompts.bonus }}</span>{% endif %}
             </div>
         </div>
     {% endif %}
@@ -30,7 +30,7 @@
 </article>
 
 <div style="text-align:center; margin-top: 24px;">
-    <a href="/home" class="cta-button">✏️ Write another story</a>
+    <a href="/home" class="cta-button">Write another story</a>
 </div>
 
 {% endblock %}

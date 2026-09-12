@@ -13,15 +13,14 @@
                         <div class="story-title">{{ story.title }}</div>
                         <div class="story-meta">{{ story.word_count }} words written</div>
                     </div>
-                    <div class="story-points">⭐ {{ story.points_earned }} pts</div>
+                    <div class="story-points">{{ story.points_earned }} pts</div>
                 </div>
             </a>
         {% endfor %}
     </div>
 {% else %}
     <div class="empty-state">
-        <span class="empty-icon">📝</span>
-        <p class="empty-text">No stories yet — let's write your first one!</p>
+        <p class="empty-text">No stories yet — let's write your first one.</p>
         <a href="/home" class="cta-button">Start writing</a>
     </div>
 {% endif %}

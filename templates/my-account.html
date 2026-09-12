@@ -5,23 +5,20 @@
 
 <div class="account-card">
     <div class="account-name">{{ username }}</div>
-    <p class="account-email">Keep it up — every story counts! 🌱</p>
+    <p class="account-email">Keep it up — every story counts.</p>
 
-    <div class="account-stats">
-        <div class="account-stat">
-            <span class="stat-icon">🔥</span>
-            <span class="stat-value">{{ streak }}</span>
-            <span class="stat-name">Day streak</span>
+    <div class="stat-list">
+        <div class="stat-item">
+            <span class="value">{{ streak }}</span>
+            <span class="label">Day streak</span>
         </div>
-        <div class="account-stat">
-            <span class="stat-icon">⭐</span>
-            <span class="stat-value">{{ points }}</span>
-            <span class="stat-name">Total points</span>
+        <div class="stat-item">
+            <span class="value">{{ points }}</span>
+            <span class="label">Total points</span>
         </div>
-        <div class="account-stat">
-            <span class="stat-icon">📖</span>
-            <span class="stat-value">{{ total_words }}</span>
-            <span class="stat-name">Total words</span>
+        <div class="stat-item">
+            <span class="value">{{ total_words }}</span>
+            <span class="label">Total words</span>
         </div>
     </div>
 </div>

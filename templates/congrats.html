@@ -2,32 +2,28 @@
 {% block content %}
 
 <div class="congrats-card">
-    <div class="congrats-emoji">🎉</div>
     <h1 class="congrats-title-text">{{ compliment }}</h1>
 
     <div class="congrats-story-title">
         <span class="label">Title:</span>{{ title }}
     </div>
 
-    <!-- big shiny stats -->
-    <div class="stats-grid">
-        <div class="stat-cell">
-            <span class="stat-number">{{ words }}/5</span>
-            <span class="stat-label">Words used</span>
+    <div class="stat-list">
+        <div class="stat-item">
+            <span class="value">{{ words }}/5</span>
+            <span class="label">Words used</span>
         </div>
-        <div class="stat-cell">
-            <span class="stat-number">{{ story_len }}</span>
-            <span class="stat-label">Words written</span>
+        <div class="stat-item">
+            <span class="value">{{ story_len }}</span>
+            <span class="label">Words written</span>
         </div>
-        <div class="stat-cell">
-            <span class="stat-number">{{ points }}</span>
-            <span class="stat-label">Points earned</span>
+        <div class="stat-item">
+            <span class="value">{{ points }}</span>
+            <span class="label">Points earned</span>
         </div>
     </div>
 
-    <a href="/home" class="cta-button">
-        ✏️ Write another story
-    </a>
+    <a href="/home" class="cta-button">Write another story</a>
 </div>
 
 {% endblock %}

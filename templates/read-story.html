@@ -7,13 +7,11 @@
 <article class="story-read-card">
     <h1 class="story-read-title">{{ story.title }}</h1>
 
-    <!-- 🆕 little stats row showing word count + points -->
     <div class="story-read-meta">
         <span class="meta-pill">📖 {{ story.word_count }} words</span>
         <span class="meta-pill points">⭐ {{ story.points_earned }} points</span>
     </div>
 
-    <!-- 🆕 show the prompts the user used (cute reminder of what they were working with!) -->
     {% if story.prompts %}
         <div class="story-read-prompts">
             <span class="prompts-label">Words used in this story:</span>

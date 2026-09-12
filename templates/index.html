@@ -1,14 +1,12 @@
 {% extends "template.html" %}
 {% block content %}
 
-<!-- ── 🆕 welcome hero (replaces old centered <b> tag) ── -->
 <div class="promptl-welcome">
 	<img src="/static/assets/favicon.png" alt="Promptl lightbulb" class="welcome-bulb">
 	<span class="promptl-text">Welcome to Promptl!</span>
 	<p class="promptl-subtitle">Use all 5 words below to write your story</p>
 </div>
 
-<!-- ── 🆕 tip cards (replaces the old <table> of rules) ── -->
 <div class="tips-container">
 	<div class="tip-card">
 		<div class="tip-icon">⭐</div>
@@ -24,12 +22,10 @@
 	</div>
 </div>
 
-<!-- ── friendly reload warning ── -->
 <div class="reload-warning">
 	<strong>Heads up!</strong> Don't reload while writing — the prompts will change and your work will disappear.
 </div>
 
-<!-- ── prompts section ── -->
 <div class="prompts-section">
 	<div class="prompts-header">
 		<div class="prompts-title">Your 5 Words</div>
@@ -59,7 +55,6 @@
 			<b>{{ place }}</b>
 		</div>
 
-		<!-- 🆕 bonus word gets special "2x" treatment -->
 		<div class="flex-item bonus">
 			<img src="/static/assets/bonus.png" alt="bonus icon">
 			<b>{{ bonus }}</b>
@@ -73,7 +68,6 @@
 	</div>
 </div>
 
-<!-- ── writing section ── -->
 <div class="writing-section">
 	<form action="/save-writing" method="post">
 		<label for="title" class="field-label">Story title</label>

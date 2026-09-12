@@ -1,50 +1,43 @@
-/* ═══════════════════════════════════════════════════════════════
-   PROMPTL — design system
-   ═══════════════════════════════════════════════════════════════ */
+/* promptl design tokens */
 
 :root {
-  /* ── 🆕 refreshed color palette ── */
-  /* warmer, friendlier, more 2026 */
-  --primary:        #4361EE;   /* vibrant blue */
-  --primary-dark:   #3451D1;
-  --primary-light:  #E8EDFF;   /* light tint for backgrounds */
+  --primary:        #C4941C;   /* gold */
+  --primary-dark:   #A17614;
+  --primary-light:  #FBF0D6;
 
-  --accent:         #FF5C49;   /* bright coral-red */
-  --accent-dark:    #E5432F;
-  --accent-light:   #FFE8E5;   /* light tint */
+  --accent:         #3D7A4E;   /* green */
+  --accent-dark:    #2C5C3A;
+  --accent-light:   #E5F1E6;
 
-  --success:        #2ECC71;   /* bright green for points/wins */
-  --success-light:  #D5F5E3;
+  --success:        #4C9A5B;
+  --success-light:  #E4F3E7;
 
-  --warning:        #F4B860;   /* warm amber for tips */
-  --warning-light:  #FEF3DC;
+  --warning:        #D98F26;
+  --warning-light:  #FBEBD2;
 
-  --text:           #1A1D35;   /* deep navy */
-  --text-2:         #5A5E7A;   /* muted secondary text */
-  --text-3:         #A0A4BE;   /* tertiary/placeholder */
+  --text:           #2A2318;
+  --text-2:         #6B6252;
+  --text-3:         #A79C87;
 
-  --bg:             #FFFFFF;   /* clean white */
-  --bg-2:           #F4F6FF;   /* light periwinkle for alternate sections */
-  --bg-card:        #FFFFFF;   /* cards */
+  --bg:             #FFFEF9;
+  --bg-2:           #FAF3E3;
+  --bg-card:        #FFFFFF;
 
-  --border:         #E0E4F0;   /* soft blue-grey border */
-  --border-strong:  #C5CBE5;
+  --border:         #E8DFC8;
+  --border-strong:  #D6C9A6;
 
-  /* ── spacing + radius tokens ── */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 28px;
 
-  --shadow-sm: 0 1px 3px rgba(42, 45, 67, 0.06);
-  --shadow-md: 0 4px 12px rgba(42, 45, 67, 0.08);
-  --shadow-lg: 0 8px 24px rgba(42, 45, 67, 0.10);
+  --shadow-sm: 0 1px 3px rgba(50, 42, 20, 0.07);
+  --shadow-md: 0 4px 12px rgba(50, 42, 20, 0.09);
+  --shadow-lg: 0 8px 24px rgba(50, 42, 20, 0.11);
 
-  /* ── font ── */
   --font: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* ── reset ── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
@@ -57,9 +50,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   NAV (top bar)
-   ═══════════════════════════════════════════════════════════════ */
+/* nav (top bar) */
 nav {
   display: flex;
   align-items: center;
@@ -82,7 +73,6 @@ nav {
   align-items: center;
 }
 
-/* ── 🆕 nav buttons: pill-shaped, friendlier ── */
 .navigation button {
   font-family: var(--font);
   font-size: 14px;
@@ -102,18 +92,14 @@ nav {
   border-color: var(--primary-light);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   PAGE CONTAINER
-   ═══════════════════════════════════════════════════════════════ */
+/* page container */
 .page-container {
   max-width: 880px;
   margin: 0 auto;
   padding: 32px 24px 64px;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   HERO + WELCOME
-   ═══════════════════════════════════════════════════════════════ */
+/* hero + welcome */
 .promptl-welcome {
   text-align: center;
   margin-bottom: 32px;
@@ -133,7 +119,6 @@ nav {
   margin-right: 2px;
 }
 
-/* ── 🆕 large playful welcome heading ── */
 .promptl-text {
   font-size: 36px;
   font-weight: 900;
@@ -150,9 +135,7 @@ nav {
   font-weight: 600;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   TIP CARDS (replaces the old <table> of rules)
-   ═══════════════════════════════════════════════════════════════ */
+/* tip cards (replaces the old <table> of rules) */
 .tips-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -191,7 +174,6 @@ nav {
   font-weight: 800;
 }
 
-/* ── 🆕 reload warning, redesigned as a friendly note ── */
 .reload-warning {
   background: var(--warning-light);
   border-left: 4px solid var(--warning);
@@ -205,9 +187,7 @@ nav {
 
 .reload-warning strong { color: var(--text); font-style: normal; }
 
-/* ═══════════════════════════════════════════════════════════════
-   PROMPTS SECTION
-   ═══════════════════════════════════════════════════════════════ */
+/* prompts section */
 .prompts-section {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -232,7 +212,6 @@ nav {
   color: var(--primary);
 }
 
-/* ── 🆕 new-prompt button: actually looks like a button now ── */
 .new-prompt-btn {
   display: inline-flex;
   align-items: center;
@@ -255,7 +234,6 @@ nav {
   color: white;
 }
 
-/* ── prompts grid ── */
 .prompts-flex {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -284,13 +262,13 @@ nav {
   box-shadow: var(--shadow-sm);
 }
 
-/* ── 🆕 the bonus prompt gets special visual treatment (it's worth more!) ── */
+/* bonus prompt gets a highlighted treatment since it's worth double */
 .flex-item.bonus {
   background: linear-gradient(135deg, var(--accent-light) 0%, var(--warning-light) 100%);
   border-color: var(--accent);
 }
 .flex-item.bonus::after {
-  content: '⭐ 2x';
+  content: '2x';
   position: absolute;
   font-size: 10px;
   font-weight: 800;
@@ -319,7 +297,6 @@ nav {
   word-break: break-word;
 }
 
-/* ── thesaurus help button ── */
 .help-link {
   display: inline-flex;
   align-items: center;
@@ -344,9 +321,7 @@ nav {
   color: var(--accent);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   WRITING FORM
-   ═══════════════════════════════════════════════════════════════ */
+/* writing form */
 .writing-section {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -355,7 +330,6 @@ nav {
   box-shadow: var(--shadow-sm);
 }
 
-/* ── reset old form styles ── */
 form {
   display: block;
   margin: 0;
@@ -427,7 +401,6 @@ textarea {
   font-family: var(--font);
 }
 
-/* ── 🆕 word count line ── */
 .wordcount {
   font-size: 13px;
   color: var(--text-2);
@@ -437,7 +410,6 @@ textarea {
   text-align: right;
 }
 
-/* ── 🆕 save button: big, friendly, ENCOURAGING ── */
 .save-writing {
   display: flex;
   align-items: center;
@@ -454,7 +426,7 @@ textarea {
   font-weight: 800;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 4px 12px rgba(255, 107, 91, 0.25);
+  box-shadow: 0 4px 12px rgba(61, 122, 78, 0.22);
   margin: 0;
   height: auto;
 }
@@ -462,7 +434,7 @@ textarea {
 .save-writing:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(255, 107, 91, 0.35);
+  box-shadow: 0 6px 16px rgba(61, 122, 78, 0.3);
 }
 
 .save-writing:active { transform: translateY(0); }
@@ -470,9 +442,7 @@ textarea {
 /* hide old img inside save button */
 .save-writing-img { display: none; }
 
-/* ═══════════════════════════════════════════════════════════════
-   OTHER PAGE STYLES (about, congrats, etc)
-   ═══════════════════════════════════════════════════════════════ */
+/* other page styles (about, congrats, etc) */
 .message {
   font-size: 16px;
   color: var(--accent);
@@ -494,16 +464,14 @@ textarea {
   gap: 8px;
 }
 
-/* ─ tables (used in account, prior pieces) ─ */
+/* tables (used in account, prior pieces) */
 .table-data {
   border-collapse: collapse;
   text-align: center;
   padding: 10px;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE: TABLET (600-1023px)
-   ═══════════════════════════════════════════════════════════════ */
+/* responsive: tablet (600-1023px) */
 @media (max-width: 1023px) {
   .page-container { padding: 24px 20px 48px; }
 
@@ -513,9 +481,7 @@ textarea {
   .prompts-flex { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE: MOBILE (≤ 600px)
-   ═══════════════════════════════════════════════════════════════ */
+/* responsive: mobile (≤ 600px) */
 @media (max-width: 600px) {
   nav {
     padding: 16px 20px;
@@ -583,10 +549,7 @@ textarea {
   .save-writing { font-size: 16px; padding: 14px 20px; }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   AUTH PAGES (login, signup, reset-password)
-   shared layout: centered card on warm background
-   ═══════════════════════════════════════════════════════════════ */
+/* auth pages (login, signup, reset-password) shared layout: centered card on warm background */
 
 /* the body background gets a soft gradient on auth pages */
 body.auth-page {
@@ -704,14 +667,14 @@ body.auth-page {
   font-weight: 800;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 4px 12px rgba(255, 107, 91, 0.25);
+  box-shadow: 0 4px 12px rgba(61, 122, 78, 0.22);
   margin-top: 4px;
 }
 
 .auth-button-primary:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(255, 107, 91, 0.35);
+  box-shadow: 0 6px 16px rgba(61, 122, 78, 0.3);
 }
 
 .auth-button-primary:active { transform: translateY(0); }
@@ -791,10 +754,7 @@ body.auth-page {
   .auth-title { font-size: 24px; }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   DATA DISPLAY PAGES (congrats, prior-pieces, my-account, about)
-   shared aesthetic: cards on warm bg, matching home page
-   ═══════════════════════════════════════════════════════════════ */
+/* data display pages (congrats, prior-pieces, my-account, about) shared aesthetic: cards on warm bg, matching home page */
 
 /* shared page heading */
 .page-heading {
@@ -840,7 +800,7 @@ body.auth-page {
 
 .content-card p:last-child { margin-bottom: 0; }
 
-/* ─── CONGRATS PAGE ─── */
+/* congrats page */
 .congrats-card {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -932,16 +892,16 @@ body.auth-page {
   cursor: pointer;
   text-decoration: none;
   transition: all 0.15s;
-  box-shadow: 0 4px 12px rgba(255, 107, 91, 0.25);
+  box-shadow: 0 4px 12px rgba(61, 122, 78, 0.22);
 }
 
 .cta-button:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(255, 107, 91, 0.35);
+  box-shadow: 0 6px 16px rgba(61, 122, 78, 0.3);
 }
 
-/* ─── MY ACCOUNT PAGE ─── */
+/* account page */
 .account-card {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -1005,13 +965,13 @@ body.auth-page {
   letter-spacing: 0.06em;
 }
 
-/* ─── PRIOR PIECES PAGE ─── */
+/* prior pieces page */
 .stories-grid {
   display: grid;
   gap: 12px;
 }
 
-/* each story shown as a card (instead of a table row) — feels more friendly */
+/* each story shown as a card instead of a table row */
 .story-card {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -1108,7 +1068,7 @@ body.auth-page {
   display: block;
 }
 
-/* ─── READ STORY PAGE ─── */
+/* read story page */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -1207,7 +1167,7 @@ body.auth-page {
   border-color: var(--accent);
 }
 
-/* the actual story text — clean readable typography */
+/* the actual story text */
 .story-read-content {
   font-size: 16px;
   line-height: 1.8;
@@ -1221,10 +1181,7 @@ body.auth-page {
   .story-read-title { font-size: 24px; }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   LANDING PAGE
-   public-facing marketing page — different layout from the app
-   ═══════════════════════════════════════════════════════════════ */
+/* landing page public-facing marketing page — different layout from the app */
 
 body.landing-page {
   background: var(--bg);
@@ -1232,7 +1189,6 @@ body.landing-page {
   padding: 0;
 }
 
-/* ─── lightweight landing nav ─── */
 .landing-nav {
   display: flex;
   align-items: center;
@@ -1278,16 +1234,15 @@ body.landing-page {
   padding: 10px 20px;
   border-radius: 20px;
   transition: all 0.15s;
-  box-shadow: 0 2px 8px rgba(255, 107, 91, 0.25);
+  box-shadow: 0 2px 8px rgba(61, 122, 78, 0.22);
 }
 
 .landing-nav-cta:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 91, 0.35);
+  box-shadow: 0 4px 12px rgba(61, 122, 78, 0.3);
 }
 
-/* ─── hero section ─── */
 .hero {
   background: linear-gradient(135deg, var(--bg) 0%, var(--accent-light) 100%);
   padding: 80px 32px 100px;
@@ -1362,7 +1317,6 @@ body.landing-page {
   background: var(--primary-light);
 }
 
-/* ─── generic section wrapper (used for "how it works" + FAQ) ─── */
 .section {
   padding: 80px 32px;
 }
@@ -1397,7 +1351,6 @@ body.landing-page {
   margin-bottom: 48px;
 }
 
-/* ─── how it works: 3-step cards ─── */
 .steps-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1434,7 +1387,7 @@ body.landing-page {
   justify-content: center;
   font-weight: 900;
   font-size: 16px;
-  box-shadow: 0 2px 8px rgba(255, 107, 91, 0.3);
+  box-shadow: 0 2px 8px rgba(61, 122, 78, 0.28);
 }
 
 .step-icon {
@@ -1456,7 +1409,7 @@ body.landing-page {
   line-height: 1.6;
 }
 
-/* ─── FAQ: native HTML <details> styled like custom accordion ─── */
+/* faq uses <details>/<summary> so it works without js */
 .faq-item {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -1499,7 +1452,7 @@ body.landing-page {
   transition: transform 0.2s;
 }
 
-/* when expanded, rotate the + into an ×, basically */
+/* swap the + for a − when expanded */
 .faq-item[open] .faq-question::after {
   content: '−';
 }
@@ -1511,7 +1464,6 @@ body.landing-page {
   line-height: 1.6;
 }
 
-/* ─── final CTA section ─── */
 .final-cta {
   background: linear-gradient(135deg, var(--accent-light) 0%, var(--warning-light) 100%);
   padding: 64px 32px;
@@ -1533,7 +1485,6 @@ body.landing-page {
   margin-bottom: 24px;
 }
 
-/* ─── footer ─── */
 .landing-footer {
   background: var(--text);
   color: white;
@@ -1595,7 +1546,6 @@ body.landing-page {
   text-align: center;
 }
 
-/* ─── responsive ─── */
 @media (max-width: 900px) {
   .steps-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }

@@ -13,10 +13,8 @@
 
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<!-- 🆕 add 'auth-page' class to body so it gets the gradient background -->
 <body class="auth-page">
 
-    <!-- 🆕 single white card holds everything, centered automatically by flexbox -->
     <div class="auth-card">
 
         <img src="/static/assets/logo.png" alt="promptl logo" class="auth-logo">
@@ -57,10 +55,6 @@
 
     </div>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         FIREBASE AUTH MODULE
-         (logic unchanged — just updated to use new CSS classes)
-         ───────────────────────────────────────────────────────────── -->
     <script type="module">
         import { firebaseConfig } from "/static/firebase-config.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";

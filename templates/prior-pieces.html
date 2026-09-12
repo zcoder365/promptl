@@ -1,13 +1,12 @@
 {% extends "template.html" %}
 {% block content %}
 
-<h1 class="page-heading">Your stories ✨</h1>
+<h1 class="page-heading">Your stories</h1>
 <p class="page-subheading">All the wonderful things you've written</p>
 
 {% if stories %}
     <div class="stories-grid">
         {% for story in stories %}
-            <!-- 🆕 wrap the card in an <a> so the whole card is clickable -->
             <a href="/read-story/{{ story.id }}" class="story-card-link">
                 <div class="story-card">
                     <div class="story-info">

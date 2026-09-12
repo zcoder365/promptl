@@ -16,7 +16,6 @@
 </head>
 <body class="landing-page">
 
-    <!-- ── lightweight nav (just logo + login link) ── -->
     <nav class="landing-nav">
         <a href="/" class="landing-nav-logo">
             <img src="/static/assets/logo.png" alt="promptl logo">
@@ -31,12 +30,9 @@
         </div>
     </nav>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         HERO SECTION
-         ───────────────────────────────────────────────────────────── -->
     <section class="hero">
         <div class="hero-inner">
-            <span class="hero-badge">✨ Built for kids with learning differences</span>
+            <span class="hero-badge">Built for kids with learning differences</span>
 
             <h1 class="hero-title">
                 Writing, but make it <span class="hero-title-accent">fun.</span>
@@ -57,9 +53,6 @@
         </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         HOW IT WORKS
-         ───────────────────────────────────────────────────────────── -->
     <section class="section">
         <div class="section-inner">
             <h2 class="section-heading">How it works</h2>
@@ -96,14 +89,10 @@
         </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         FAQ
-         ───────────────────────────────────────────────────────────── -->
     <section class="section section-alt">
         <div class="section-inner section-narrow">
             <h2 class="section-heading">Common questions</h2>
 
-            <!-- ── using <details> + <summary> = a native expandable FAQ with no JS ✨ -->
             <details class="faq-item">
                 <summary class="faq-question">Is Promptl free?</summary>
                 <p class="faq-answer">
@@ -148,9 +137,6 @@
         </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         FINAL CTA (catches users who scrolled all the way down)
-         ───────────────────────────────────────────────────────────── -->
     {% if not logged_in %}
         <section class="final-cta">
             <div class="section-inner">
@@ -161,9 +147,6 @@
         </section>
     {% endif %}
 
-    <!-- ─────────────────────────────────────────────────────────────
-         FOOTER
-         ───────────────────────────────────────────────────────────── -->
     <footer class="landing-footer">
         <div class="section-inner">
             <div class="footer-grid">

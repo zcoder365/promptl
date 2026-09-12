@@ -35,12 +35,8 @@
         {% block content %} {% endblock %}
     </div>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         SCRIPT 1: regular (non-module) — word count tracker
-         this runs on every page that has a textarea (the writing form).
-         ───────────────────────────────────────────────────────────── -->
+    <!-- word count tracker, runs on any page with a textarea -->
     <script>
-        // ── word count tracker ──
         const textarea = document.querySelector('textarea');
         if (textarea) {
             textarea.addEventListener('keyup', function() {
@@ -59,12 +55,7 @@
         }
     </script>
 
-    <!-- ─────────────────────────────────────────────────────────────
-         SCRIPT 2: module — firebase logout
-         needs type="module" because it uses ES module imports.
-         when user clicks logout, sign out of firebase BEFORE hitting flask
-         (otherwise firebase still thinks they're logged in next visit).
-         ───────────────────────────────────────────────────────────── -->
+    <!-- sign out of firebase before hitting flask, otherwise firebase still thinks we're logged in next visit -->
     <script type="module">
         import { firebaseConfig } from "/static/firebase-config.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
